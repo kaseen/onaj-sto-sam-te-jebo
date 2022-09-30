@@ -1,10 +1,6 @@
 const fs = require('fs');
 const readline = require('readline');
 
-// Zapravo se dodaje u objekat na dan, svi korisnici za jedan dan se pamete u memoriju
-// pa cuvaju na .txt na pocetku dana a lista se praznimodule.exports = fileStorage;
-// Lakse da se proverava
-
 module.exports = class fileStorage {
 
     constructor(filePath) {
@@ -17,17 +13,34 @@ module.exports = class fileStorage {
 
         const lineReader = readline.createInterface({
             input: inputStream,
+            // ako nesto baguje komentuj ovo
             crlfDelay: Infinity
         });
 
         for await (const line of lineReader) {
+            if(line === ''){
+                continue;
+            }
             const mapField = line.split(' ');
-            this._map.set(mapField[0], Number(mapField[1]));
+            this._map.set(
+                mapField[0],
+                Number(mapField[1])
+            );
         }
     }
 
-    getUsername(username){
-        return this._map.get(username);
+    exportToFilePath(){
+        const outputStream = fs.createWriteStream(this._filePath, {
+            flags: 'w'
+        });
+
+        for (const [key, value] of this._map) {
+            outputStream.write(key + ' ' + value + '\n');
+        }
+    }
+
+    getId(userId){
+        return this._map.get(userId);
     }
 
     getMap(){
@@ -36,6 +49,14 @@ module.exports = class fileStorage {
 
     getMapSize(){
         return this._map.size;
+    }
+
+    incrementId(userId){
+        const currentValue = this._map.get(userId);
+        if(typeof currentValue === 'undefined')
+            this._map.set(userId, 1);
+        else
+            this._map.set(userId, currentValue+1);
     }
 
     clearMap(){

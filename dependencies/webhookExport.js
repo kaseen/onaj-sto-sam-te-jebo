@@ -41,12 +41,12 @@ const prenk = async (senderId, senderUsername, targetUsername) => {
     }
 
     const randInt = Math.floor(Math.random()*(listPrenk.length));
-    const text = `${listPrenk[randInt]}\n\nPrenk 🤙🤙🤙`;
+    const text = `${targetUsername}\n\n${listPrenk[randInt]}\n\nPrenk 🤙🤙🤙`;
 
     try{
         await postStatusText(text);
         await sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`);
-        logTime(`@${senderUsername} /prenk`);
+        logTime(`@${senderUsername} prenked @${targetUsername}`);
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
         console.log(e);
@@ -56,15 +56,10 @@ const prenk = async (senderId, senderUsername, targetUsername) => {
 
 const patoshi = async (senderId, senderUsername, targetUsername) => {
 
-    if(!(await userFollowsBot(senderId))){
-        await sendMessage(senderId, 'Zaprati bota, stoko');
-        return;
-    }
-
     try{
         await postPatoshi(senderUsername, targetUsername);
         await sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16.`);
-        logTime(`@${senderUsername} /patoshi`);
+        logTime(`@${senderUsername} patoshied @${targetUsername}`);
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
         console.log(e);
@@ -72,7 +67,7 @@ const patoshi = async (senderId, senderUsername, targetUsername) => {
 
 }
 
-const onNewMessage = async (event) => {
+const onNewMessage = async (dailyStorageInstance, event) => {
     try{
         // We check that the event is a direct message
         if (!event.direct_message_events) {
@@ -103,6 +98,11 @@ const onNewMessage = async (event) => {
             return;
         }
 
+        if(!(await userFollowsBot(senderId))){
+            await sendMessage(senderId, 'Zaprati bota, stoko');
+            return;
+        }
+
         if((await getUserByUsername(targetUsername)) === '-1'){
             await sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
             return;
@@ -110,10 +110,22 @@ const onNewMessage = async (event) => {
 
         switch(splitedMsg[0]){
             case '/prenk':
-                await prenk(senderId, senderUsername, targetUsername)
+                if(dailyStorageInstance.getId(senderId) >= process.env.MAX_DAILY_USAGE){
+                    //await sendMessage(senderId, `Wec si prenkovao ${process.env.MAX_PRENK_PER_DAY} puta danas`);
+                    await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
+                    break;
+                }
+                await prenk(senderId, senderUsername, targetUsername);
+                dailyStorageInstance.incrementId(senderId);
                 break;
-            case '/patoshi':                                    
+            case '/patoshi':
+                if(dailyStorageInstance.getId(senderId) >= process.env.MAX_DAILY_USAGE){
+                    //await sendMessage(senderId, `Wec si patoshio ${process.env.MAX_PATOSHI_PER_DAY} patoshenja danas`);
+                    await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
+                    break;
+                }                                    
                 await patoshi(senderId, senderUsername, targetUsername);
+                dailyStorageInstance.incrementId(senderId);
                 break;
             default:
                 await sendMessage(senderId, 'Dostupne komande:\n/prenk <username>\n/patoshi <username>')

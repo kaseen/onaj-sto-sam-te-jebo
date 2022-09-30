@@ -3,16 +3,13 @@
 /* TODOS:
 
 ------ MAIN
+- spam patoshi na jednu osobu MOZE BREAK
 - proveri kako heroku worker-a pali gasi
 - pre svaki exit gresku upisi u fajl i ugasi
 - KAD PROGRAM NAIDJE NA GRESKU I KRENE DA SE GASI UPISI MAPU U FAJL I PROCESS EXIT
 - datoteka TODO u kaseengithub uradi i obrisi
-- bolji log user @a1 prenkovo @a2
-- zaprati bota stoko MACRO
-- patoshi invalid user
 - targetUsername nije blokiro bota PROVERA
 - u ponoc console.log datoteku sa logovima, obrisi i kreiraj praznu datoteku
-- username space broj u log datoteku
 - preminum lista ban lista (whitelist, blacklist)
 - COMMENTS IN SOLIDITY STANDARD
 - test try/catch
@@ -40,9 +37,7 @@ const openStreaming = async () => {
 	stream.on(ETwitterStreamEvent.Data, (eventData) => onDataFilterStream(eventData));
 }
 
-
-
-const openWebhook = async () => {
+const openWebhook = async (dailyStorageInstance) => {
 	const webhook = AutohookInstance;
 		
 	// Removes existing webhooks
@@ -50,7 +45,7 @@ const openWebhook = async () => {
 	
 	webhook.on('event', async (event) => {
 		if (event.direct_message_events){
-			await onNewMessage(event);
+			await onNewMessage(dailyStorageInstance, event);
 		}
 	})
 	
@@ -69,8 +64,8 @@ const main = async () => {
 		const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
-		//await openWebhook(dailyStorageInstance);
-		//await openStreaming();
+		await openWebhook(dailyStorageInstance);
+		await openStreaming();
 		console.log("\n--------------------- STARTED ---------------------\n");
 	} catch (e) {
 		// Display the error and quit
@@ -81,9 +76,3 @@ const main = async () => {
 }
 
 main();
-
-const test2 = async () => {
-	
-}
-
-//test2();
