@@ -41,6 +41,11 @@ const relationshipId = async (senderId, targetId) => {
         const heFollows = res.relationship.source.following === true ? 1 : 0;
         const heIsFollowed = res.relationship.source.followed_by === true ? 1 : 0;
 
+        const heIsBlocked = res.relationship.source.blocked_by;
+        if(heIsBlocked){
+            return [2, 0];
+        }
+
         return [
             heFollows,
             heIsFollowed

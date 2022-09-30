@@ -6,10 +6,9 @@
 - fix NaN/3
 - spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
 - proveri kako heroku worker-a pali gasi
-- pre svaki exit gresku upisi u fajl i ugasi
+- pre svaki exit gresku upisi u fajl i ugasi (VALJDA JE)
 - KAD PROGRAM NAIDJE NA GRESKU I KRENE DA SE GASI UPISI MAPU U FAJL I PROCESS EXIT
 - datoteka TODO u kaseengithub uradi i obrisi
-- targetUsername nije blokiro bota PROVERA
 - u ponoc console.log datoteku sa logovima, obrisi i kreiraj praznu datoteku
 - preminum lista ban lista (whitelist, blacklist)
 - COMMENTS IN SOLIDITY STANDARD
@@ -71,9 +70,10 @@ process.on('exit', () => {
 const main = async () => {
 	try{
 
-		setTimeout(function () {
+		// TODO: ugasi bota namerno da bi se upalio
+		/*setTimeout(function () {
 			throw new Error('error!');
-		}, 45* 1000)
+		}, 45* 1000)*/
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
@@ -88,10 +88,13 @@ const main = async () => {
 	}
 }
 
-//main();
+main();
+
+const {getUserByUsername} = require('./dependencies/twitterLib')
 
 const test2 = async () => {
-	console.log(Number(dailyStorageInstance.getId('12412')));
+	const x = await getUserByUsername('jawisemalena');
+	console.log(x);
 }
 
-test2();
+//test2();

@@ -13,6 +13,7 @@ const {
 
 /*
 *   async userFollowsBot(senderId)
+*   async userBlocksBot(senderId)
 *   async prenk(senderId, senderUsername, targetUsername)
 *   async patoshi(senderId, senderUsername, targetUsername)
 *   async onNewMessage(event)
@@ -21,6 +22,11 @@ const {
 const userFollowsBot = async (senderId) => {
     const res = await relationshipId(senderId, process.env.BOT_ID);
     return res[0] === 1 ? true : false;
+}
+
+const userBlocksBot = async (senderId) => {
+    const res = await relationshipId(process.env.BOT_ID, senderId);
+    return res[0] === 2 ? false : true;
 }
 
 const prenk = async (senderId, senderUsername, targetUsername) => {
@@ -82,9 +88,16 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             return;
         }
 
+        // Check if sender have enought followers
         const senderIdFollowersCount = await getFollowers(senderId);
         if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
             await sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno`);
+            return;
+        }
+
+        // Check if user follows bot
+        if(!(await userFollowsBot(senderId))){
+            await sendMessage(senderId, 'Zaprati bota, stoko');
             return;
         }
 
@@ -96,13 +109,17 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             return;
         }
 
-        if(!(await userFollowsBot(senderId))){
-            await sendMessage(senderId, 'Zaprati bota, stoko');
+        // Check if targetUsername exists
+        const targetInfo = await getUserByUsername(targetUsername);
+        const targetId = targetInfo.id_str;
+        if(targetId === '-1'){
+            await sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
             return;
         }
 
-        if((await getUserByUsername(targetUsername)) === '-1'){
-            await sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
+        // Check if target blocks bot
+        if(!(await userBlocksBot(targetId))){
+            await sendMessage(senderId, 'Mićko blokiro bota xd');
             return;
         }
 
