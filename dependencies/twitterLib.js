@@ -57,16 +57,6 @@ const relationshipId = async (senderId, targetId) => {
     }
 }
 
-const relationshipUsername = async (senderUsername, targetUsername) => {
-
-    const _senderUsername = (await getUserByUsername(senderUsername)).id_str;
-    const _targetUsername = (await getUserByUsername(targetUsername)).id_str;
-
-    const x = await relationshipId(_senderUsername, _targetUsername);
-
-    return x;
-}
-
 const postStatusText = async (text) => {
     try{
         await TwitterClient.v1.tweet(text);
@@ -136,7 +126,6 @@ module.exports = {
     sendMessage,
     getUserByUsername,
     relationshipId,
-    relationshipUsername,
     postStatusText,
     postStatusWithMedia,
     postPatoshi,

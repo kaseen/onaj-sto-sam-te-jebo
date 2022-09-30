@@ -5,7 +5,6 @@ const {
     sendMessage,
     getUserByUsername,
     relationshipId,
-    relationshipUsername,
     postStatusText,
     postPatoshi,
     getFollowers,
@@ -29,25 +28,25 @@ const userBlocksBot = async (senderId) => {
     return res[0] === 2 ? false : true;
 }
 
-const prenk = async (senderId, senderUsername, targetUsername) => {
+const prenk = async (senderId, targetId, targetUsername) => {
 
-    const result = await relationshipUsername(senderUsername, targetUsername);
+    const result = await relationshipId(senderId, targetId);
 
     if(result[0] === -1){
         await sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
-        return;
+        return 0;
     }
     if(result[0] === 0){
         await sendMessage(senderId, 'Ne pratish mićka');
-        return;
+        return 0;
     }
     if(result[1] === 0){
         await sendMessage(senderId, 'Mićko te ne prati');
-        return;
+        return 0;
     }
 
     const randInt = Math.floor(Math.random()*(listPrenk.length));
-    const text = `${targetUsername}\n\n${listPrenk[randInt]}\n\nPrenk 🤙🤙🤙`;
+    const text = `@${targetUsername}\n\n${listPrenk[randInt]}\n\nPrenk 🤙🤙🤙`;
 
     try{
         await postStatusText(text);
@@ -57,6 +56,8 @@ const prenk = async (senderId, senderUsername, targetUsername) => {
         console.log(e);
     }
 
+    // If success return 1 (needed for dailyStorageInstance)
+    return 1;
 }
 
 const patoshi = async (senderId, senderUsername, targetUsername) => {
@@ -127,18 +128,19 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             case '/prenk':
                 const numPrenk = dailyStorageInstance.getId(senderId);
                 if(numPrenk >= process.env.MAX_DAILY_USAGE){
-                    //await sendMessage(senderId, `Wec si prenkovao ${process.env.MAX_PRENK_PER_DAY} puta danas`);
                     await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
                     break;
                 }
-                await prenk(senderId, senderUsername, targetUsername);
-                dailyStorageInstance.incrementId(senderId);
-                logTime(`@${senderUsername}(${numPrenk+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
+                const res = await prenk(senderId, targetId, targetUsername);
+                // On successful prenk increment
+                if(res === 1){
+                    dailyStorageInstance.incrementId(senderId);
+                    logTime(`@${senderUsername}(${numPrenk+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
+                }
                 break;
             case '/patoshi':
                 const numPatoshi = dailyStorageInstance.getId(senderId);
                 if(numPatoshi >= process.env.MAX_DAILY_USAGE){
-                    //await sendMessage(senderId, `Wec si patoshio ${process.env.MAX_PATOSHI_PER_DAY} patoshenja danas`);
                     await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
                     break;
                 }                                    
