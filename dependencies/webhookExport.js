@@ -1,5 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../storage/listPrenk');
+const { logTime } = require('./serverMaintenance');
 const { 
     sendMessage,
     getUserByUsername,
@@ -8,7 +9,6 @@ const {
     postStatusText,
     postPatoshi,
     getFollowers,
-    logTime
 } = require('./twitterLib');
 
 /*
@@ -46,7 +46,6 @@ const prenk = async (senderId, senderUsername, targetUsername) => {
     try{
         await postStatusText(text);
         await sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`);
-        logTime(`@${senderUsername} prenked @${targetUsername}`);
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
         console.log(e);
@@ -59,7 +58,6 @@ const patoshi = async (senderId, senderUsername, targetUsername) => {
     try{
         await postPatoshi(senderUsername, targetUsername);
         await sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16.`);
-        logTime(`@${senderUsername} patoshied @${targetUsername}`);
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
         console.log(e);
@@ -110,22 +108,26 @@ const onNewMessage = async (dailyStorageInstance, event) => {
 
         switch(splitedMsg[0]){
             case '/prenk':
-                if(dailyStorageInstance.getId(senderId) >= process.env.MAX_DAILY_USAGE){
+                const numPrenk = dailyStorageInstance.getId(senderId);
+                if(numPrenk >= process.env.MAX_DAILY_USAGE){
                     //await sendMessage(senderId, `Wec si prenkovao ${process.env.MAX_PRENK_PER_DAY} puta danas`);
                     await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
                     break;
                 }
                 await prenk(senderId, senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
+                logTime(`@${senderUsername}(${numPrenk+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 break;
             case '/patoshi':
-                if(dailyStorageInstance.getId(senderId) >= process.env.MAX_DAILY_USAGE){
+                const numPatoshi = dailyStorageInstance.getId(senderId);
+                if(numPatoshi >= process.env.MAX_DAILY_USAGE){
                     //await sendMessage(senderId, `Wec si patoshio ${process.env.MAX_PATOSHI_PER_DAY} patoshenja danas`);
                     await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
                     break;
                 }                                    
                 await patoshi(senderId, senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
+                logTime(`@${senderUsername}(${numPatoshi+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 break;
             default:
                 await sendMessage(senderId, 'Dostupne komande:\n/prenk <username>\n/patoshi <username>')

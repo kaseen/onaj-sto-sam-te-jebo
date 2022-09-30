@@ -10,7 +10,6 @@ const fs = require("fs");
 *   async postStatusWithMedia(text, mediaPath)
 *   async postPatoshi(senderUsername, targetUsername)
 *   async getFollowers(senderId)
-*   logTime()
 */
 
 const sendMessage = async (recipientId, text) => {
@@ -128,12 +127,6 @@ Date.prototype.timeNow = function () {
     )
 }
 
-const logTime = (text) => {
-    const currentTime = new Date();
-
-    console.log('(' + currentTime.today() + ')(' + currentTime.timeNow() + '): ' + text);
-}
-
 module.exports = {
     sendMessage,
     getUserByUsername,
@@ -142,6 +135,5 @@ module.exports = {
     postStatusText,
     postStatusWithMedia,
     postPatoshi,
-    getFollowers,
-    logTime
+    getFollowers
 }

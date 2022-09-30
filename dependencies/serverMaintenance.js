@@ -1,7 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 
-module.exports = class fileStorage {
+class fileStorage {
 
     constructor(filePath) {
         this._map = new Map();
@@ -30,25 +30,13 @@ module.exports = class fileStorage {
     }
 
     exportToFilePath(){
-        const outputStream = fs.createWriteStream(this._filePath, {
-            flags: 'w'
-        });
+        // Erase this._filePath
+        fs.writeFileSync(this._filePath, '', {flag: 'w'});
 
         for (const [key, value] of this._map) {
-            outputStream.write(key + ' ' + value + '\n');
+            const tmp = `${key} ${value}\n`;
+            fs.writeFileSync(this._filePath, tmp, {flag: 'a'});
         }
-    }
-
-    getId(userId){
-        return this._map.get(userId);
-    }
-
-    getMap(){
-        return this._map;
-    }
-
-    getMapSize(){
-        return this._map.size;
     }
 
     incrementId(userId){
@@ -59,10 +47,40 @@ module.exports = class fileStorage {
             this._map.set(userId, currentValue+1);
     }
 
+    getId(userId){
+        return this._map.get(userId);
+    }
+
+    getMap(){
+        return this._map;
+    }
+
+    getFilePath(){
+        return this._filePath;
+    }
+
+    getMapSize(){
+        return this._map.size;
+    }
+
+    clearFile(){
+        fs.writeFileSync(this._filePath, '', {flag: 'w'});
+    }
+
     clearMap(){
         this._map.clear();
     }
 
 };
 
+const logTime = (text) => {
+    const currentTime = new Date();
+
+    console.log('(' + currentTime.today() + ')(' + currentTime.timeNow() + '): ' + text);
+}
+
+module.exports = {
+    fileStorage,
+    logTime
+}
 

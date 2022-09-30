@@ -3,7 +3,8 @@
 /* TODOS:
 
 ------ MAIN
-- spam patoshi na jednu osobu MOZE BREAK
+- fix NaN/3
+- spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
 - proveri kako heroku worker-a pali gasi
 - pre svaki exit gresku upisi u fajl i ugasi
 - KAD PROGRAM NAIDJE NA GRESKU I KRENE DA SE GASI UPISI MAPU U FAJL I PROCESS EXIT
@@ -29,8 +30,8 @@ const { AutohookInstance, TwitterClient } = require('./dependencies/Instances');
 const { trackList, trackListMAIN } = require('./storage/listTrack');
 const { onDataFilterStream } = require('./dependencies/streamingExport');
 const { onNewMessage } = require('./dependencies/webhookExport');
+const { fileStorage, logTime } = require('./dependencies/serverMaintenance');
 const { ETwitterStreamEvent } = require('twitter-api-v2');
-const fileStorage = require('./dependencies/fileStorage');
 
 const openStreaming = async () => {
 	const stream = await TwitterClient.v1.filterStream({ track: trackListMAIN });
@@ -59,9 +60,21 @@ const openWebhook = async (dailyStorageInstance) => {
 	});  
 }
 
+const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
+
+process.on('exit', () => {
+	logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
+	dailyStorageInstance.exportToFilePath();
+	logTime('File saved, exiting...');
+});
+
 const main = async () => {
 	try{
-		const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
+
+		setTimeout(function () {
+			throw new Error('error!');
+		}, 45* 1000)
+
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
 		await openWebhook(dailyStorageInstance);
@@ -75,4 +88,10 @@ const main = async () => {
 	}
 }
 
-main();
+//main();
+
+const test2 = async () => {
+	console.log(Number(dailyStorageInstance.getId('12412')));
+}
+
+test2();
