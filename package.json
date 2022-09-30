@@ -1,0 +1,19 @@
+{
+  "name": "onaj-sto-sam-te-jebo-bot",
+  "version": "1.0.0",
+  "description": "onaj-sto-sam-te-jebo-bot",
+  "main": "app.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.2",
+    "find-config": "^1.0.0",
+    "twitter-api-v2": "^1.12.7",
+    "twitter-autohook": "^1.7.2"
+  },
+  "devDependencies": {}
+}

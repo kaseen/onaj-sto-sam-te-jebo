@@ -1,0 +1,81 @@
+{
+  for_user_id: '1446068185019654152',
+  direct_message_indicate_typing_events: [
+    {
+      created_timestamp: '1664304423956',
+      sender_id: '1059478209115406336',
+      target: [Object]
+    }
+  ],
+  users: {
+    '1059478209115406336': {
+      id: '1059478209115406336',
+      created_timestamp: '1541434264034',
+      name: 'tuky grejtezt xits',
+      screen_name: 'ka1seen',
+      description: 'ma nem jef',
+      protected: false,
+      verified: false,
+      followers_count: 0,
+      friends_count: 1,
+      statuses_count: 153,
+      profile_image_url: 'http://pbs.twimg.com/profile_images/1191664842236715013/RhoGu5fU_normal.jpg',
+      profile_image_url_https: 'https://pbs.twimg.com/profile_images/1191664842236715013/RhoGu5fU_normal.jpg'
+    },
+    '1446068185019654152': {
+      id: '1446068185019654152',
+      created_timestamp: '1633604542955',
+      name: 'test6bot',
+      screen_name: 'test6bot',
+      description: 'test6bot',
+      protected: false,
+      verified: false,
+      followers_count: 0,
+      friends_count: 0,
+      statuses_count: 7,
+      profile_image_url: 'http://pbs.twimg.com/profile_images/1446070590117384196/4TAiK3bL_normal.jpg',
+      profile_image_url_https: 'https://pbs.twimg.com/profile_images/1446070590117384196/4TAiK3bL_normal.jpg'
+    }
+  }
+}
+{
+  for_user_id: '1446068185019654152',
+  direct_message_events: [
+    {
+      type: 'message_create',
+      id: '1574833017025171474',
+      created_timestamp: '1664304424898',
+      message_create: [Object]
+    }
+  ],
+  users: {
+    '1059478209115406336': {
+      id: '1059478209115406336',
+      created_timestamp: '1541434264034',
+      name: 'tuky grejtezt xits',
+      screen_name: 'ka1seen',
+      description: 'ma nem jef',
+      protected: false,
+      verified: false,
+      followers_count: 0,
+      friends_count: 1,
+      statuses_count: 153,
+      profile_image_url: 'http://pbs.twimg.com/profile_images/1191664842236715013/RhoGu5fU_normal.jpg',
+      profile_image_url_https: 'https://pbs.twimg.com/profile_images/1191664842236715013/RhoGu5fU_normal.jpg'
+    },
+    '1446068185019654152': {
+      id: '1446068185019654152',
+      created_timestamp: '1633604542955',
+      name: 'test6bot',
+      screen_name: 'test6bot',
+      description: 'test6bot',
+      protected: false,
+      verified: false,
+      followers_count: 0,
+      friends_count: 0,
+      statuses_count: 7,
+      profile_image_url: 'http://pbs.twimg.com/profile_images/1446070590117384196/4TAiK3bL_normal.jpg',
+      profile_image_url_https: 'https://pbs.twimg.com/profile_images/1446070590117384196/4TAiK3bL_normal.jpg'
+    }
+  }
+}
