@@ -3,33 +3,33 @@
 /* TODOS:
 
 ------ MAIN
-- fix NaN/3
+
 - spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
 - proveri kako heroku worker-a pali gasi
 - pre svaki exit gresku upisi u fajl i ugasi (VALJDA JE)
-- KAD PROGRAM NAIDJE NA GRESKU I KRENE DA SE GASI UPISI MAPU U FAJL I PROCESS EXIT
-- datoteka TODO u kaseengithub uradi i obrisi
 - u ponoc console.log datoteku sa logovima, obrisi i kreiraj praznu datoteku
-- preminum lista ban lista (whitelist, blacklist)
-- COMMENTS IN SOLIDITY STANDARD
 - test try/catch
-- patoshi alt text
 - Kad neko zaprati bota posalji mu Komande poruku
 - Error: Status is a duplicate!!! (puno primera dodaj zbog random)
 
 
 ------ ALT
+- datoteka TODO u kaseengithub uradi i obrisi
+- COMMENTS IN SOLIDITY STANDARD
+- preminum lista ban lista (whitelist, blacklist)
 - .env list of usernames ['jawisemalena', 'test6bot']
 - rendom lista patoshi, postPatoshi, prenk
+- fix NaN/3
 - ALT TEXT NA SLIKE ALSO RANDOM
+- patoshi alt text
 */
 
 require('dotenv').config({ path: require('find-config')('.env') });
+const { fileStorage, timestampStorage, logTime, dateNow } = require('./dependencies/serverMaintenance');
 const { AutohookInstance, TwitterClient } = require('./dependencies/Instances');
 const { trackList, trackListMAIN } = require('./storage/listTrack');
 const { onDataFilterStream } = require('./dependencies/streamingExport');
 const { onNewMessage } = require('./dependencies/webhookExport');
-const { fileStorage, logTime } = require('./dependencies/serverMaintenance');
 const { ETwitterStreamEvent } = require('twitter-api-v2');
 
 const openStreaming = async () => {
@@ -60,6 +60,7 @@ const openWebhook = async (dailyStorageInstance) => {
 }
 
 const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
+const timestamp = new timestampStorage('./storage/resetStorage.txt');
 
 process.on('exit', () => {
 	logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
@@ -89,12 +90,3 @@ const main = async () => {
 }
 
 main();
-
-const {getUserByUsername} = require('./dependencies/twitterLib')
-
-const test2 = async () => {
-	const x = await getUserByUsername('jawisemalena');
-	console.log(x);
-}
-
-//test2();

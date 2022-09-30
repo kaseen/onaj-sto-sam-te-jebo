@@ -73,14 +73,44 @@ class fileStorage {
 
 };
 
+class timestampStorage{
+
+    constructor(filePath) {;
+        this._filePath = filePath;
+        this.SECONDS_20H = 72000000;
+        this._seconds = 0;
+    }
+
+    readTimestampFromFile(){
+        const data = fs.readFileSync(this._filePath, {encoding:'utf8', flag:'r'});
+        this._seconds = Number(data);
+    }
+
+    writeTimestampToFile(){
+        const out = new Date().getTime().toString();
+        fs.writeFileSync(this._filePath, out, {flag: 'w'});
+    }
+
+    getTimestamp(){
+        return this._seconds;
+    }
+
+}
+
 const logTime = (text) => {
     const currentTime = new Date();
 
-    console.log('(' + currentTime.today() + ')(' + currentTime.timeNow() + '): ' + text);
+    console.log('(' + currentTime.today() + ')(' + currentTime.timeNow() + ') ' + text);
+}
+
+const dateNow = () => {
+    return Number(new Date().getTime());
 }
 
 module.exports = {
     fileStorage,
+    timestampStorage,
+    dateNow,
     logTime
 }
 

@@ -5,7 +5,6 @@ const fs = require("fs");
 *   async sendMessage(recipientId, text)
 *   async getUserByUsername(username)
 *   async relationshipId(senderId, targetId)
-*   async relationshipUsername(senderUsername, targetUsername)
 *   async postStatusText(text)
 *   async postStatusWithMedia(text, mediaPath)
 *   async postPatoshi(senderUsername, targetUsername)
