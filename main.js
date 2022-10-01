@@ -2,17 +2,21 @@
 
 /* TODOS:
 
+------ EVENT
+
+uksrs, nova godina, bozic bata i tako to
+
 ------ MAIN
 
+- izracunaj kad ce se shutdownuje
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
 - spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
 - test try/catch
 - Kad neko zaprati bota posalji mu Komande poruku
-- Error: Status is a duplicate!!! (puno primera dodaj zbog random)
+- Error: Status is a duplicate!!! (puno primera dodaj zbog random) ILI POsle poruke generisi novi tekst
 
 
 ------ ALT
-- datoteka TODO u kaseengithub uradi i obrisi
 - COMMENTS IN SOLIDITY STANDARD
 - preminum lista ban lista (whitelist, blacklist)
 - .env list of usernames ['jawisemalena', 'test6bot']
@@ -40,12 +44,12 @@ timestamp.readTimestampFromFile();
 
 const main = async () => {
 	try{
-
+		console.log("\n------------------------ STARTED ------------------------\n");
 		// Turn off bot every 12h (720min)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes.
 		setTimeout(function () {
 			throw new Error('Shutdown error');
-		}, 12 * 60 * 1000)
+		}, 12 * 60 * 60 * 1000)
 
 		// Check if 20h passed after last reset of dailyUsage 
 		if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
@@ -63,7 +67,7 @@ const main = async () => {
 
 		await openWebhook(dailyStorageInstance);
 		await openStreaming();
-		console.log("\n--------------------- STARTED ---------------------\n");
+		console.log("\n------------------------ LIVE ------------------------n");
 	} catch (e) {
 		// Display the error and quit
 		console.log("Error in MAIN");

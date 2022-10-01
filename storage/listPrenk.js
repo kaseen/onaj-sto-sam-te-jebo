@@ -12,5 +12,11 @@ listPrenk.push('Ostade mi zelja pusta da ti ga stavim u usta,oci ti suze dok ga 
 listPrenk.push('Чујем да ти је ЛЕП, ДОБАР, КРУТ, да ти је ЧУПАВ, НЕНОРМАЛНО ВЕЛИК, и да ти НЕ МОЖЕ СТАТИ У ПАНТАЛОНЕ... Могу ти рећи, стварно ти је С У П Е Р тај ЏЕМПЕР!!!');
 listPrenk.push('Guraj,ah ah guraj,\nGuraj srce jace,ah jace,jace,ah to too\nAjde jos samo malo,sad ce srce osecam,ah ah,guraj guraj,ah ah...\nUskaci fica je upalio!');
 listPrenk.push('Velik sam 23cm. Volim da budem svuda. Kada me povedes sa sobom ljubis me ceo put. Uvek cu te cekati na krevetu nasmejan. Ali ti znas da sam plisani medvedic?');
+listPrenk.push('u parku ti ga mazim, rukom ga pronalazim, zbog njega vristim na sav glas, NAJSLADJI JE TVOJ PAS');
+listPrenk.push('Ja sam zlatna zelja, mogu da ti ispunim ribicu tri puta.');
+listPrenk.push('Kad me imaš, dobro ti je. Kad me lizneš, vlažim se. Kad me pališ, ja se žarim. Kad me sisaš, ja se gubim. Kad se izgubim, ti me gasiš... tvoja... CIGARETA!');
+listPrenk.push('Cvrsto ga drzi da ne isklizne, dobro ga protresi, sto ga vise treses on vise prska to belo obavezno ga probaj jer svaki sampanjac je drugaciji......!!!');
+listPrenk.push('Dobro jutro. Ja bih ležeći, ti bi stojeći. Ja bih danju, a ti noću :-P ma nikada nećeš kafu kakvu ja hoću');
+listPrenk.push('Želim te! hoću te odvući u krevet, lomiti te i preznojavati,obuzeti te tako da se treseš dok me imaš, da ti telo gori! Voli te tvoja korona!!!');
 
 module.exports = listPrenk;

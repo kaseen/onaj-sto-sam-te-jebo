@@ -40,5 +40,9 @@ listMention.push("dunjice to sam ja, onaj shto sam te jebo")
 listMention.push('Devojka:Reci sedam.\nDecko:Sedam.\nDevojka:Nikome te nedam! :)\nDevojka:Osam\nDecko:Reci osam.\nDevojka:Necu,znam foru.\nDecko:Ali,reci osam.\nDevojka:Ajde...Osam.\nDecko: Na onaj shto sam te jebo te nosam');
 listMention.push('Nemam decka ako te zanima bas,a onaj sto sam te jebo mi sladak sam da znas...');
 listMention.push('Onaj što sam te jebo se, slučajno, udao 18. maja 1980. Da se udao za mene, verovatno bih, kao pravi muž, ponekad i zaboravio taj datum. Ovako, zapamtio sam ga zauvek…');
+listMention.push('Svi mi kazu da sam luda jer dugo spavam..\nBudale ne znaju da sanjam onog sto sam te jebo. 🤭');
+listMention.push('Ja ljubim onog shto sam te jebo jer tebe ne mogu, srce mi plače volim te sve jače i dok mu ljubav priznajem u duši tvoja riba njemu pushi...');
+listMention.push('U svom životu želim 3 stvari:\nSunce,Medu i Tebe.\nSunce za dan,\nMedu za noć,\ni onog shto sam te jebo ZAUWEK!');
+listMention.push('Mesec je pun kao lubenica,ti si moja mala LEPTIRICA,pun mesec dok se na nebu zlati, onaj shto sam te jebo u san nek te prati:)');
 
 module.exports = listMention;
