@@ -8,6 +8,8 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
+- ako je napisao @ trimuj
+- new filestamp na exit radi?
 - izracunaj kad ce se shutdownuje
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
 - spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
@@ -17,6 +19,7 @@ uksrs, nova godina, bozic bata i tako to
 
 
 ------ ALT
+- TODO ENV SERVER RESTART TIME 12h;
 - COMMENTS IN SOLIDITY STANDARD
 - preminum lista ban lista (whitelist, blacklist)
 - .env list of usernames ['jawisemalena', 'test6bot']
@@ -31,6 +34,7 @@ const { fileStorage, timestampStorage, logTime, dateNow } = require('./dependenc
 const { openWebhook, openStreaming} = require('./dependencies/init');
 
 process.on('exit', () => {
+	console.log("\n------------------------- EXIT --------------------------\n");
 	logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
 	logTime('\nMap entries on exit:');
 	dailyStorageInstance.printMap();
@@ -49,10 +53,11 @@ const main = async () => {
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes.
 		setTimeout(function () {
 			throw new Error('Shutdown error');
-		}, 12 * 60 * 60 * 1000)
+		}, 12 * 60 * 60 * 1000);
 
 		// Check if 20h passed after last reset of dailyUsage 
 		if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
+			console.log("\n------------------------ UPDATE -------------------------\n");
 			logTime('\nMap entries before reset:');
 			dailyStorageInstance.printMap();
 			dailyStorageInstance.clearFile();
@@ -67,10 +72,10 @@ const main = async () => {
 
 		await openWebhook(dailyStorageInstance);
 		await openStreaming();
-		console.log("\n------------------------ LIVE ------------------------n");
+		console.log("\n------------------------- LIVE --------------------------\n");
 	} catch (e) {
 		// Display the error and quit
-		console.log("Error in MAIN");
+		console.log('Error in MAIN');
 		console.error(e);
 		process.exit(1);
 	}

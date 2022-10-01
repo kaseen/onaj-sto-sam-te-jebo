@@ -8,6 +8,7 @@ const fs = require("fs");
 *   async postStatusText(text)
 *   async postStatusWithMedia(text, mediaPath)
 *   async postPatoshi(senderUsername, targetUsername)
+*   async postFuxo(senderUsername, targetUsername)
 *   async getFollowers(senderId)
 */
 
@@ -94,6 +95,20 @@ const postPatoshi = async (senderUsername, targetUsername) => {
     }
 }
 
+const postFuxo = async (senderUsername, targetUsername) => {
+
+    const text = `@${targetUsername}\n\nXalo kurajberu, @${senderUsername} ti poruchuje:`;
+    const FUXO_MP4_PATH = './vid/fuxo.mp4';
+
+    try{
+        await postStatusWithMedia(text, FUXO_MP4_PATH, 'video/mp4');
+    }catch(e){
+        console.log("Error in ./dependencies/twitterLib/postFuxo");
+        console.log(e);
+        return;
+    }
+}
+
 const getFollowers = async (senderId) => {
     try{
         const res = await TwitterClient.v1.user({ user_id: senderId });
@@ -128,5 +143,6 @@ module.exports = {
     postStatusText,
     postStatusWithMedia,
     postPatoshi,
+    postFuxo,
     getFollowers
 }

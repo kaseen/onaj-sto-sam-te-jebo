@@ -7,7 +7,8 @@ const {
     relationshipId,
     postStatusText,
     postPatoshi,
-    getFollowers,
+    postFuxo,
+    getFollowers
 } = require('./twitterLib');
 
 /*
@@ -17,6 +18,8 @@ const {
 *   async patoshi(senderId, senderUsername, targetUsername)
 *   async onNewMessage(event)
 */
+
+const botHelperInfo = 'Dostupne komande:\n/prenk <username>\n/patoshi <username>\n/fuxo <username>';
 
 const userFollowsBot = async (senderId) => {
     const res = await relationshipId(senderId, process.env.BOT_ID);
@@ -72,6 +75,19 @@ const patoshi = async (senderId, senderUsername, targetUsername) => {
 
 }
 
+const fuxo = async (senderId, senderUsername, targetUsername) => {
+
+    try{
+        //await postPatoshi(senderUsername, targetUsername);
+        await postFuxo(senderUsername, targetUsername);
+        await sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`);
+    }catch(e){
+        console.log("Error in ./dependencies/webhookExport/fuxo");
+        console.log(e);
+    }
+
+}
+
 const onNewMessage = async (dailyStorageInstance, event) => {
     try{
         // We check that the event is a direct message
@@ -105,8 +121,12 @@ const onNewMessage = async (dailyStorageInstance, event) => {
         const splitedMsg = text.split(' ');
         const targetUsername = splitedMsg[1];
 
-        if(splitedMsg.length === 1 && (splitedMsg[0] !== '/prenk' || splitedMsg[0] !== '/patoshi')){
-            await sendMessage(senderId, 'Dostupne komande:\n/prenk <username>\n/patoshi <username>');
+        if(splitedMsg.length === 1 && (
+            splitedMsg[0] !== '/prenk' || 
+            splitedMsg[0] !== '/patoshi' ||
+            splitedMsg[0] !== '/fuxo'
+        )){
+            await sendMessage(senderId, botHelperInfo);
             return;
         }
 
@@ -124,32 +144,35 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             return;
         }
 
+        const _numOfBotUses = dailyStorageInstance.getId(senderId);
+        const numOfBotUses = isNaN(_numOfBotUses) ? 0 : _numOfBotUses;    
+
+        if(numOfBotUses >= process.env.MAX_DAILY_USAGE){
+            await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas`);
+            return;
+        }
+
         switch(splitedMsg[0]){
             case '/prenk':
-                const numPrenk = dailyStorageInstance.getId(senderId);
-                if(numPrenk >= process.env.MAX_DAILY_USAGE){
-                    await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
-                    break;
-                }
                 const res = await prenk(senderId, targetId, targetUsername);
                 // On successful prenk increment
                 if(res === 1){
                     dailyStorageInstance.incrementId(senderId);
-                    logTime(`@${senderUsername}(${numPrenk+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
+                    logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
                 }
                 break;
-            case '/patoshi':
-                const numPatoshi = dailyStorageInstance.getId(senderId);
-                if(numPatoshi >= process.env.MAX_DAILY_USAGE){
-                    await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} prenka/patosha danas`);
-                    break;
-                }                                    
+            case '/patoshi':                                 
                 await patoshi(senderId, senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
-                logTime(`@${senderUsername}(${numPatoshi+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
+                logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
+                break;
+            case '/fuxo':                                  
+                await fuxo(senderId, senderUsername, targetUsername);
+                dailyStorageInstance.incrementId(senderId);
+                logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 break;
             default:
-                await sendMessage(senderId, 'Dostupne komande:\n/prenk <username>\n/patoshi <username>')
+                await sendMessage(senderId, botHelperInfo);
         }
 
     }catch(e){
@@ -159,7 +182,5 @@ const onNewMessage = async (dailyStorageInstance, event) => {
 }
 
 module.exports = {
-    onNewMessage,
-    prenk,
-    patoshi
+    onNewMessage
 }
