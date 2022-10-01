@@ -6,8 +6,7 @@ const {
     getUserByUsername,
     relationshipId,
     postStatusText,
-    postPatoshi,
-    postFuxo,
+    postVideoMethod,
     getFollowers
 } = require('./twitterLib');
 
@@ -19,7 +18,7 @@ const {
 *   async onNewMessage(event)
 */
 
-const botHelperInfo = 'Dostupne komande:\n/prenk <username>\n/patoshi <username>\n/fuxo <username>';
+const botHelperInfo = 'Dostupne komande:\n!prenk <username>\n!patoshi <username>\n!fuxo <username>\n!zejtin <username>';
 
 const userFollowsBot = async (senderId) => {
     const res = await relationshipId(senderId, process.env.BOT_ID);
@@ -63,31 +62,6 @@ const prenk = async (senderId, targetId, targetUsername) => {
     return 1;
 }
 
-const patoshi = async (senderId, senderUsername, targetUsername) => {
-
-    try{
-        await postPatoshi(senderUsername, targetUsername);
-        await sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16.`);
-    }catch(e){
-        console.log("Error in ./dependencies/webhookExport/patoshi");
-        console.log(e);
-    }
-
-}
-
-const fuxo = async (senderId, senderUsername, targetUsername) => {
-
-    try{
-        //await postPatoshi(senderUsername, targetUsername);
-        await postFuxo(senderUsername, targetUsername);
-        await sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`);
-    }catch(e){
-        console.log("Error in ./dependencies/webhookExport/fuxo");
-        console.log(e);
-    }
-
-}
-
 const onNewMessage = async (dailyStorageInstance, event) => {
     try{
         // We check that the event is a direct message
@@ -122,9 +96,10 @@ const onNewMessage = async (dailyStorageInstance, event) => {
         const targetUsername = splitedMsg[1];
 
         if(splitedMsg.length === 1 && (
-            splitedMsg[0] !== '/prenk' || 
-            splitedMsg[0] !== '/patoshi' ||
-            splitedMsg[0] !== '/fuxo'
+            splitedMsg[0] !== '!prenk' || 
+            splitedMsg[0] !== '!patoshi' ||
+            splitedMsg[0] !== '!fuxo' ||
+            splitedMsg[0] !== '!zejtin'
         )){
             await sendMessage(senderId, botHelperInfo);
             return;
@@ -153,7 +128,7 @@ const onNewMessage = async (dailyStorageInstance, event) => {
         }
 
         switch(splitedMsg[0]){
-            case '/prenk':
+            case '!prenk':
                 const res = await prenk(senderId, targetId, targetUsername);
                 // On successful prenk increment
                 if(res === 1){
@@ -161,15 +136,26 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                     logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
                 }
                 break;
-            case '/patoshi':                                 
-                await patoshi(senderId, senderUsername, targetUsername);
+            case '!patoshi':
+                sendMessage(senderId, `Sachekaj sekundu lutko`);
+                await postVideoMethod('patoshi', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
+                await sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 break;
-            case '/fuxo':                                  
-                await fuxo(senderId, senderUsername, targetUsername);
+            case '!fuxo':                       
+                sendMessage(senderId, `Sachekaj sekundu lutko`);         
+                await postVideoMethod('fuxo', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
+                await sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
+                break;
+            case '!zejtin':
+                sendMessage(senderId, `Sachekaj sekundu lutko`);
+                await postVideoMethod('zejtin', senderUsername, targetUsername);
+                dailyStorageInstance.incrementId(senderId);
+                await sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16.`);
+                logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 break;
             default:
                 await sendMessage(senderId, botHelperInfo);

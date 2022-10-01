@@ -8,6 +8,8 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
+- ne radi stream gasi se
+- u bafer cuvaj kolko ti ko pise da ne spamuje (mapiraj id sa brojem puta kolko je sta pisao i poslednji timestamp)
 - ako je napisao @ trimuj
 - new filestamp na exit radi?
 - izracunaj kad ce se shutdownuje
@@ -24,7 +26,6 @@ uksrs, nova godina, bozic bata i tako to
 - preminum lista ban lista (whitelist, blacklist)
 - .env list of usernames ['jawisemalena', 'test6bot']
 - rendom lista patoshi, postPatoshi, prenk
-- fix NaN/3
 - ALT TEXT NA SLIKE ALSO RANDOM
 - patoshi alt text
 */

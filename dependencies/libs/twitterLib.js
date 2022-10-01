@@ -12,6 +12,12 @@ const fs = require("fs");
 *   async getFollowers(senderId)
 */
 
+const methodtoVideoMap = {
+    'patoshi': './vid/cutepatosem.mp4',
+    'fuxo': './vid/fuxo.mp4',
+    'zejtin': './vid/zejtin.mp4'
+};
+
 const sendMessage = async (recipientId, text) => {
 
     try{
@@ -81,29 +87,17 @@ const postStatusWithMedia = async (text, mediaPath, mimeType) => {
     }
 }
 
-const postPatoshi = async (senderUsername, targetUsername) => {
+const postVideoMethod = async (method, senderUsername, targetUsername) => {
 
-    const text = `@${targetUsername}\n\nXalo kurajberu, @${senderUsername} ti poruchuje:`;
-    const PATOSHI_MP4_PATH = './vid/cutepatosem.mp4';
-
-    try{
-        await postStatusWithMedia(text, PATOSHI_MP4_PATH, 'video/mp4');
-    }catch(e){
-        console.log("Error in ./dependencies/twitterLib/postPatoshi");
-        console.log(e);
+    const video_path = methodtoVideoMap[method];
+    if (typeof(video_path) === 'undefined'){
         return;
     }
-}
-
-const postFuxo = async (senderUsername, targetUsername) => {
-
     const text = `@${targetUsername}\n\nXalo kurajberu, @${senderUsername} ti poruchuje:`;
-    const FUXO_MP4_PATH = './vid/fuxo.mp4';
-
     try{
-        await postStatusWithMedia(text, FUXO_MP4_PATH, 'video/mp4');
+        await postStatusWithMedia(text, video_path, 'video/mp4');
     }catch(e){
-        console.log("Error in ./dependencies/twitterLib/postFuxo");
+        console.log("Error in ./dependencies/twitterLib/postVideoMethod");
         console.log(e);
         return;
     }
@@ -142,7 +136,6 @@ module.exports = {
     relationshipId,
     postStatusText,
     postStatusWithMedia,
-    postPatoshi,
-    postFuxo,
+    postVideoMethod,
     getFollowers
 }
