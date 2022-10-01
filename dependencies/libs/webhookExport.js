@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
-const listPrenk = require('../storage/listPrenk');
-const { logTime } = require('./serverMaintenance');
+const listPrenk = require('../../storage/listPrenk');
+const { logTime } = require('../serverMaintenance');
 const { 
     sendMessage,
     getUserByUsername,

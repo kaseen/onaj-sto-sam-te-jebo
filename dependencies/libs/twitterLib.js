@@ -1,4 +1,4 @@
-const { TwitterClient } = require('./Instances');
+const { TwitterClient } = require('../Instances');
 const fs = require("fs");
 
 /* 

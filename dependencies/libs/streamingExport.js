@@ -2,9 +2,9 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const fs = require('fs');
 const { postStatusText, postStatusWithMedia } = require('./twitterLib');
-const { logTime } = require('./serverMaintenance');
 const { regex, provera } = require('./checkExport');
-const listMention = require('../storage/listMention');
+const { logTime } = require('../serverMaintenance');
+const listMention = require('../../storage/listMention');
 
 // TODO: remove
 const accountsList = ['jawisemalena', 'test6bot'];

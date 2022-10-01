@@ -1,6 +1,22 @@
 const fs = require('fs');
 const readline = require('readline');
 
+/*
+*   fileStorage:                    timestampStorage:
+*
+*   constructor(filePath)           constructor(filePath)
+*   async replenishMap()            readTimestampFromFile()
+*   exportToFilePath()              writeDateNowToFile()
+*   incrementId(userId)             getTimestamp()
+*   printMap()
+*   getId(userId)
+*   getMap()                        Other:
+*   getFilePath()                   
+*   getMapSize()                    logTime(text)
+*   clearFile()                     dateNow
+*   clearMap()
+*/
+
 class fileStorage {
 
     constructor(filePath) {
@@ -47,6 +63,14 @@ class fileStorage {
             this._map.set(userId, currentValue+1);
     }
 
+    printMap(){
+        //console.log();
+        for (const [key, value] of this._map) {
+            console.log(`\t${key}\t\t${value}`);
+        }
+        //console.log();
+    }
+
     getId(userId){
         return this._map.get(userId);
     }
@@ -73,7 +97,7 @@ class fileStorage {
 
 };
 
-class timestampStorage{
+class timestampStorage {
 
     constructor(filePath) {;
         this._filePath = filePath;
@@ -86,7 +110,7 @@ class timestampStorage{
         this._seconds = Number(data);
     }
 
-    writeTimestampToFile(){
+    writeDateNowToFile(){
         const out = new Date().getTime().toString();
         fs.writeFileSync(this._filePath, out, {flag: 'w'});
     }
@@ -110,7 +134,7 @@ const dateNow = () => {
 module.exports = {
     fileStorage,
     timestampStorage,
-    dateNow,
-    logTime
+    logTime,
+    dateNow
 }
 

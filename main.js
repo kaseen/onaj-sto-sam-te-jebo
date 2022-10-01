@@ -4,10 +4,8 @@
 
 ------ MAIN
 
+- korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
 - spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
-- proveri kako heroku worker-a pali gasi
-- pre svaki exit gresku upisi u fajl i ugasi (VALJDA JE)
-- u ponoc console.log datoteku sa logovima, obrisi i kreiraj praznu datoteku
 - test try/catch
 - Kad neko zaprati bota posalji mu Komande poruku
 - Error: Status is a duplicate!!! (puno primera dodaj zbog random)
@@ -26,58 +24,43 @@
 
 require('dotenv').config({ path: require('find-config')('.env') });
 const { fileStorage, timestampStorage, logTime, dateNow } = require('./dependencies/serverMaintenance');
-const { AutohookInstance, TwitterClient } = require('./dependencies/Instances');
-const { trackList, trackListMAIN } = require('./storage/listTrack');
-const { onDataFilterStream } = require('./dependencies/streamingExport');
-const { onNewMessage } = require('./dependencies/webhookExport');
-const { ETwitterStreamEvent } = require('twitter-api-v2');
-
-const openStreaming = async () => {
-	const stream = await TwitterClient.v1.filterStream({ track: trackListMAIN });
-	stream.on(ETwitterStreamEvent.Data, (eventData) => onDataFilterStream(eventData));
-}
-
-const openWebhook = async (dailyStorageInstance) => {
-	const webhook = AutohookInstance;
-		
-	// Removes existing webhooks
-	await webhook.removeWebhooks();
-	
-	webhook.on('event', async (event) => {
-		if (event.direct_message_events){
-			await onNewMessage(dailyStorageInstance, event);
-		}
-	})
-	
-	// Starts a server and adds a new webhook
-	await webhook.start();
-		
-	// Subscribes to your own user's activity
-	await webhook.subscribe({
-		oauth_token: process.env.TOKENV2,
-		oauth_token_secret: process.env.TOKENV2_SECRET
-	});  
-}
-
-const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
-const timestamp = new timestampStorage('./storage/resetStorage.txt');
+const { openWebhook, openStreaming} = require('./dependencies/init');
 
 process.on('exit', () => {
 	logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
+	logTime('\nMap entries on exit:');
+	dailyStorageInstance.printMap();
 	dailyStorageInstance.exportToFilePath();
 	logTime('File saved, exiting...');
 });
 
+const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
+const timestamp = new timestampStorage('./storage/resetStorage.txt');
+timestamp.readTimestampFromFile();
+
 const main = async () => {
 	try{
 
-		// TODO: ugasi bota namerno da bi se upalio
-		/*setTimeout(function () {
-			throw new Error('error!');
-		}, 45* 1000)*/
+		// Turn off bot every 12h (720min)
+		// Heroku restart crashed dynos by spawning new dynos once every ten minutes.
+		setTimeout(function () {
+			throw new Error('Shutdown error');
+		}, 12 * 60 * 1000)
+
+		// Check if 20h passed after last reset of dailyUsage 
+		if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
+			logTime('\nMap entries before reset:');
+			dailyStorageInstance.printMap();
+			dailyStorageInstance.clearFile();
+			dailyStorageInstance.clearMap();
+			timestamp.writeDateNowToFile();
+			logTime(`New filestamp: ${timestamp.getTimestamp()}`)
+			logTime('Storage files updated');
+		}
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
+
 		await openWebhook(dailyStorageInstance);
 		await openStreaming();
 		console.log("\n--------------------- STARTED ---------------------\n");

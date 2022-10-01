@@ -1,4 +1,4 @@
-const {trackListMAIN} = require('../storage/listTrack');
+const {trackListMAIN} = require('../../storage/listTrack');
 
 function regex(niska){
     //niska koja ulazi na parsiranje
