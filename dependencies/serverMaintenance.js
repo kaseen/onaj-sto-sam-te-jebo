@@ -1,3 +1,4 @@
+require('dotenv').config({ path: require('find-config')('.env') });
 const fs = require('fs');
 const readline = require('readline');
 
@@ -64,11 +65,9 @@ class fileStorage {
     }
 
     printMap(){
-        //console.log();
         for (const [key, value] of this._map) {
             console.log(`\t${key}\t\t${value}`);
         }
-        //console.log();
     }
 
     getId(userId){
@@ -100,8 +99,8 @@ class fileStorage {
 class timestampStorage {
 
     constructor(filePath) {;
+        this.SECONDS_20H = 72000000;    // 20 * 60 * 60 * 1000
         this._filePath = filePath;
-        this.SECONDS_20H = 72000000;
         this._seconds = 0;
     }
 
@@ -118,7 +117,57 @@ class timestampStorage {
     getTimestamp(){
         return this._seconds;
     }
+}
 
+class antiSpam {
+
+    constructor() {
+        this.TIME_BLOCK = 7*1000;
+        this._map = new Map();
+    }
+
+    incrementId(userId){
+        const currentValue = this._map.get(userId);
+        if(typeof currentValue === 'undefined')
+            this._map.set(userId, {count: 1, timestamp: dateNow(), warning: false});
+        else
+            this._map.set(userId, {count: currentValue.count + 1, timestamp: currentValue.timestamp, warning: false});
+    }
+
+    getIdCount(userId){
+        const tmp = this._map.get(userId);
+        if(typeof tmp === 'undefined')
+            return 0;
+        return this._map.get(userId).count;
+    }
+
+    getIdTimestamp(userId){
+        const tmp = this._map.get(userId);
+        if(typeof tmp === 'undefined')
+            return 0;
+        return this._map.get(userId).timestamp;
+    }
+
+    getWarning(userId){
+        const tmp = this._map.get(userId);
+        if(typeof tmp === 'undefined')
+            return false;
+        return this._map.get(userId).warning;
+    }
+
+    checkSpam(userId){
+        if(this.getIdTimestamp(userId) + this.TIME_BLOCK < dateNow())
+            this._map.delete(userId);
+
+        if(this.getIdCount(userId) > process.env.ANTI_SPAM_MSG_COUNT)
+            return true;
+        else
+            return false;
+    }
+
+    setWarning(userId){
+        this._map.get(userId).warning = true;
+    }
 }
 
 const logTime = (text) => {
@@ -134,6 +183,7 @@ const dateNow = () => {
 module.exports = {
     fileStorage,
     timestampStorage,
+    antiSpam,
     logTime,
     dateNow
 }

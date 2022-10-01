@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
-const { logTime } = require('../serverMaintenance');
+const { antiSpam, logTime } = require('../serverMaintenance');
 const { 
     sendMessage,
     getUserByUsername,
@@ -14,11 +14,11 @@ const {
 *   async userFollowsBot(senderId)
 *   async userBlocksBot(senderId)
 *   async prenk(senderId, senderUsername, targetUsername)
-*   async patoshi(senderId, senderUsername, targetUsername)
-*   async onNewMessage(event)
+*   async onNewMessage(dailyStorageInstance, event)
 */
 
 const botHelperInfo = 'Dostupne komande:\n!prenk <username>\n!patoshi <username>\n!fuxo <username>\n!zejtin <username>';
+const spamChecker = new antiSpam();
 
 const userFollowsBot = async (senderId) => {
     const res = await relationshipId(senderId, process.env.BOT_ID);
@@ -79,19 +79,17 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             return;
         }
 
-        // Check if sender have enought followers
-        const senderIdFollowersCount = await getFollowers(senderId);
-        if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
-            await sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno`);
+        // Anti spam checker
+        if(spamChecker.checkSpam(senderId)){
+            if(!spamChecker.getWarning(senderId)){
+                await sendMessage(senderId, 'Sachekaj bota bote (spam protection)');
+            }
+            spamChecker.setWarning(senderId);
             return;
         }
+        spamChecker.incrementId(senderId);
 
-        // Check if user follows bot
-        if(!(await userFollowsBot(senderId))){
-            await sendMessage(senderId, 'Zaprati bota, stoko');
-            return;
-        }
-
+        // Check valid commands
         const splitedMsg = text.split(' ');
         const targetUsername = splitedMsg[1];
 
@@ -102,6 +100,19 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             splitedMsg[0] !== '!zejtin'
         )){
             await sendMessage(senderId, botHelperInfo);
+            return;
+        }
+
+        // Check if sender have enought followers
+        const senderIdFollowersCount = await getFollowers(senderId);
+        if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
+            await sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno`);
+            return;
+        }
+
+        // Check if user follows bot
+        if(!(await userFollowsBot(senderId))){
+            await sendMessage(senderId, 'Zaprati bota, stoko');
             return;
         }
 
@@ -137,21 +148,21 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                 }
                 break;
             case '!patoshi':
-                sendMessage(senderId, `Sachekaj sekundu lutko`);
+                sendMessage(senderId, 'Sachekaj sekundu lutko');
                 await postVideoMethod('patoshi', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
                 await sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 break;
             case '!fuxo':                       
-                sendMessage(senderId, `Sachekaj sekundu lutko`);         
+                sendMessage(senderId, 'Sachekaj sekundu lutko');         
                 await postVideoMethod('fuxo', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
                 await sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 break;
             case '!zejtin':
-                sendMessage(senderId, `Sachekaj sekundu lutko`);
+                sendMessage(senderId, 'Sachekaj sekundu lutko');
                 await postVideoMethod('zejtin', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
                 await sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16.`);

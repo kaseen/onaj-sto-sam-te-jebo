@@ -6,12 +6,16 @@ const { trackList, trackListMAIN } = require('../storage/listTrack');
 
 const openStreaming = async () => {
 	const stream = await TwitterClient.v1.filterStream({ track: trackListMAIN });
-	stream.on(ETwitterStreamEvent.Data, (eventData) => onDataFilterStream(eventData));
 
 	stream.autoReconnect = true;
+	stream.autoReconnectRetries = Infinity;
 
-	// TODO MOZDA REMOVE
-	//stream.close();
+	stream.on(ETwitterStreamEvent.Data, (eventData) => onDataFilterStream(eventData));
+	stream.on(ETwitterStreamEvent.ConnectionLost, async () => {
+		console.log('Izgubio konekciju...');
+		await stream.reconnect();
+		console.log('Rekonekcija brat');
+	});
 }
 
 const openWebhook = async (dailyStorageInstance) => {

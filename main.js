@@ -8,8 +8,10 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
-- ne radi stream gasi se
-- u bafer cuvaj kolko ti ko pise da ne spamuje (mapiraj id sa brojem puta kolko je sta pisao i poslednji timestamp)
+- ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
+- NGROK 8 sati proveri jel radi valja to
+- spam protection (IMPLEMENTIRAO TESTIRA SE)
+
 - ako je napisao @ trimuj
 - new filestamp na exit radi?
 - izracunaj kad ce se shutdownuje

@@ -1,5 +1,5 @@
 const { TwitterClient } = require('../Instances');
-const fs = require("fs");
+const fs = require('fs');
 
 /* 
 *   async sendMessage(recipientId, text)
@@ -7,8 +7,7 @@ const fs = require("fs");
 *   async relationshipId(senderId, targetId)
 *   async postStatusText(text)
 *   async postStatusWithMedia(text, mediaPath)
-*   async postPatoshi(senderUsername, targetUsername)
-*   async postFuxo(senderUsername, targetUsername)
+*   async postVideoMethod(method, senderUsername, targetUsername)
 *   async getFollowers(senderId)
 */
 
