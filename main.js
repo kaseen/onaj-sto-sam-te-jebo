@@ -9,12 +9,14 @@ uksrs, nova godina, bozic bata i tako to
 ------ MAIN
 
 - ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
-- NGROK 8 sati proveri jel radi valja to
+- NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
 - spam protection (IMPLEMENTIRAO TESTIRA SE)
+- info: Bot prazni buffer svakih 8 sati (downtime 10 min), vreme poslednjeg restarta je timestamp:
+- izracunaj kad ce se shutdownuje NA POCETAK OBJAVI SLEDECI RESTART JE
 
+- !mali dobro jebe ovaj mali ali na sliku stavi audio
 - ako je napisao @ trimuj
 - new filestamp na exit radi?
-- izracunaj kad ce se shutdownuje
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
 - spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
 - test try/catch
@@ -23,6 +25,7 @@ uksrs, nova godina, bozic bata i tako to
 
 
 ------ ALT
+- !admin hardkodovan admin id
 - TODO ENV SERVER RESTART TIME 12h;
 - COMMENTS IN SOLIDITY STANDARD
 - preminum lista ban lista (whitelist, blacklist)
@@ -33,21 +36,17 @@ uksrs, nova godina, bozic bata i tako to
 */
 
 require('dotenv').config({ path: require('find-config')('.env') });
-const { fileStorage, timestampStorage, logTime, dateNow } = require('./dependencies/serverMaintenance');
+const { fileStorage, timestampStorage, onExit, onUpdate, dateNow, readBotInfoTxt } = require('./dependencies/serverMaintenance');
 const { openWebhook, openStreaming} = require('./dependencies/init');
-
-process.on('exit', () => {
-	console.log("\n------------------------- EXIT --------------------------\n");
-	logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
-	logTime('\nMap entries on exit:');
-	dailyStorageInstance.printMap();
-	dailyStorageInstance.exportToFilePath();
-	logTime('File saved, exiting...');
-});
 
 const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
 const timestamp = new timestampStorage('./storage/resetStorage.txt');
 timestamp.readTimestampFromFile();
+
+process.on('exit', () => {
+	console.log("\n------------------------- EXIT --------------------------\n");
+	onExit(dailyStorageInstance);
+});
 
 const main = async () => {
 	try{
@@ -55,19 +54,15 @@ const main = async () => {
 		// Turn off bot every 12h (720min)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes.
 		setTimeout(function () {
-			throw new Error('Shutdown error');
+			console.log("\n------------------------ RESTART ------------------------\n");
+			process.exit(1);
+			//throw new Error('Shutdown error');
 		}, 12 * 60 * 60 * 1000);
 
 		// Check if 20h passed after last reset of dailyUsage 
 		if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
 			console.log("\n------------------------ UPDATE -------------------------\n");
-			logTime('\nMap entries before reset:');
-			dailyStorageInstance.printMap();
-			dailyStorageInstance.clearFile();
-			dailyStorageInstance.clearMap();
-			timestamp.writeDateNowToFile();
-			logTime(`New filestamp: ${timestamp.getTimestamp()}`)
-			logTime('Storage files updated');
+			onUpdate(dailyStorageInstance, timestamp);
 		}
 
 		// If app stops working fill map again on start

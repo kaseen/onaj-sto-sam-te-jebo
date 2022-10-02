@@ -3,20 +3,41 @@ const fs = require('fs');
 const readline = require('readline');
 
 /*
-*   fileStorage:                    timestampStorage:
+*   antiSpam:                       fileStorage:
 *
-*   constructor(filePath)           constructor(filePath)
-*   async replenishMap()            readTimestampFromFile()
-*   exportToFilePath()              writeDateNowToFile()
-*   incrementId(userId)             getTimestamp()
-*   printMap()
-*   getId(userId)
-*   getMap()                        Other:
-*   getFilePath()                   
-*   getMapSize()                    logTime(text)
-*   clearFile()                     dateNow
-*   clearMap()
+*   constructor()                   constructor(filePath)
+*   incrementId(userId)             async replenishMap()
+*   getIdCount(userId)              exportToFilePath()
+*   getIdTimestamp(userId)          incrementId(userId)
+*   getWarning(userId)              printMap()
+*   checkSpam(userId)               getId(userId)
+*   setWarning(userId)              getMap() 
+*                                   getFilePath()
+*                                   getMapSize()
+*   timestampStorage:               clearFile()
+*                                   clearMap()
+*   constructor(filePath)           
+*   readTimestampFromFile()         Other:
+*   writeDateNowToFile()            logTime(text)
+*   getTimestamp()                  dateNow()                  
 */
+   
+
+Date.prototype.today = function () { 
+    return (
+        ((this.getDate() < 10) ? '0' : '') + 
+        this.getDate() + '/' + (((this.getMonth() + 1) < 10) ? '0' : '') + 
+        (this.getMonth() + 1) + '/' + this.getFullYear()
+    );
+}
+
+Date.prototype.timeNow = function () {
+    return (
+        ((this.getHours() < 10) ? '0' : '') + this.getHours() + ':' + 
+        ((this.getMinutes() < 10) ? '0' : '') + this.getMinutes() + ':' + 
+        ((this.getSeconds() < 10) ? '0' : '') + this.getSeconds()
+    )
+}
 
 class fileStorage {
 
@@ -170,6 +191,29 @@ class antiSpam {
     }
 }
 
+const onExit = (dailyStorageInstance) => {
+    logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
+	logTime('\nMap entries on exit:\n');
+	dailyStorageInstance.printMap();
+	dailyStorageInstance.exportToFilePath();
+	logTime('\nFile saved, exiting...');
+}
+
+const onUpdate = (dailyStorageInstance, timestamp) => {
+    logTime('\nMap entries before reset:\n');
+    dailyStorageInstance.printMap();
+    dailyStorageInstance.clearFile();
+    dailyStorageInstance.clearMap();
+    timestamp.writeDateNowToFile();
+    logTime(`\nNew filestamp: ${timestamp.getTimestamp()}`)
+    logTime('Storage files updated');
+}
+
+const readBotInfoTxt = (filePath) => {
+    const text = fs.readFileSync(filePath, {encoding:'utf8', flag:'r'});
+    return text;
+}
+
 const logTime = (text) => {
     const currentTime = new Date();
 
@@ -184,6 +228,9 @@ module.exports = {
     fileStorage,
     timestampStorage,
     antiSpam,
+    onExit,
+    onUpdate,
+    readBotInfoTxt,
     logTime,
     dateNow
 }

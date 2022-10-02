@@ -1,0 +1,6 @@
+Dostupne komande:
+!prenk <username>
+!patoshi <username>
+!fuxo <username>
+!zejtin <username>
+!info

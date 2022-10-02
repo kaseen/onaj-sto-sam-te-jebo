@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
-const { antiSpam, logTime } = require('../serverMaintenance');
+const { antiSpam, logTime, readBotInfoTxt } = require('../serverMaintenance');
 const { 
     sendMessage,
     getUserByUsername,
@@ -17,7 +17,7 @@ const {
 *   async onNewMessage(dailyStorageInstance, event)
 */
 
-const botHelperInfo = 'Dostupne komande:\n!prenk <username>\n!patoshi <username>\n!fuxo <username>\n!zejtin <username>';
+const botHelperInfo = readBotInfoTxt('./storage/botInfo.txt');
 const spamChecker = new antiSpam();
 
 const userFollowsBot = async (senderId) => {
@@ -35,15 +35,15 @@ const prenk = async (senderId, targetId, targetUsername) => {
     const result = await relationshipId(senderId, targetId);
 
     if(result[0] === -1){
-        await sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
+        sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
         return 0;
     }
     if(result[0] === 0){
-        await sendMessage(senderId, 'Ne pratish mićka');
+        sendMessage(senderId, 'Ne pratish mićka');
         return 0;
     }
     if(result[1] === 0){
-        await sendMessage(senderId, 'Mićko te ne prati');
+        sendMessage(senderId, 'Mićko te ne prati');
         return 0;
     }
 
@@ -52,7 +52,7 @@ const prenk = async (senderId, targetId, targetUsername) => {
 
     try{
         await postStatusText(text);
-        await sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`);
+        sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`);
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
         console.log(e);
@@ -82,7 +82,7 @@ const onNewMessage = async (dailyStorageInstance, event) => {
         // Anti spam checker
         if(spamChecker.checkSpam(senderId)){
             if(!spamChecker.getWarning(senderId)){
-                await sendMessage(senderId, 'Sachekaj bota bote (spam protection)');
+                sendMessage(senderId, 'Sachekaj bota bote (spam protection)');
             }
             spamChecker.setWarning(senderId);
             return;
@@ -93,40 +93,30 @@ const onNewMessage = async (dailyStorageInstance, event) => {
         const splitedMsg = text.split(' ');
         const targetUsername = splitedMsg[1];
 
-        if(splitedMsg.length === 1 && (
-            splitedMsg[0] !== '!prenk' || 
-            splitedMsg[0] !== '!patoshi' ||
-            splitedMsg[0] !== '!fuxo' ||
-            splitedMsg[0] !== '!zejtin'
-        )){
-            await sendMessage(senderId, botHelperInfo);
-            return;
-        }
-
         // Check if sender have enought followers
         const senderIdFollowersCount = await getFollowers(senderId);
         if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
-            await sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno`);
+            sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno`);
             return;
         }
 
         // Check if user follows bot
         if(!(await userFollowsBot(senderId))){
-            await sendMessage(senderId, 'Zaprati bota, stoko');
+            sendMessage(senderId, 'Zaprati bota, stoko');
             return;
         }
 
         // Check if targetUsername exists
         const targetInfo = await getUserByUsername(targetUsername);
         const targetId = targetInfo.id_str;
-        if(targetId === '-1'){
-            await sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
+        if(splitedMsg.length !== 1 && targetId === '-1'){
+            sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
             return;
         }
 
         // Check if target blocks bot
         if(!(await userBlocksBot(targetId))){
-            await sendMessage(senderId, 'Mićko blokiro bota xd');
+            sendMessage(senderId, 'Mićko blokiro bota xd');
             return;
         }
 
@@ -134,40 +124,62 @@ const onNewMessage = async (dailyStorageInstance, event) => {
         const numOfBotUses = isNaN(_numOfBotUses) ? 0 : _numOfBotUses;    
 
         if(numOfBotUses >= process.env.MAX_DAILY_USAGE){
-            await sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas`);
+            sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas`);
             return;
         }
 
         switch(splitedMsg[0]){
             case '!prenk':
+                if(splitedMsg.length === 1)
+                    return;
                 const res = await prenk(senderId, targetId, targetUsername);
                 // On successful prenk increment
                 if(res === 1){
                     dailyStorageInstance.incrementId(senderId);
                     logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
                 }
-                break;
+                return;
             case '!patoshi':
+                if(splitedMsg.length === 1)
+                    return;
                 sendMessage(senderId, 'Sachekaj sekundu lutko');
                 await postVideoMethod('patoshi', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
                 await sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
-                break;
-            case '!fuxo':                       
+                return;
+            case '!fuxo':
+                if(splitedMsg.length === 1)
+                    return;                     
                 sendMessage(senderId, 'Sachekaj sekundu lutko');         
                 await postVideoMethod('fuxo', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
                 await sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
-                break;
+                return;
             case '!zejtin':
+                if(splitedMsg.length === 1)
+                    return;
                 sendMessage(senderId, 'Sachekaj sekundu lutko');
                 await postVideoMethod('zejtin', senderUsername, targetUsername);
                 dailyStorageInstance.incrementId(senderId);
                 await sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
-                break;
+                return;
+            case '!info':
+                //TODO
+                console.log('INFO');
+                return;
+            case '!admin':
+                if(senderId === '1059478209115406336'){
+                    const map = dailyStorageInstance.getMap();
+                    let msg = '';
+                    for (const [key, value] of map) {
+                        msg += `${key} ${value}\n`
+                    }
+                    msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty');
+                }
+                return;
             default:
                 await sendMessage(senderId, botHelperInfo);
         }
