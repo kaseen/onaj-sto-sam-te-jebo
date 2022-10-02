@@ -7,7 +7,7 @@ const { logTime } = require('../serverMaintenance');
 const listMention = require('../../storage/listMention');
 
 // TODO: remove
-const accountsList = ['jawisemalena', 'test6bot'];
+const accountsList = ['jawisemalena'];
 
 const postStreamMention = async (eventMsg) => {
 	const randInt = Math.floor(Math.random()*(listMention.length));

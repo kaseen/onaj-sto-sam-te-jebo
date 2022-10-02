@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
-const { antiSpam, logTime, readBotInfoTxt } = require('../serverMaintenance');
+const { antiSpam, readBotInfoTxt, importFromFile, addToEndOfFile, logTime } = require('../serverMaintenance');
 const { 
     sendMessage,
     getUserByUsername,
@@ -19,6 +19,10 @@ const {
 
 const botHelperInfo = readBotInfoTxt('./storage/botInfo.txt');
 const spamChecker = new antiSpam();
+
+const whitelist = importFromFile('./storage/txt/whitelist.txt');
+const blacklist = importFromFile('./storage/txt/blacklist.txt');
+const commands = importFromFile('./storage/txt/commands.txt');
 
 const userFollowsBot = async (senderId) => {
     const res = await relationshipId(senderId, process.env.BOT_ID);
@@ -51,7 +55,7 @@ const prenk = async (senderId, targetId, targetUsername) => {
     const text = `@${targetUsername}\n\n${listPrenk[randInt]}\n\nPrenk 🤙🤙🤙`;
 
     try{
-        await postStatusText(text)
+        postStatusText(text)
             .then(() => sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`));
         
     }catch(e){
@@ -96,6 +100,11 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
         const splitedMsg = text.split(' ');
         const targetUsername = splitedMsg[1];
 
+        if(!commands.includes(splitedMsg[0])){
+            sendMessage(senderId, botHelperInfo);
+            return;
+        }
+
         // Check if sender have enought followers
         const senderIdFollowersCount = await getFollowers(senderId);
         if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
@@ -123,10 +132,15 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
             return;
         }
 
-        const _numOfBotUses = dailyStorageInstance.getId(senderId);
-        const numOfBotUses = isNaN(_numOfBotUses) ? 0 : _numOfBotUses;    
+        const _numOfCommandUses = dailyStorageInstance.getId(senderId);
+        const numOfCommandUses = isNaN(_numOfCommandUses) ? 0 : _numOfCommandUses;    
 
-        if(numOfBotUses >= process.env.MAX_DAILY_USAGE){
+        if(blacklist.includes(senderId)){
+            sendMessage(senderId, 'Mićko banowan si.');
+            return;
+        }else if(whitelist.includes(senderId)){
+            sendMessage(senderId, 'Brao admine si.');
+        }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
             sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas`);
             return;
         }
@@ -139,48 +153,74 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
                 // On successful prenk increment
                 if(res === 1){
                     dailyStorageInstance.incrementId(senderId);
-                    logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
+                    logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
                 }
                 return;
             case '!patoshi':
                 if(splitedMsg.length === 1)
                     return;
                 sendMessage(senderId, 'Sachekaj sekundu lutko');
-                await postVideoMethod('patoshi', senderUsername, targetUsername)
+                postVideoMethod('patoshi', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16`));
                 dailyStorageInstance.incrementId(senderId);
-                logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
+                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 return;
             case '!fuxo':
                 if(splitedMsg.length === 1)
                     return;                     
                 sendMessage(senderId, 'Sachekaj sekundu lutko');         
-                await postVideoMethod('fuxo', senderUsername, targetUsername)
+                postVideoMethod('fuxo', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`));
                 dailyStorageInstance.incrementId(senderId);
-                logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
+                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 return;
             case '!zejtin':
                 if(splitedMsg.length === 1)
                     return;
                 sendMessage(senderId, 'Sachekaj sekundu lutko');
-                await postVideoMethod('zejtin', senderUsername, targetUsername)
+                postVideoMethod('zejtin', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16.`));
                 dailyStorageInstance.incrementId(senderId);
-                logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
+                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;
             case '!info':
                 //TODO
-                console.log('TODO');
+                console.log('INFO TODO');
                 return;
+
+            // HEAD ADMIN COMMANDS
             case '!admin':
-                if(senderId === '1059478209115406336'){
+                if(senderId === process.env.HEAD_ADMIN_ID){
                     const map = dailyStorageInstance.getMap();
                     let msg = '';
                     for (const [key, value] of map) {
                         msg += `${key} ${value}\n`
                     }
                     msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty.');
+                }
+                return;
+            case '!white':
+                if(splitedMsg.length === 1)
+                    return;  
+                if(senderId === process.env.HEAD_ADMIN_ID){
+                    getUserByUsername(targetUsername)
+                        .then((res) => {
+                            whitelist.push(res.id_str);
+                            addToEndOfFile('./storage/txt/whitelist.txt', res.id_str);
+                            sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to whitelist.`);
+                        });
+                }
+                return;
+            case '!black':
+                if(splitedMsg.length === 1)
+                    return;  
+                if(senderId === process.env.HEAD_ADMIN_ID){
+                    getUserByUsername(targetUsername)
+                        .then((res) => {
+                            whitelist.push(res.id_str);
+                            addToEndOfFile('./storage/txt/blacklist.txt', res.id_str);
+                            sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
+                        });
                 }
                 return;
             default:

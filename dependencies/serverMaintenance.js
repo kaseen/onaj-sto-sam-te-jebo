@@ -192,11 +192,25 @@ const onExit = (dailyStorageInstance) => {
 const onUpdate = (dailyStorageInstance, timestamp) => {
     logTime('\nMap entries before reset:\n');
     dailyStorageInstance.printMap();
+    // Clear fileStorage map and clear ./dailyUsage.txt file
     dailyStorageInstance.clearFile();
     dailyStorageInstance.clearMap();
+    // Write new timestamp to file
     timestamp.writeDateNowToFile();
     logTime(`\nNew filestamp: ${timestamp.getTimestamp()}`)
     logTime('Storage files updated');
+}
+
+const importFromFile = (filepath) => {
+    const lines = fs.readFileSync(filepath, {encoding:'utf8', flag:'r'})
+        .split('\n')
+        .filter(Boolean)
+    ;
+    return lines;
+}
+
+const addToEndOfFile = (filepath, text) => {
+    fs.writeFileSync(filepath, '\n' + text, {flag: 'a'});
 }
 
 const readBotInfoTxt = (filePath) => {
@@ -221,6 +235,8 @@ module.exports = {
     onExit,
     onUpdate,
     readBotInfoTxt,
+    importFromFile,
+    addToEndOfFile,
     logTime,
     dateNow
 }

@@ -8,13 +8,20 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
+- testiraj heroku storage .txt fajl
+- process.on exit print timestamp trenutni i kad ce da se ocekuje resetovanje storaga
+- !neca 2 (testcase nije proper) (CHECK SAMO PRVU REC ISPOD Check valid commands)
+- getTimestamp !admin option
+- blacklist.txt whitelist.txt (!black !white username komande only admin) (I REMOVE from white and black)
+
+
 - SIGTERM NODEJS
 - ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
 - spam protection (IMPLEMENTIRAO TESTIRA SE)
 - NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
-- POSLEDNJI RESTART, OCEKIVANI SLEDECI info: Bot prazni buffer svakih 8 sati (downtime 10 min), vreme poslednjeg restarta je timestamp:
+- !info iskoristeno (2/5) POSLEDNJI RESTART, OCEKIVANI SLEDECI info: Bot prazni buffer svakih 8 sati (downtime 10 min), vreme poslednjeg restarta je timestamp i sledeceg
 
-- !mali dobro jebe ovaj mali ali na sliku stavi audio
+- !mali na sliku stavi audio
 - ako je napisao @ trimuj
 - new filestamp na exit radi?
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
@@ -22,7 +29,7 @@ uksrs, nova godina, bozic bata i tako to
 - test try/catch
 - Kad neko zaprati bota posalji mu Komande poruku
 - Error: Status is a duplicate!!! (puno primera dodaj zbog random) ILI POsle poruke generisi novi tekst
-
+- rucno mora se uklanja whitelist blacklist
 
 ------ ALT
 - !admin hardkodovan admin id
@@ -83,3 +90,23 @@ const main = async () => {
 }
 
 main();
+
+//const {getUserByUsername} = require('./dependencies/libs/twitterLib')
+//const { importFromFile, addToEndOfFile } = require('./dependencies/serverMaintenance');
+
+async function bla(){
+	/*const x = importFromFile('./storage/txt/whitelist.txt');
+	console.log(x);
+	addToEndOfFile('./storage/txt/whitelist.txt', 'linijajaaa');
+	const x1 = importFromFile('./storage/txt/whitelist.txt');
+	console.log(x1);*/
+	/*const x = await getUserByUsername('ka1seen');
+	console.log(x.id_str);*/
+	const commands = importFromFile('./storage/txt/commands.txt');
+	console.log(commands);
+	const unos = '!bla'
+	console.log(!commands.includes(unos));
+	return;
+}
+
+//bla();
