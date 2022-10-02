@@ -119,7 +119,7 @@ class fileStorage {
 
 class timestampStorage {
 
-    constructor(filePath) {;
+    constructor(filePath) {
         this.SECONDS_20H = 72000000;    // 20 * 60 * 60 * 1000
         this._filePath = filePath;
         this._seconds = 0;
@@ -143,23 +143,8 @@ class timestampStorage {
 class antiSpam {
 
     constructor() {
-        this.TIME_BLOCK = 7*1000;
+        this.TIME_BLOCK = process.env.ANTI_SPAM_SECONDS * 1000;
         this._map = new Map();
-    }
-
-    incrementId(userId){
-        const currentValue = this._map.get(userId);
-        if(typeof currentValue === 'undefined')
-            this._map.set(userId, {count: 1, timestamp: dateNow(), warning: false});
-        else
-            this._map.set(userId, {count: currentValue.count + 1, timestamp: currentValue.timestamp, warning: false});
-    }
-
-    getIdCount(userId){
-        const tmp = this._map.get(userId);
-        if(typeof tmp === 'undefined')
-            return 0;
-        return this._map.get(userId).count;
     }
 
     getIdTimestamp(userId){
@@ -180,10 +165,15 @@ class antiSpam {
         if(this.getIdTimestamp(userId) + this.TIME_BLOCK < dateNow())
             this._map.delete(userId);
 
-        if(this.getIdCount(userId) > process.env.ANTI_SPAM_MSG_COUNT)
-            return true;
-        else
-            return false;
+        const currentValue = this._map.get(userId);
+        if(typeof currentValue === 'undefined'){
+            this._map.set(userId, {timestamp: dateNow(), warning: false});
+            return false;   // False - not a spam
+        }
+        else{
+            this._map.set(userId, {timestamp: dateNow(), warning: currentValue.warning});
+            return true;    // True - it is a spam
+        }
     }
 
     setWarning(userId){

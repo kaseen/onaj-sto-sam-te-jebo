@@ -8,11 +8,11 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
+- SIGTERM NODEJS
 - ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
-- NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
 - spam protection (IMPLEMENTIRAO TESTIRA SE)
-- info: Bot prazni buffer svakih 8 sati (downtime 10 min), vreme poslednjeg restarta je timestamp:
-- izracunaj kad ce se shutdownuje NA POCETAK OBJAVI SLEDECI RESTART JE
+- NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
+- POSLEDNJI RESTART, OCEKIVANI SLEDECI info: Bot prazni buffer svakih 8 sati (downtime 10 min), vreme poslednjeg restarta je timestamp:
 
 - !mali dobro jebe ovaj mali ali na sliku stavi audio
 - ako je napisao @ trimuj
@@ -36,7 +36,7 @@ uksrs, nova godina, bozic bata i tako to
 */
 
 require('dotenv').config({ path: require('find-config')('.env') });
-const { fileStorage, timestampStorage, onExit, onUpdate, dateNow, readBotInfoTxt } = require('./dependencies/serverMaintenance');
+const { fileStorage, timestampStorage, onExit, onUpdate, dateNow } = require('./dependencies/serverMaintenance');
 const { openWebhook, openStreaming} = require('./dependencies/init');
 
 const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
@@ -51,13 +51,16 @@ process.on('exit', () => {
 const main = async () => {
 	try{
 		console.log("\n------------------------ STARTED ------------------------\n");
+		const expectedRestart = new Date(dateNow() + process.env.SERVER_RESTART * 60 * 60 * 1000);
+		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}\n`);
+
 		// Turn off bot every 12h (720min)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes.
 		setTimeout(function () {
 			console.log("\n------------------------ RESTART ------------------------\n");
-			process.exit(1);
+			process.exit(0);
 			//throw new Error('Shutdown error');
-		}, 12 * 60 * 60 * 1000);
+		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 
 		// Check if 20h passed after last reset of dailyUsage 
 		if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
@@ -68,7 +71,7 @@ const main = async () => {
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
 
-		await openWebhook(dailyStorageInstance);
+		await openWebhook(dailyStorageInstance, timestamp);
 		await openStreaming();
 		console.log("\n------------------------- LIVE --------------------------\n");
 	} catch (e) {

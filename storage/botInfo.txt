@@ -3,4 +3,3 @@ Dostupne komande:
 !patoshi <username>
 !fuxo <username>
 !zejtin <username>
-!info

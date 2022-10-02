@@ -51,8 +51,9 @@ const prenk = async (senderId, targetId, targetUsername) => {
     const text = `@${targetUsername}\n\n${listPrenk[randInt]}\n\nPrenk 🤙🤙🤙`;
 
     try{
-        await postStatusText(text);
-        sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`);
+        await postStatusText(text)
+            .then(() => sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`));
+        
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
         console.log(e);
@@ -62,7 +63,7 @@ const prenk = async (senderId, targetId, targetUsername) => {
     return 1;
 }
 
-const onNewMessage = async (dailyStorageInstance, event) => {
+const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
     try{
         // We check that the event is a direct message
         if (!event.direct_message_events) {
@@ -81,13 +82,15 @@ const onNewMessage = async (dailyStorageInstance, event) => {
 
         // Anti spam checker
         if(spamChecker.checkSpam(senderId)){
+            // If it's spam sendMessage
             if(!spamChecker.getWarning(senderId)){
                 sendMessage(senderId, 'Sachekaj bota bote (spam protection)');
             }
+
+            // Disable sending message in this block of spam
             spamChecker.setWarning(senderId);
             return;
         }
-        spamChecker.incrementId(senderId);
 
         // Check valid commands
         const splitedMsg = text.split(' ');
@@ -143,32 +146,32 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                 if(splitedMsg.length === 1)
                     return;
                 sendMessage(senderId, 'Sachekaj sekundu lutko');
-                await postVideoMethod('patoshi', senderUsername, targetUsername);
+                await postVideoMethod('patoshi', senderUsername, targetUsername)
+                    .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16`));
                 dailyStorageInstance.incrementId(senderId);
-                await sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 return;
             case '!fuxo':
                 if(splitedMsg.length === 1)
                     return;                     
                 sendMessage(senderId, 'Sachekaj sekundu lutko');         
-                await postVideoMethod('fuxo', senderUsername, targetUsername);
+                await postVideoMethod('fuxo', senderUsername, targetUsername)
+                    .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`));
                 dailyStorageInstance.incrementId(senderId);
-                await sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 return;
             case '!zejtin':
                 if(splitedMsg.length === 1)
                     return;
                 sendMessage(senderId, 'Sachekaj sekundu lutko');
-                await postVideoMethod('zejtin', senderUsername, targetUsername);
+                await postVideoMethod('zejtin', senderUsername, targetUsername)
+                    .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16.`));
                 dailyStorageInstance.incrementId(senderId);
-                await sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16.`);
                 logTime(`@${senderUsername}(${numOfBotUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;
             case '!info':
                 //TODO
-                console.log('INFO');
+                console.log('TODO');
                 return;
             case '!admin':
                 if(senderId === '1059478209115406336'){
@@ -177,11 +180,11 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                     for (const [key, value] of map) {
                         msg += `${key} ${value}\n`
                     }
-                    msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty');
+                    msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty.');
                 }
                 return;
             default:
-                await sendMessage(senderId, botHelperInfo);
+                sendMessage(senderId, botHelperInfo);
         }
 
     }catch(e){
