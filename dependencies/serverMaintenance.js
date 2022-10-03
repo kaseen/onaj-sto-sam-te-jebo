@@ -183,10 +183,11 @@ class antiSpam {
 
 const onExit = (dailyStorageInstance) => {
     logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
-	logTime('\nMap entries on exit:\n');
+	logTime('Map entries on exit:\n');
 	dailyStorageInstance.printMap();
+    console.log();
 	dailyStorageInstance.exportToFilePath();
-	logTime('\nFile saved, exiting...');
+	logTime('File saved, exiting...\n');
 }
 
 const onUpdate = (dailyStorageInstance, timestamp) => {
@@ -197,8 +198,8 @@ const onUpdate = (dailyStorageInstance, timestamp) => {
     dailyStorageInstance.clearMap();
     // Write new timestamp to file
     timestamp.writeDateNowToFile();
-    logTime(`\nNew filestamp: ${timestamp.getTimestamp()}`)
-    logTime('Storage files updated');
+    logTime(`New filestamp: ${timestamp.getTimestamp()}`)
+    logTime('Storage files updated.\n');
 }
 
 const importFromFile = (filepath) => {

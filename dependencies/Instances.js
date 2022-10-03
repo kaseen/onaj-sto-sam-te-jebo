@@ -17,7 +17,7 @@ const AutohookInstance = new Autohook({
   consumer_secret:      process.env.CONSUMER_KEY_V2_SECRET,
   ngrok_secret:         process.env.NGROK_SECRET,
   env: 'env',
-  port: 8999
+  port: process.env.PORT || 8999
 });
 
 const TwitterClient = TwitterApiInit.readWrite;

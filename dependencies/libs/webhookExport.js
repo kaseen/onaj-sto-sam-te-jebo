@@ -105,9 +105,9 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
             return;
         }
 
-        // Check if sender have enought followers
+        // Check if sender have enought followers (Skip for whitelist users)
         const senderIdFollowersCount = await getFollowers(senderId);
-        if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
+        if(!whitelist.includes(senderId) && senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
             sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno`);
             return;
         }
@@ -139,7 +139,7 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
             sendMessage(senderId, 'Mićko banowan si.');
             return;
         }else if(whitelist.includes(senderId)){
-            sendMessage(senderId, 'Brao admine si.');
+            //sendMessage(senderId, 'Brao admine si.');
         }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
             sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas`);
             return;

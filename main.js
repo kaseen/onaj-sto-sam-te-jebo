@@ -10,14 +10,10 @@ uksrs, nova godina, bozic bata i tako to
 
 - testiraj heroku storage .txt fajl
 - process.on exit print timestamp trenutni i kad ce da se ocekuje resetovanje storaga
-- !neca 2 (testcase nije proper) (CHECK SAMO PRVU REC ISPOD Check valid commands)
 - getTimestamp !admin option
-- blacklist.txt whitelist.txt (!black !white username komande only admin) (I REMOVE from white and black)
-
 
 - SIGTERM NODEJS
 - ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
-- spam protection (IMPLEMENTIRAO TESTIRA SE)
 - NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
 - !info iskoristeno (2/5) POSLEDNJI RESTART, OCEKIVANI SLEDECI info: Bot prazni buffer svakih 8 sati (downtime 10 min), vreme poslednjeg restarta je timestamp i sledeceg
 
@@ -41,9 +37,8 @@ uksrs, nova godina, bozic bata i tako to
 - ALT TEXT NA SLIKE ALSO RANDOM
 - patoshi alt text
 */
-
 require('dotenv').config({ path: require('find-config')('.env') });
-const { fileStorage, timestampStorage, onExit, onUpdate, dateNow } = require('./dependencies/serverMaintenance');
+const { fileStorage, timestampStorage, onExit, onUpdate, dateNow, logTime } = require('./dependencies/serverMaintenance');
 const { openWebhook, openStreaming} = require('./dependencies/init');
 
 const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
@@ -59,14 +54,13 @@ const main = async () => {
 	try{
 		console.log("\n------------------------ STARTED ------------------------\n");
 		const expectedRestart = new Date(dateNow() + process.env.SERVER_RESTART * 60 * 60 * 1000);
-		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}\n`);
+		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
 
 		// Turn off bot every 12h (720min)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes.
 		setTimeout(function () {
-			console.log("\n------------------------ RESTART ------------------------\n");
+			logTime('Ngrok time passed, restarting...');
 			process.exit(0);
-			//throw new Error('Shutdown error');
 		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 
 		// Check if 20h passed after last reset of dailyUsage 
@@ -90,23 +84,3 @@ const main = async () => {
 }
 
 main();
-
-//const {getUserByUsername} = require('./dependencies/libs/twitterLib')
-//const { importFromFile, addToEndOfFile } = require('./dependencies/serverMaintenance');
-
-async function bla(){
-	/*const x = importFromFile('./storage/txt/whitelist.txt');
-	console.log(x);
-	addToEndOfFile('./storage/txt/whitelist.txt', 'linijajaaa');
-	const x1 = importFromFile('./storage/txt/whitelist.txt');
-	console.log(x1);*/
-	/*const x = await getUserByUsername('ka1seen');
-	console.log(x.id_str);*/
-	const commands = importFromFile('./storage/txt/commands.txt');
-	console.log(commands);
-	const unos = '!bla'
-	console.log(!commands.includes(unos));
-	return;
-}
-
-//bla();

@@ -10,11 +10,14 @@ const openStreaming = async () => {
 	stream.autoReconnect = true;
 	stream.autoReconnectRetries = Infinity;
 
-	stream.on(ETwitterStreamEvent.Data, (eventData) => onDataFilterStream(eventData));
+	stream.on(ETwitterStreamEvent.Data, (eventData) => {
+		onDataFilterStream(eventData);
+		console.log('Stream opened.')
+	});
 	stream.on(ETwitterStreamEvent.ConnectionLost, async () => {
-		console.log('Izgubio konekciju...');
+		console.log('Connection lost...');
 		await stream.reconnect();
-		console.log('Rekonekcija brat');
+		console.log('Reconnected.');
 	});
 }
 
