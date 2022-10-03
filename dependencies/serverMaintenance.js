@@ -44,6 +44,8 @@ class fileStorage {
     constructor(filePath) {
         this._map = new Map();
         this._filePath = filePath;
+        this._timestamp = dateNow();
+        this._oneHour = 3600000;    // 60 * 60 * 1000
     }
 
     async replenishMap(){
@@ -75,6 +77,30 @@ class fileStorage {
             const tmp = `${key} ${value}\n`;
             fs.writeFileSync(this._filePath, tmp, {flag: 'a'});
         }
+    }
+
+    // Only write to .txt file in storage without clearing map
+    boolSaveStorage(){
+        const now = dateNow()
+        if(now > this._timestamp + this._oneHour){
+            this._timestamp = now;
+            console.log("\n------------------------ HOURLY -------------------------\n");
+			logTime('\nMap entries before saving to server:\n');
+            this.printMap();
+            console.log();
+            this.exportToFilePath();
+            logTime('Storage successfully saved to server.\n');
+		}
+    }
+
+    // Save map to .txt file and exit
+    onExit(){
+        logTime(`Saving ${this.getFilePath()}..`);
+        logTime('Map entries on exit:\n');
+        this.printMap();
+        console.log();
+        this.exportToFilePath();
+        logTime('File saved, exiting...\n');
     }
 
     incrementId(userId){
@@ -181,15 +207,7 @@ class antiSpam {
     }
 }
 
-const onExit = (dailyStorageInstance) => {
-    logTime(`Saving ${dailyStorageInstance.getFilePath()}`);
-	logTime('Map entries on exit:\n');
-	dailyStorageInstance.printMap();
-    console.log();
-	dailyStorageInstance.exportToFilePath();
-	logTime('File saved, exiting...\n');
-}
-
+// Reset storage every 24h
 const onUpdate = (dailyStorageInstance, timestamp) => {
     logTime('\nMap entries before reset:\n');
     dailyStorageInstance.printMap();
@@ -225,6 +243,11 @@ const logTime = (text) => {
     console.log('(' + currentTime.today() + ')(' + currentTime.timeNow() + ') ' + text);
 }
 
+const randomElementFromList = (list) => {
+    const randInt = Math.floor(Math.random()*(list.length));
+    return list[randInt];
+}
+
 const dateNow = () => {
     return Number(new Date().getTime());
 }
@@ -233,12 +256,12 @@ module.exports = {
     fileStorage,
     timestampStorage,
     antiSpam,
-    onExit,
     onUpdate,
     readBotInfoTxt,
     importFromFile,
     addToEndOfFile,
     logTime,
+    randomElementFromList,
     dateNow
 }
 

@@ -1,6 +1,7 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
-const { antiSpam, readBotInfoTxt, importFromFile, addToEndOfFile, logTime } = require('../serverMaintenance');
+const { antiSpam, addToEndOfFile, randomElementFromList, logTime } = require('../serverMaintenance');
+const { botHelperInfo, whitelist, blacklist, commands } = require('../../storage/exportTxt');
 const { 
     sendMessage,
     getUserByUsername,
@@ -17,12 +18,21 @@ const {
 *   async onNewMessage(dailyStorageInstance, event)
 */
 
-const botHelperInfo = readBotInfoTxt('./storage/botInfo.txt');
-const spamChecker = new antiSpam();
+const waitForBot = [
+    'Sachekaj sekundu lutko 💖', 
+    'Saće ga rešimo..',
+    'Evo stizhe 🥰',
+    'Twoja zhelja je moja zapowest princezo 😘',
+    'Swe za tebe lutko 💖',
+    'Evo beby stizhe 😏',
+    'Shaljem 💌...',
+    'Ide odma šefe'
+]
 
-const whitelist = importFromFile('./storage/txt/whitelist.txt');
-const blacklist = importFromFile('./storage/txt/blacklist.txt');
-const commands = importFromFile('./storage/txt/commands.txt');
+const randomEmoji = ['😌', '😊', '😚', '🥰', '🤡', '😇', '👏', '👍', '🤙'];
+const randomEmojiError = ['🥱','😴','👎','😤','😩','😪']
+
+const spamChecker = new antiSpam();
 
 const userFollowsBot = async (senderId) => {
     const res = await relationshipId(senderId, process.env.BOT_ID);
@@ -39,15 +49,15 @@ const prenk = async (senderId, targetId, targetUsername) => {
     const result = await relationshipId(senderId, targetId);
 
     if(result[0] === -1){
-        sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
+        sendMessage(senderId, `Mićko @${targetUsername} ne postoji ${randomElementFromList(randomEmojiError)}`);
         return 0;
     }
     if(result[0] === 0){
-        sendMessage(senderId, 'Ne pratish mićka');
+        sendMessage(senderId, `Ne pratish mićka ${randomElementFromList(randomEmojiError)}`);
         return 0;
     }
     if(result[1] === 0){
-        sendMessage(senderId, 'Mićko te ne prati');
+        sendMessage(senderId, `Mićko te ne prati ${randomElementFromList(randomEmojiError)}`);
         return 0;
     }
 
@@ -56,7 +66,7 @@ const prenk = async (senderId, targetId, targetUsername) => {
 
     try{
         postStatusText(text)
-            .then(() => sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16.`));
+            .then(() => sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
         
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
@@ -73,6 +83,9 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
         if (!event.direct_message_events) {
             return;
         }
+
+        // Check if hour passed to save storage file
+        dailyStorageInstance.boolSaveStorage();
 
         const myId = event.for_user_id;
         const senderId = event.direct_message_events[0].message_create.sender_id;
@@ -101,20 +114,20 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
         const targetUsername = splitedMsg[1];
 
         if(!commands.includes(splitedMsg[0])){
-            sendMessage(senderId, botHelperInfo);
+            sendMessage(senderId, botHelperInfo + randomElementFromList(randomEmojiError));
             return;
         }
 
         // Check if sender have enought followers (Skip for whitelist users)
         const senderIdFollowersCount = await getFollowers(senderId);
         if(!whitelist.includes(senderId) && senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
-            sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno`);
+            sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno ${randomElementFromList(randomEmojiError)}`);
             return;
         }
 
         // Check if user follows bot
         if(!(await userFollowsBot(senderId))){
-            sendMessage(senderId, 'Zaprati bota, stoko');
+            sendMessage(senderId, `Zaprati bota, stoko ${randomElementFromList(randomEmojiError)}`);
             return;
         }
 
@@ -122,13 +135,13 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
         const targetInfo = await getUserByUsername(targetUsername);
         const targetId = targetInfo.id_str;
         if(splitedMsg.length !== 1 && targetId === '-1'){
-            sendMessage(senderId, `Mićko @${targetUsername} ne postoji`);
+            sendMessage(senderId, `Mićko @${targetUsername} ne postoji ${randomElementFromList(randomEmojiError)}`);
             return;
         }
 
         // Check if target blocks bot
         if(!(await userBlocksBot(targetId))){
-            sendMessage(senderId, 'Mićko blokiro bota xd');
+            sendMessage(senderId, `Mićko blokiro bota ${randomElementFromList(randomEmojiError)}`);
             return;
         }
 
@@ -136,12 +149,12 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
         const numOfCommandUses = isNaN(_numOfCommandUses) ? 0 : _numOfCommandUses;    
 
         if(blacklist.includes(senderId)){
-            sendMessage(senderId, 'Mićko banowan si.');
+            sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiError)}`);
             return;
         }else if(whitelist.includes(senderId)){
             //sendMessage(senderId, 'Brao admine si.');
         }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
-            sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas`);
+            sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas ${randomElementFromList(randomEmojiError)}`);
             return;
         }
 
@@ -159,27 +172,27 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
             case '!patoshi':
                 if(splitedMsg.length === 1)
                     return;
-                sendMessage(senderId, 'Sachekaj sekundu lutko');
+                sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('patoshi', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16`));
+                    .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
                 dailyStorageInstance.incrementId(senderId);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 return;
             case '!fuxo':
                 if(splitedMsg.length === 1)
                     return;                     
-                sendMessage(senderId, 'Sachekaj sekundu lutko');         
+                sendMessage(senderId, randomElementFromList(waitForBot));         
                 postVideoMethod('fuxo', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16.`));
+                    .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
                 dailyStorageInstance.incrementId(senderId);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 return;
             case '!zejtin':
                 if(splitedMsg.length === 1)
                     return;
-                sendMessage(senderId, 'Sachekaj sekundu lutko');
+                sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('zejtin', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16.`));
+                    .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
                 dailyStorageInstance.incrementId(senderId);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;

@@ -8,6 +8,9 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
+- 24H reset onUpdate (MUST FIX)
+- Svakih sat vremena save to storage (IMPLEMENTIRAO TESTIRA SE)
+
 - testiraj heroku storage .txt fajl
 - process.on exit print timestamp trenutni i kad ce da se ocekuje resetovanje storaga
 - getTimestamp !admin option
@@ -38,16 +41,15 @@ uksrs, nova godina, bozic bata i tako to
 - patoshi alt text
 */
 require('dotenv').config({ path: require('find-config')('.env') });
-const { fileStorage, timestampStorage, onExit, onUpdate, dateNow, logTime } = require('./dependencies/serverMaintenance');
+const { onUpdate, dateNow, logTime } = require('./dependencies/serverMaintenance');
 const { openWebhook, openStreaming} = require('./dependencies/init');
+const { dailyStorageInstance, timestamp } = require('./storage/exportTxt');
 
-const dailyStorageInstance = new fileStorage('./storage/dailyUsage.txt');
-const timestamp = new timestampStorage('./storage/resetStorage.txt');
 timestamp.readTimestampFromFile();
 
 process.on('exit', () => {
 	console.log("\n------------------------- EXIT --------------------------\n");
-	onExit(dailyStorageInstance);
+	dailyStorageInstance.onExit();
 });
 
 const main = async () => {
@@ -64,10 +66,10 @@ const main = async () => {
 		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 
 		// Check if 20h passed after last reset of dailyUsage 
-		if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
+		/*if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
 			console.log("\n------------------------ UPDATE -------------------------\n");
 			onUpdate(dailyStorageInstance, timestamp);
-		}
+		}*/
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
