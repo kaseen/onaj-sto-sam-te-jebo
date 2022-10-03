@@ -8,17 +8,15 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
-- 24H reset onUpdate (MUST FIX)
+- 24H reset onUpdate (IMPLEMENTIRAO TESTIRA SE)
 - Svakih sat vremena save to storage (IMPLEMENTIRAO TESTIRA SE)
 
 - testiraj heroku storage .txt fajl
 - process.on exit print timestamp trenutni i kad ce da se ocekuje resetovanje storaga
 - getTimestamp !admin option
 
-- SIGTERM NODEJS
 - ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
 - NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
-- !info iskoristeno (2/5) POSLEDNJI RESTART, OCEKIVANI SLEDECI info: Bot prazni buffer svakih 8 sati (downtime 10 min), vreme poslednjeg restarta je timestamp i sledeceg
 
 - !mali na sliku stavi audio
 - ako je napisao @ trimuj
@@ -31,17 +29,14 @@ uksrs, nova godina, bozic bata i tako to
 - rucno mora se uklanja whitelist blacklist
 
 ------ ALT
-- !admin hardkodovan admin id
-- TODO ENV SERVER RESTART TIME 12h;
 - COMMENTS IN SOLIDITY STANDARD
-- preminum lista ban lista (whitelist, blacklist)
-- .env list of usernames ['jawisemalena', 'test6bot']
 - rendom lista patoshi, postPatoshi, prenk
 - ALT TEXT NA SLIKE ALSO RANDOM
 - patoshi alt text
 */
+
 require('dotenv').config({ path: require('find-config')('.env') });
-const { onUpdate, dateNow, logTime } = require('./dependencies/serverMaintenance');
+const { dateNow, logTime } = require('./dependencies/serverMaintenance');
 const { openWebhook, openStreaming} = require('./dependencies/init');
 const { dailyStorageInstance, timestamp } = require('./storage/exportTxt');
 
@@ -66,16 +61,16 @@ const main = async () => {
 		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 
 		// Check if 20h passed after last reset of dailyUsage 
-		/*if(dateNow() > timestamp.getTimestamp() + timestamp.SECONDS_20H){
+		if(dateNow() > timestamp.getTimestamp() + timestamp._RESET_TIME){
 			console.log("\n------------------------ UPDATE -------------------------\n");
-			onUpdate(dailyStorageInstance, timestamp);
-		}*/
+			// TODO
+		}
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
 
-		await openWebhook(dailyStorageInstance, timestamp);
-		await openStreaming();
+		//await openWebhook(dailyStorageInstance, timestamp);
+		await openStreaming(dailyStorageInstance, timestamp);
 		console.log("\n------------------------- LIVE --------------------------\n");
 	} catch (e) {
 		// Display the error and quit

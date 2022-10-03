@@ -84,18 +84,19 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
             return;
         }
 
-        // Check if hour passed to save storage file
-        dailyStorageInstance.boolSaveStorage();
-
         const myId = event.for_user_id;
         const senderId = event.direct_message_events[0].message_create.sender_id;
-        const senderUsername = event.users[senderId].screen_name;
-        const text = event.direct_message_events[0].message_create.message_data.text;
-        
+
         // Avoiding infinite loop
         if(senderId === myId){
             return;
         }
+
+        const senderUsername = event.users[senderId].screen_name;
+        const text = event.direct_message_events[0].message_create.message_data.text;
+
+        // Check if hour passed to save storage file
+        dailyStorageInstance.boolSaveStorage(timestamp);
 
         // Anti spam checker
         if(spamChecker.checkSpam(senderId)){
@@ -113,8 +114,10 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
         const splitedMsg = text.split(' ');
         const targetUsername = splitedMsg[1];
 
+        // If first word is unknow command send list of commands to use
         if(!commands.includes(splitedMsg[0])){
-            sendMessage(senderId, botHelperInfo + randomElementFromList(randomEmojiError));
+            sendMessage(senderId, botHelperInfo + '\n' + randomElementFromList(randomEmoji) + 
+                                     ' ' + randomElementFromList(randomEmojiError));
             return;
         }
 
@@ -172,33 +175,34 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
             case '!patoshi':
                 if(splitedMsg.length === 1)
                     return;
+                dailyStorageInstance.incrementId(senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('patoshi', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
-                dailyStorageInstance.incrementId(senderId);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
                 return;
             case '!fuxo':
                 if(splitedMsg.length === 1)
-                    return;                     
+                    return;
+                dailyStorageInstance.incrementId(senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));         
                 postVideoMethod('fuxo', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
-                dailyStorageInstance.incrementId(senderId);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 return;
             case '!zejtin':
                 if(splitedMsg.length === 1)
                     return;
+                dailyStorageInstance.incrementId(senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('zejtin', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
-                dailyStorageInstance.incrementId(senderId);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;
             case '!info':
-                //TODO
-                console.log('INFO TODO');
+                sendMessage(senderId, `Iskorishteno (${numOfCommandUses}/${process.env.MAX_DAILY_USAGE}) usluga za danas.\n\n` + 
+                    'Za wishe informacija (ili predloga) jawi se malena na wacap +381 62 839 7553.\n\n(poshalji sise ako oces admina ' +
+                    `${randomElementFromList(randomEmoji)}${randomElementFromList(randomEmojiError)})`);
                 return;
 
             // HEAD ADMIN COMMANDS

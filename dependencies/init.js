@@ -4,14 +4,17 @@ const { onNewMessage } = require('./libs/webhookExport');
 const { AutohookInstance, TwitterClient } = require('./Instances');
 const { trackList, trackListMAIN } = require('../storage/listTrack');
 
-const openStreaming = async () => {
+const openStreaming = async (dailyStorageInstance, timestamp) => {
 	const stream = await TwitterClient.v1.filterStream({ track: trackListMAIN })
 	
 	stream.autoReconnect = true;
 	stream.autoReconnectRetries = Infinity;
 	stream.keepAliveTimeoutMs = Infinity;
 
-	stream.on(ETwitterStreamEvent.Data, (eventData) => onDataFilterStream(eventData));
+	stream.on(ETwitterStreamEvent.Data, (dailyStorageInstance, timestamp, eventData) => {
+		dailyStorageInstance.boolSaveStorage(timestamp);
+		onDataFilterStream(eventData);
+	});
 	stream.on(ETwitterStreamEvent.ConnectionLost, async () => {
 		console.log('Connection lost...');
 		await stream.reconnect();

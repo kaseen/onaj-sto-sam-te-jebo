@@ -1,7 +1,7 @@
 const { fileStorage, timestampStorage, readBotInfoTxt, importFromFile } = require('../dependencies/serverMaintenance');
 
 const dailyStorageInstance = new fileStorage('./storage/txt/dailyUsage.txt');
-const timestamp = new timestampStorage('./storage/resetStorage.txt');
+const timestamp = new timestampStorage('./storage/txt/timestamp.txt');
 
 const botHelperInfo = readBotInfoTxt('./storage/txt/botInfo.txt');
 const whitelist = importFromFile('./storage/txt/whitelist.txt');
