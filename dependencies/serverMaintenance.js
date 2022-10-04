@@ -3,23 +3,27 @@ const fs = require('fs');
 const readline = require('readline');
 
 /*
-*   antiSpam:                       fileStorage:
+*   fileStorage:                            antiSpam: 
 *
-*   constructor()                   constructor(filePath)
-*   incrementId(userId)             async replenishMap()
-*   getIdCount(userId)              exportToFilePath()
-*   getIdTimestamp(userId)          incrementId(userId)
-*   getWarning(userId)              printMap()
-*   checkSpam(userId)               getId(userId)
-*   setWarning(userId)              getMap() 
-*                                   getFilePath()
-*                                   getMapSize()
-*   timestampStorage:               clearFile()
-*                                   clearMap()
-*   constructor(filePath)           
-*   readTimestampFromFile()         Other:
-*   writeDateNowToFile()            logTime(text)
-*   getTimestamp()                  dateNow()                  
+*   constructor(filePath)                   constructor()
+*   async replenishMap()                    getIdTimestamp(userId)
+*   exportToFilePath()                      getWarning(userId)
+*   boolSaveStorage(timestampInstance)      checkSpam(userId)
+*   onExit()                                setWarning(userId)
+*   incrementId(userId)                     getWarning(userId)
+*   printMap()                              checkSpam(userId)
+*   getId(userId)                           setWarning(userId)
+*   getMap()
+*   getFilePath()                           Other:
+*   getMapSize()                            importFromFile(filepath)
+*   clearFile()                             addToEndOfFile(filepath, text)    
+*   clearMap()                              readBotInfoTxt(filePath)
+*                                           logTime(text)
+*   timestampStorage:                       randomElementFromList(list)
+*   constructor(filePath)                   dateNow()
+*   readTimestampFromFile()
+*   writeDateNowToFile()
+*   getTimestamp()
 */
    
 
@@ -53,7 +57,7 @@ class fileStorage {
 
         const lineReader = readline.createInterface({
             input: inputStream,
-            // ako nesto baguje komentuj ovo
+            // if something seems buggy comment crlfDelay
             crlfDelay: Infinity
         });
 
@@ -223,19 +227,6 @@ class timestampStorage {
         return this._seconds;
     }
 };
-
-// Reset storage every 24h
-/*const onUpdate = (dailyStorageInstance, timestamp) => {
-    logTime('\nMap entries before reset:\n');
-    dailyStorageInstance.printMap();
-    // Clear fileStorage map and clear ./dailyUsage.txt file
-    dailyStorageInstance.clearFile();
-    dailyStorageInstance.clearMap();
-    // Write new timestamp to file
-    timestamp.writeDateNowToFile();
-    logTime(`New filestamp: ${timestamp.getTimestamp()}`)
-    logTime('Storage files updated.\n');
-}*/
 
 const importFromFile = (filepath) => {
     const lines = fs.readFileSync(filepath, {encoding:'utf8', flag:'r'})

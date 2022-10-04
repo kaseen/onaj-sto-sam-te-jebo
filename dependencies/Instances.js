@@ -4,10 +4,14 @@ const { TwitterApi } = require('twitter-api-v2');
 
 // ApiKey (Consumer key), ApiKeySecret (Consumer secret)
 const TwitterApiInit = new TwitterApi({
-  appKey:           process.env.CONSUMER_KEY,
+  /*appKey:           process.env.CONSUMER_KEY,
   appSecret:        process.env.CONSUMER_KEY_SECRET,
   accessToken:      process.env.ACCESS_TOKEN,
-  accessSecret:     process.env.ACCESS_TOKEN_SECRET,
+  accessSecret:     process.env.ACCESS_TOKEN_SECRET*/
+  appKey:           process.env.CONSUMER_KEY_V2,
+  appSecret:        process.env.CONSUMER_KEY_V2_SECRET,
+  accessToken:      process.env.TOKENV2,
+  accessSecret:     process.env.TOKENV2_SECRET,
 });
 
 const AutohookInstance = new Autohook({
@@ -20,9 +24,12 @@ const AutohookInstance = new Autohook({
   port: process.env.PORT || 8999
 });
 
+const BearerClient = new TwitterApi(process.env.BEARER_TOKEN);
+
 const TwitterClient = TwitterApiInit.readWrite;
 
 module.exports = {
   AutohookInstance,
+  BearerClient,
   TwitterClient
 }

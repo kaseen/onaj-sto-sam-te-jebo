@@ -6,26 +6,30 @@ const { regex, provera } = require('./checkExport');
 const { logTime } = require('../serverMaintenance');
 const listMention = require('../../storage/listMention');
 
-// TODO: remove
-const accountsList = ['jawisemalena'];
+/*
+*   async postStreamMention(tweetUsername, tweetId)
+*   async postStreamImg(tweetUsername, tweetId)
+*   randPost(tweetUsername, tweetId)
+*   onDataFilterStream(eventMsg)
+*/
 
-const postStreamMention = async (eventMsg) => {
+const postStreamMention = async (tweetUsername, tweetId) => {
 	const randInt = Math.floor(Math.random()*(listMention.length));
-	const https = "https://twitter.com/" + eventMsg.user.screen_name + "/status/" + eventMsg.id_str;
+	const https = "https://twitter.com/" + tweetUsername + "/status/" + tweetId;
 
     const tweet = `${listMention[randInt]} ${https}`;
 
     try{
         await postStatusText(tweet);
-        logTime(`@${eventMsg.user.screen_name} /postStreamMention`);
+        logTime(`@${tweetUsername} /postStreamMention`);
     }catch(e){
-        console.log("Error in ./dependencies/streamingExport/postStreamMention");
+        console.log("Error in ./dependencies/libs/streamingExport/postStreamMention");
         console.log(e);
     }
 }
 
-const postStreamImg = async (eventMsg) => {
-    const text = "https://twitter.com/" + eventMsg.user.screen_name + "/status/" + eventMsg.id_str;
+const postStreamImg = async (tweetUsername, tweetId) => {
+    const text = "https://twitter.com/" + tweetUsername + "/status/" + tweetId;
 
     const duzinaImgDirektorijuma = fs.readdirSync('./img').length;
     const randIntSlika = Math.floor(Math.random()*(duzinaImgDirektorijuma));
@@ -33,34 +37,57 @@ const postStreamImg = async (eventMsg) => {
 
     try{
         await postStatusWithMedia(text, randSlika, 'image/jpeg');
-        logTime(`@${eventMsg.user.screen_name} /postStreamImg`);
+        logTime(`@${tweetUsername} /postStreamImg`);
     }catch(e){
-        console.log("Error in ./dependencies/streamingExport/postStreamImg");
+        console.log("Error in ./dependencies/libs/streamingExport/postStreamImg");
         console.log(e);
     }
 }
 
-const randPost = (eventMsg) => {
+const randPost = (tweetUsername, tweetId) => {
 	const rand = Math.floor(Math.random()*(100));
 	if(rand < Number(process.env.POST_STREAM_IMG_PERCENT))
-		postStreamImg(eventMsg);
+		postStreamImg(tweetUsername, tweetId);
 	else	
-		postStreamMention(eventMsg);
+		postStreamMention(tweetUsername, tweetId);
 }
 
 const onDataFilterStream = (eventMsg) => {
+    const tweetText = eventMsg.data.text;
+    const tweetUsername = eventMsg.includes.users[0].username;
+    const tweetId = eventMsg.data.id;
+
+    // If tweet is a retweet skip
+    if(tweetText.startsWith('RT @')){
+        return;
+    }
+
+    // If tweet is from this bot
+    if(tweetUsername === 'jawisemalena'){
+        return;
+    }
+
+    // Check if tweet is a quote
+    let isQuote = false;
     try{
-        if(!eventMsg.text.startsWith("RT @") && !accountsList.includes(eventMsg.user.screen_name)){
-            // ako je tvit zapravo quote proveri jel validan pre tvitovanja
-            if(eventMsg.is_quote_status === true){
-                if(!provera(regex(eventMsg.quoted_status.text)))
-                    randPost(eventMsg);
-            }
-            else
-                randPost(eventMsg);
+        const x = eventMsg.includes.tweets[0].referenced_tweets;
+        if(typeof x !== 'undefined'){
+            isQuote = true;
         }
+    }catch(e){}
+
+    try{
+        if(isQuote){
+            if(provera(regex(tweetText))){
+                randPost(tweetUsername, tweetId);
+            }
+        }
+        else{
+            randPost(tweetUsername, tweetId);
+        }
+        
     }catch(e){
-        console.log("Error in ./dependencies/streamingExport/streamFunction");
+        console.log("Error in ./dependencies/libs/streamingExport/streamFunction");
         console.log(e);
     }
 }

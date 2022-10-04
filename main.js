@@ -8,6 +8,8 @@ uksrs, nova godina, bozic bata i tako to
 
 ------ MAIN
 
+- mozda on exit stream.close() ???
+
 - 24H reset onUpdate (IMPLEMENTIRAO TESTIRA SE)
 - Svakih sat vremena save to storage (IMPLEMENTIRAO TESTIRA SE)
 
@@ -53,8 +55,8 @@ const main = async () => {
 		const expectedRestart = new Date(dateNow() + process.env.SERVER_RESTART * 60 * 60 * 1000);
 		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
 
-		// Turn off bot every 12h (720min)
-		// Heroku restart crashed dynos by spawning new dynos once every ten minutes.
+		// Turn off bot every SERVER_RESTART h (Ngrok server lives 8h)
+		// Heroku restart crashed dynos by spawning new dynos once every ten minutes (and than exponentially)
 		setTimeout(function () {
 			logTime('Ngrok time passed, restarting...');
 			process.exit(0);
@@ -62,14 +64,14 @@ const main = async () => {
 
 		// Check if 20h passed after last reset of dailyUsage 
 		if(dateNow() > timestamp.getTimestamp() + timestamp._RESET_TIME){
-			console.log("\n------------------------ UPDATE -------------------------\n");
-			// TODO
+			console.log("\n------------------------ UPDATE -------------------------\n");	// TODO: REMOVE
+			dailyStorageInstance.boolSaveStorage(timestamp);
 		}
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
 
-		//await openWebhook(dailyStorageInstance, timestamp);
+		await openWebhook(dailyStorageInstance, timestamp);
 		await openStreaming(dailyStorageInstance, timestamp);
 		console.log("\n------------------------- LIVE --------------------------\n");
 	} catch (e) {
