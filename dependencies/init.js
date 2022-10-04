@@ -76,53 +76,107 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 	});
 
 	stream.on(ETwitterStreamEvent.Connected, () => console.log('\nStream opened.'));
-	stream.on(ETwitterStreamEvent.ConnectionLost, async () => {
-		console.log('Connection lost...');
+	stream.on(ETwitterStreamEvent.ConnectionLost, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
 		await stream.reconnect();
-		console.log('Reconnected.');
+		console.log(e);
+		console.log('\nConnectionLost');
+		console.log("\---------------------------------------------------------");
 	});
 
 	//
-	stream.on(ETwitterStreamEvent.ConnectionError, (e) => {
+	stream.on(ETwitterStreamEvent.ConnectionError, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('ConnectionError\n');
+		console.log('\nConnectionError');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.ConnectionClosed, (e) => {
+	stream.on(ETwitterStreamEvent.ConnectionClosed, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('ConnectionClosed\n');
+		console.log('\nConnectionClosed');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.ReconnectAttempt, (e) => {
+	stream.on(ETwitterStreamEvent.ReconnectAttempt, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('ReconnectAttempt\n');
+		console.log('\nReconnectAttempt');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.ConnectError, (e) => {
+	stream.on(ETwitterStreamEvent.ConnectError, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('ConnectError\n');
+		console.log('\nConnectError');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.Reconnected, (e) => {
+	stream.on(ETwitterStreamEvent.Reconnected, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('Reconnected\n');
+		console.log('\nReconnected');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.ReconnectError, (e) => {
+	stream.on(ETwitterStreamEvent.ReconnectError, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('ReconnectError\n');
+		console.log('\nReconnectError');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.ReconnectLimitExceeded, (e) => {
+	stream.on(ETwitterStreamEvent.ReconnectLimitExceeded, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('ReconnectLimitExceeded');
+		console.log('\nReconnectLimitExceeded');
+		console.log("---------------------------------------------------------");
 	});
 	//stream.on(ETwitterStreamEvent.DataKeepAlive, () => console.log('DataKeepAlive'));
-	stream.on(ETwitterStreamEvent.DataError, (e) => {
+	stream.on(ETwitterStreamEvent.DataError, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('DataError');
+		console.log('\nDataError');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.TweetParseError, (e) => {
+	stream.on(ETwitterStreamEvent.TweetParseError, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('TweetParseError\n');
+		console.log('\nTweetParseError');
+		console.log("---------------------------------------------------------");
 	});
-	stream.on(ETwitterStreamEvent.Error, (e) => {
+	stream.on(ETwitterStreamEvent.Error, async (e) => {
+		await stream.close();
+		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
+
+		await stream.reconnect();
 		console.log(e);
-		console.log('Error\n');
+		console.log('\nError');
+		console.log("---------------------------------------------------------");
 	});
 	//
 

@@ -20,7 +20,7 @@ const postStreamMention = async (tweetUsername, tweetId) => {
     const tweet = `${listMention[randInt]} ${https}`;
 
     try{
-        await postStatusText(tweet);
+        postStatusText(tweet);
         logTime(`@${tweetUsername} /postStreamMention`);
     }catch(e){
         console.log("Error in ./dependencies/libs/streamingExport/postStreamMention");
@@ -36,7 +36,7 @@ const postStreamImg = async (tweetUsername, tweetId) => {
     const randSlika = "./img/" + (randIntSlika+1) + ".jpg";
 
     try{
-        await postStatusWithMedia(text, randSlika, 'image/jpeg');
+        postStatusWithMedia(text, randSlika, 'image/jpeg');
         logTime(`@${tweetUsername} /postStreamImg`);
     }catch(e){
         console.log("Error in ./dependencies/libs/streamingExport/postStreamImg");
