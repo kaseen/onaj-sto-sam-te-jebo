@@ -80,7 +80,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nConnectionLost');
 		console.log("\---------------------------------------------------------");
@@ -91,7 +91,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nConnectionError');
 		console.log("---------------------------------------------------------");
@@ -100,7 +100,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nConnectionClosed');
 		console.log("---------------------------------------------------------");
@@ -109,7 +109,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nReconnectAttempt');
 		console.log("---------------------------------------------------------");
@@ -118,7 +118,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nConnectError');
 		console.log("---------------------------------------------------------");
@@ -127,7 +127,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nReconnected');
 		console.log("---------------------------------------------------------");
@@ -136,7 +136,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nReconnectError');
 		console.log("---------------------------------------------------------");
@@ -145,7 +145,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nReconnectLimitExceeded');
 		console.log("---------------------------------------------------------");
@@ -155,7 +155,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nDataError');
 		console.log("---------------------------------------------------------");
@@ -164,7 +164,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nTweetParseError');
 		console.log("---------------------------------------------------------");
@@ -173,7 +173,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 		await stream.close();
 		await new Promise(resolve => setTimeout(resolve, Number(30)*1000));
 
-		await stream.reconnect();
+		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
 		console.log('\nError');
 		console.log("---------------------------------------------------------");
