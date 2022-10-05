@@ -66,7 +66,7 @@ const main = async () => {
 		dailyStorageInstance.checkTimestamp(timestamp);
 
 		// Every 2 hours (HOURS_STORAGE_SAVE) save map in memory to drive
-		checkEveryNHours(process.env.HOURS_STORAGE_SAVE);
+		//checkEveryNHours(process.env.HOURS_STORAGE_SAVE);
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
