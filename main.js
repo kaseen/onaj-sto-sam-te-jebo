@@ -59,7 +59,7 @@ const checkEveryNHours = async (n) => {
 const main = async () => {
 	try{
 		console.log("\n------------------------ STARTED ------------------------\n");
-		const expectedRestart = new Date(dateNow() + process.env.HOURS_SERVER_RESTART * 60 * 60 * 1000);
+		const expectedRestart = new Date(dateNow() + 8 * 60 * 60 * 1000);
 		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
 
 		// Turn off bot every HOURS_SERVER_RESTART h (Ngrok server lives 8h)
@@ -67,7 +67,7 @@ const main = async () => {
 		setTimeout(function () {
 			logTime('Ngrok time passed, restarting...');
 			process.exit(0);
-		}, process.env.HOURS_SERVER_RESTART * 60 * 60 * 1000);
+		}, 8 * 60 * 60 * 1000);
 
 		// Check timestamp on startup
 		dailyStorageInstance.checkTimestamp(timestamp);
