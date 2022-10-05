@@ -49,24 +49,31 @@ process.on('exit', () => {
 	dailyStorageInstance.onExit();
 });
 
+const checkEveryNHours = async (n) => {
+	await setTimeout(function () {
+		dailyStorageInstance.boolSaveStorage(timestamp);
+		checkEveryNHours(n);
+	}, n * 60 * 60 * 1000);
+}
+
 const main = async () => {
 	try{
 		console.log("\n------------------------ STARTED ------------------------\n");
-		const expectedRestart = new Date(dateNow() + process.env.HOURS_SERVER_RESTART * 60 * 60 * 1000);
+		const expectedRestart = new Date(dateNow() + process.env.SERVER_RESTART * 60 * 60 * 1000);
 		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
 
-		// Turn off bot every HOURS_SERVER_RESTART h (Ngrok server lives 8h)
+		// Turn off bot every SERVER_RESTART h (Ngrok server lives 8h)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes (and than exponentially)
 		setTimeout(function () {
 			logTime('Ngrok time passed, restarting...');
 			process.exit(0);
-		}, process.env.HOURS_SERVER_RESTART * 60 * 60 * 1000);
+		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 
 		// Check timestamp on startup
 		dailyStorageInstance.checkTimestamp(timestamp);
 
-		// Every 2 hours (HOURS_STORAGE_SAVE) save map in memory to drive
-		//checkEveryNHours(process.env.HOURS_STORAGE_SAVE);
+		// Every 2 hours (STORAGE_SAVE) save map in memory to drive
+		checkEveryNHours(process.env.STORAGE_SAVE);
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();
@@ -80,13 +87,6 @@ const main = async () => {
 		console.error(e);
 		process.exit(1);
 	}
-}
-
-const checkEveryNHours = async (n) => {
-	await setTimeout(function () {
-		dailyStorageInstance.boolSaveStorage(timestamp);
-		checkEveryNHours(n);
-	}, n * 60 * 60 * 1000);
 }
 
 main();
