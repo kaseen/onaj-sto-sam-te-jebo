@@ -60,7 +60,7 @@ const viewRules = async () => {
 	}
 }
 
-const openStreaming = async (dailyStorageInstance, timestamp) => {
+const openStreaming = async () => {
 	// For debugging
 	// await renewRules();
 	// await viewRules();
@@ -71,7 +71,6 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 	});
 
 	stream.on(ETwitterStreamEvent.Data, async (x) => {
-		dailyStorageInstance.boolSaveStorage(timestamp);
 		onDataFilterStream(x);
 	});
 
@@ -90,7 +89,7 @@ const openStreaming = async (dailyStorageInstance, timestamp) => {
 	await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 }
 
-const openWebhook = async (dailyStorageInstance, timestamp) => {
+const openWebhook = async (dailyStorageInstance) => {
 	const webhook = AutohookInstance;
 
 	// Removes existing webhooks
@@ -98,7 +97,7 @@ const openWebhook = async (dailyStorageInstance, timestamp) => {
 
 	webhook.on('event', async (event) => {
 		if (event.direct_message_events) {
-			await onNewMessage(dailyStorageInstance, timestamp, event);
+			await onNewMessage(dailyStorageInstance, event);
 		}
 	})
 

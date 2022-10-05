@@ -77,7 +77,7 @@ const prenk = async (senderId, targetId, targetUsername) => {
     return 1;
 }
 
-const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
+const onNewMessage = async (dailyStorageInstance, event) => {
     try{
         // We check that the event is a direct message
         if (!event.direct_message_events) {
@@ -95,11 +95,9 @@ const onNewMessage = async (dailyStorageInstance, timestamp, event) => {
         const senderUsername = event.users[senderId].screen_name;
         const text = event.direct_message_events[0].message_create.message_data.text;
 
-        // Check if hour passed to save storage file
-        dailyStorageInstance.boolSaveStorage(timestamp);
-
         // Anti spam checker
         if(spamChecker.checkSpam(senderId)){
+			
             // If it's spam sendMessage
             if(!spamChecker.getWarning(senderId)){
                 sendMessage(senderId, 'Sachekaj bota bote (spam protection)');

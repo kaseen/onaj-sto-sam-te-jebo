@@ -48,8 +48,6 @@ class fileStorage {
     constructor(filePath) {
         this._map = new Map();
         this._filePath = filePath;
-        this._timestamp = dateNow();
-        this._twoHour = 7200000;    // 60 * 60 * 1000
     }
 
     async replenishMap(){
@@ -85,32 +83,32 @@ class fileStorage {
 
     // Only write to .txt file in storage without clearing map
     boolSaveStorage(timestampInstance){
-        const now = dateNow();
-        if(now > this._timestamp + this._twoHour){
-            this._timestamp = now;
-            console.log("\n----------------------- 2HOURLY -------------------------\n");       // TODO: remove after deep test
-			logTime('\nMap entries before saving to server:\n');                                // TODO: remove after deep test
-            this.printMap();                                                                    // TODO: remove after deep test
-            console.log();                                                                      // TODO: remove after deep test
-            this.exportToFilePath();
-            logTime('[SERVER MAINTENANCE]: Storage successfully saved to server.');
-            console.log("\n---------------------------------------------------------\n");       // TODO: remove after deep test
+		console.log("\n----------------------- 2HOURLY -------------------------\n");       // TODO: remove after deep test
+		logTime('\nMap entries before saving to server:\n');                                // TODO: remove after deep test
+		this.printMap();                                                                    // TODO: remove after deep test
+		console.log();                                                                      // TODO: remove after deep test
+		this.exportToFilePath();
+		logTime('[SERVER MAINTENANCE]: Storage successfully saved to server.');
+		console.log("\n---------------------------------------------------------\n");       // TODO: remove after deep test
 
-            if(dateNow() > timestampInstance.getTimestamp() + timestampInstance._RESET_TIME){
-                console.log("\n------------------------ UPDATE -------------------------\n");   // TODO: remove after deep test
-                logTime('\nMap entries before reset:\n');                                       // TODO: remove after deep test
-                this.printMap();                                                                // TODO: remove after deep test
-                // Clear fileStorage map and clear ./dailyUsage.txt file
-                this.clearFile();
-                this.clearMap();
-                // Write new timestamp to file
-                timestampInstance.writeDateNowToFile();
-                timestampInstance.readTimestampFromFile();
-                logTime(`New filestamp: ${timestampInstance.getTimestamp()}`);                  // TODO: remove after deep test
-                logTime('[SERVER MAINTENANCE]: Timestamp file updated.\n');
-            }
-		}
+		this.checkTimestamp(timestampInstance);
     }
+
+	checkTimestamp(timestampInstance){
+		if(dateNow() > timestampInstance.getTimestamp() + timestampInstance._RESET_TIME){
+			console.log("\n------------------------ UPDATE -------------------------\n");   // TODO: remove after deep test
+			logTime('\nMap entries before reset:\n');                                       // TODO: remove after deep test
+			this.printMap();                                                                // TODO: remove after deep test
+			// Clear fileStorage map and clear ./dailyUsage.txt file
+			this.clearFile();
+			this.clearMap();
+			// Write new timestamp to file
+			timestampInstance.writeDateNowToFile();
+			timestampInstance.readTimestampFromFile();
+			logTime(`New filestamp: ${timestampInstance.getTimestamp()}`);                  // TODO: remove after deep test
+			logTime('[SERVER MAINTENANCE]: Timestamp file updated.\n');
+		}
+	}
 
     // Save map to .txt file and exit
     onExit(){
