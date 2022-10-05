@@ -76,13 +76,18 @@ const openStreaming = async () => {
 
 	stream.on(ETwitterStreamEvent.Connected, () => console.log('\nStream opened.'));
 	stream.on(ETwitterStreamEvent.Error, async (e) => {
-		console.log("---------------------------------------------------------");
 		stream.close();
+		console.log("------------------------- ERROR -------------------------");
 		await new Promise(resolve => setTimeout(resolve, Number(30) * 1000));
 
 		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		console.log(e);
-		console.log('\nError');
+		try{
+			console.log(e.error.errors);
+		}catch(e){
+			console.log(e);
+			console.log('\nCatch');
+		}
 		console.log("---------------------------------------------------------");
 	});
 

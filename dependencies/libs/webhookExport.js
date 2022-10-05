@@ -1,7 +1,15 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
 const { antiSpam, addToEndOfFile, randomElementFromList, logTime } = require('../serverMaintenance');
-const { botHelperInfo, whitelist, blacklist, commands } = require('../../storage/exportTxt');
+const { 
+    botHelperInfo,
+    whitelist,
+    blacklist,
+    commands,
+	randomEmojiSuccess,
+	randomEmojiError,
+	waitForBot 
+} = require('../../storage/exportTxt');
 const { 
     sendMessage,
     getUserByUsername,
@@ -18,19 +26,7 @@ const {
 *   async onNewMessage(dailyStorageInstance, event)
 */
 
-const waitForBot = [
-    'Sachekaj sekundu lutko 💖', 
-    'Saće ga rešimo..',
-    'Evo stizhe 🥰',
-    'Twoja zhelja je moja zapowest princezo 😘',
-    'Swe za tebe lutko 💖',
-    'Evo beby stizhe 😏',
-    'Shaljem 💌...',
-    'Ide odma šefe'
-]
 
-const randomEmoji = ['😌', '😊', '😚', '🥰', '🤡', '😇', '👏', '👍', '🤙'];
-const randomEmojiError = ['🥱','😴','👎','😤','😩','😪']
 
 const spamChecker = new antiSpam();
 
@@ -62,11 +58,11 @@ const prenk = async (senderId, targetId, targetUsername) => {
     }
 
     const randInt = Math.floor(Math.random()*(listPrenk.length));
-    const text = `@${targetUsername}\n\n${listPrenk[randInt]}\n\nPrenk 🤙🤙🤙`;
+    const text = `@${targetUsername}\n\n${listPrenk[randInt]}\n\nPrenk ${randomElementFromList(randomEmojiSuccess)}🤙🤙`;
 
     try{
         postStatusText(text)
-            .then(() => sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
+            .then(() => sendMessage(senderId, `Uspeshno si prenkowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
         
     }catch(e){
         console.log("Error in ./dependencies/webhookExport/patoshi");
@@ -97,7 +93,7 @@ const onNewMessage = async (dailyStorageInstance, event) => {
 
         // Anti spam checker
         if(spamChecker.checkSpam(senderId)){
-			
+
             // If it's spam sendMessage
             if(!spamChecker.getWarning(senderId)){
                 sendMessage(senderId, 'Sachekaj bota bote (spam protection)');
@@ -108,13 +104,15 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             return;
         }
 
-        // Check valid commands
+        // Split message and trim if username starts with @
         const splitedMsg = text.split(' ');
-        const targetUsername = splitedMsg[1];
+        const _targetUsername = splitedMsg[1];
+		const targetUsername = _targetUsername.startsWith('@') ? 
+				_targetUsername.substring(_targetUsername.lastIndexOf('@') + 1) : _targetUsername;
 
         // If first word is unknow command send list of commands to use
         if(!commands.includes(splitedMsg[0])){
-            sendMessage(senderId, botHelperInfo + '\n' + randomElementFromList(randomEmoji) + 
+            sendMessage(senderId, botHelperInfo + '\n' + randomElementFromList(randomEmojiSuccess) + 
                                      ' ' + randomElementFromList(randomEmojiError));
             return;
         }
@@ -176,16 +174,16 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                 dailyStorageInstance.incrementId(senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('patoshi', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
+                    .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
-                return;
+				return;
             case '!fuxo':
                 if(splitedMsg.length === 1)
                     return;
                 dailyStorageInstance.incrementId(senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));         
                 postVideoMethod('fuxo', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
+                    .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 return;
             case '!zejtin':
@@ -194,13 +192,13 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                 dailyStorageInstance.incrementId(senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('zejtin', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmoji)}`));
+                    .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;
             case '!info':
                 sendMessage(senderId, `Iskorishteno (${numOfCommandUses}/${process.env.MAX_DAILY_USAGE}) usluga za danas.\n\n` + 
                     'Za wishe informacija (ili predloga) jawi se malena na wacap +381 62 839 7553.\n\n(poshalji sise ako oces admina ' +
-                    `${randomElementFromList(randomEmoji)}${randomElementFromList(randomEmojiError)})`);
+                    `${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)})`);
                 return;
 
             // HEAD ADMIN COMMANDS

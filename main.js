@@ -2,11 +2,16 @@
 
 /* TODOS:
 
------- EVENT
+------ FUTURE PLANS
 
-uksrs, nova godina, bozic bata i tako to
+- EVENT uksrs, nova godina, bozic bata i tako to
+- ukloni ngrok, svoj server napravi 
+
 
 ------ MAIN
+
+
+- NE RADI LOG TIME NA BOTA !!! XITNO
 
 - mozda on exit stream.close() ???
 
@@ -21,16 +26,13 @@ uksrs, nova godina, bozic bata i tako to
 - NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
 
 - !mali na sliku stavi audio
-- ako je napisao @ trimuj
 - new filestamp na exit radi?
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
-- spam patoshi na jednu osobu MOZE BREAK (mozda i ne)
-- test try/catch
 - Kad neko zaprati bota posalji mu Komande poruku
-- Error: Status is a duplicate!!! (puno primera dodaj zbog random) ILI POsle poruke generisi novi tekst
 - rucno mora se uklanja whitelist blacklist
 
 ------ ALT
+
 - COMMENTS IN SOLIDITY STANDARD
 - rendom lista patoshi, postPatoshi, prenk
 - ALT TEXT NA SLIKE ALSO RANDOM
@@ -49,10 +51,10 @@ process.on('exit', () => {
 	dailyStorageInstance.onExit();
 });
 
-const checkEveryNHours = async (n) => {
+const checkStorage = async (n) => {
 	await setTimeout(function () {
 		dailyStorageInstance.boolSaveStorage(timestamp);
-		checkEveryNHours(n);
+		checkStorage(n);
 	}, n * 60 * 60 * 1000);
 }
 
@@ -73,7 +75,7 @@ const main = async () => {
 		dailyStorageInstance.checkTimestamp(timestamp);
 
 		// Every 2 hours (STORAGE_SAVE) save map in memory to drive
-		checkEveryNHours(process.env.STORAGE_SAVE);
+		checkStorage(process.env.STORAGE_SAVE);
 
 		// If app stops working fill map again on start
 		await dailyStorageInstance.replenishMap();

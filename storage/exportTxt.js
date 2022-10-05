@@ -8,11 +8,28 @@ const whitelist = importFromFile('./storage/txt/whitelist.txt');
 const blacklist = importFromFile('./storage/txt/blacklist.txt');
 const commands = importFromFile('./storage/txt/commands.txt');
 
+const randomEmojiSuccess = ['😌', '😊', '😚', '🥰', '🤡', '😇', '👏', '👍', '🤙'];
+const randomEmojiError = ['🧐', '🫣', '🤡', '😤', '😟', '😴', '🥴', '😷', '🙀', '🥶', '🤕', '🤐'];
+
+const waitForBot = [
+    'Sachekaj sekundu lutko 💖', 
+    'Saće ga rešimo..',
+    'Evo stizhe 🥰',
+    'Twoja zhelja je moja zapowest princezo 😘',
+    'Swe za tebe lutko 💖',
+    'Evo beby stizhe 😏',
+    'Shaljem 💌...',
+    'Ide odma šefe'
+]
+
 module.exports = {
     dailyStorageInstance,
     timestamp,
     botHelperInfo,
     whitelist,
     blacklist,
-    commands
+    commands,
+	randomEmojiSuccess,
+	randomEmojiError,
+	waitForBot
 }

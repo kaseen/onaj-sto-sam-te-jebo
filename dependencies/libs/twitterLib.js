@@ -1,4 +1,6 @@
 const { TwitterClient } = require('../Instances');
+const { randomElementFromList } = require('../serverMaintenance');
+const { randomEmojiError } = require('../../storage/exportTxt');
 const fs = require('fs');
 
 /* 
@@ -92,7 +94,7 @@ const postVideoMethod = async (method, senderUsername, targetUsername) => {
     if (typeof(video_path) === 'undefined'){
         return;
     }
-    const text = `@${targetUsername}\n\nXalo kurajberu, @${senderUsername} ti poruchuje:`;
+    const text = `@${targetUsername}\n\nXalo kurajberu ${randomElementFromList(randomEmojiError)}, @${senderUsername} ti poruchuje:`;
     try{
         await postStatusWithMedia(text, video_path, 'video/mp4');
     }catch(e){
