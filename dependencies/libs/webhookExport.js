@@ -4,6 +4,7 @@ const { antiSpam, addToEndOfFile, randomElementFromList, logTime } = require('..
 const { DATABASE_ADD, DATABASE_DELETE_USERNAME } = require('./sheetdb');
 const { 
     botHelperInfo,
+	hAdminInfo,
     commands,
 	randomEmojiSuccess,
 	randomEmojiError,
@@ -210,11 +211,13 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                         msg += `${key} ${value}\n`
                     }
                     msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty.');
+					sendMessage(senderId, hAdminInfo);
                 }
                 return;
-            case '!white':
-                if(splitedMsg.length === 1)
-                    return;  
+            case '!wadd':
+                if(splitedMsg.length === 1){
+                    return;
+				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
                     getUserByUsername(targetUsername)
                         .then((res) => {
@@ -225,9 +228,19 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                         });
                 }
                 return;
-            case '!black':
-                if(splitedMsg.length === 1)
-                    return;  
+			case '!wrem':
+                if(splitedMsg.length === 1){
+                    return;
+				}
+                if(senderId === process.env.HEAD_ADMIN_ID){
+                    DATABASE_DELETE_USERNAME('Whitelist', targetUsername);
+					logTime(`@${targetUsername} (ID: ${res.id_str}) removed from whitelist.`);
+                }
+                return;
+            case '!badd':
+                if(splitedMsg.length === 1){
+                    return;
+				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
                     getUserByUsername(targetUsername)
                         .then((res) => {
@@ -236,6 +249,15 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
 							logTime(`@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
                             sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
                         });
+                }
+                return;
+			case '!brem':
+                if(splitedMsg.length === 1){
+                    return;  
+				}
+                if(senderId === process.env.HEAD_ADMIN_ID){
+                    DATABASE_DELETE_USERNAME('Blacklist', targetUsername);
+					logTime(`@${targetUsername} (ID: ${res.id_str}) removed from blacklist.`);
                 }
                 return;
             default:

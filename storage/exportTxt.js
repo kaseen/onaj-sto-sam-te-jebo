@@ -4,6 +4,7 @@ const dailyStorageInstance = new fileStorage('./storage/txt/dailyUsage.txt');
 const timestamp = new timestampStorage('./storage/txt/timestamp.txt');
 
 const botHelperInfo = readBotInfoTxt('./storage/txt/botInfo.txt');
+const hAdminInfo = readBotInfoTxt('./storage/txt/hAdminInfo.txt');
 const commands = importFromFile('./storage/txt/commands.txt');
 
 const randomEmojiSuccess = ['😌', '😊', '😚', '🥰', '🤡', '😇', '👏', '👍', '🤙'];
@@ -24,6 +25,7 @@ module.exports = {
     dailyStorageInstance,
     timestamp,
     botHelperInfo,
+	hAdminInfo,
     commands,
 	randomEmojiSuccess,
 	randomEmojiError,

@@ -1,0 +1,5 @@
+Head admin commands:
+!wadd <username>
+!wrem <username>
+!badd <username>
+!brem <username>

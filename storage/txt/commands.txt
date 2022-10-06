@@ -4,5 +4,7 @@
 !zejtin
 !info
 !admin
-!white
-!black
+!wadd
+!wrem
+!badd
+!brem

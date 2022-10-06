@@ -5,10 +5,6 @@ const sheetdb = require('sheetdb-node');
 
 // ApiKey (Consumer key), ApiKeySecret (Consumer secret)
 const TwitterApiInit = new TwitterApi({
-  /*appKey:           process.env.CONSUMER_KEY,
-  appSecret:        process.env.CONSUMER_KEY_SECRET,
-  accessToken:      process.env.ACCESS_TOKEN,
-  accessSecret:     process.env.ACCESS_TOKEN_SECRET*/
   appKey:           process.env.CONSUMER_KEY_V2,
   appSecret:        process.env.CONSUMER_KEY_V2_SECRET,
   accessToken:      process.env.TOKENV2,

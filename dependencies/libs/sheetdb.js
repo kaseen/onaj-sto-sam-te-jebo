@@ -13,8 +13,8 @@ const DATABASE_GET = async (sheet) => {
 	try{
 		return SheetDB.read({ sheet: sheet });
 	}catch(e){
+		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_GET');
 		console.log(e);
-		console.log("Error reading database.");
 	}
 }
 
@@ -24,8 +24,8 @@ const DATABASE_ADD = (sheet, username) => {
 	try{
 		SheetDB.create(username, sheet);
 	}catch(e){
+		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_ADD');
 		console.log(e);
-		console.log("Error adding row(s) in database");
 	}
 }
 
@@ -34,8 +34,8 @@ const DATABASE_DELETE_USERNAME = (sheet, username) => {
 	try{
 		SheetDB.delete('username', username, sheet);
 	}catch(e){
+		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_DELETE_USERNAME');
 		console.log(e);
-		console.log("Error deleting row(s) in database");
 	}
 }
 

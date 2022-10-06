@@ -11,8 +11,6 @@
 ------ MAIN
 
 
-- NE RADI LOG TIME NA BOTA !!! XITNO
-
 - mozda on exit stream.close() ???
 
 - 24H reset onUpdate (IMPLEMENTIRAO TESTIRA SE)
