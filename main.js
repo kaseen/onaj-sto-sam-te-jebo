@@ -33,7 +33,6 @@
 
 ------ ALT
 
-- COMMENTS IN SOLIDITY STANDARD
 - rendom lista patoshi, postPatoshi, prenk
 - ALT TEXT NA SLIKE ALSO RANDOM
 - patoshi alt text

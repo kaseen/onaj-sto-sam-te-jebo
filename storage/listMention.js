@@ -44,5 +44,9 @@ listMention.push('Svi mi kazu da sam luda jer dugo spavam..\nBudale ne znaju da 
 listMention.push('Ja ljubim onog shto sam te jebo jer tebe ne mogu, srce mi plače volim te sve jače i dok mu ljubav priznajem u duši tvoja riba njemu pushi...');
 listMention.push('U svom životu želim 3 stvari:\nSunce,Medu i Tebe.\nSunce za dan,\nMedu za noć,\ni onog shto sam te jebo ZAUWEK!');
 listMention.push('Mesec je pun kao lubenica,ti si moja mala LEPTIRICA,pun mesec dok se na nebu zlati, onaj shto sam te jebo u san nek te prati:)');
+listMention.push('PRAVI ONAJ SHTO SAM TE JEBO:\n- Kad plačeš - NAPALI SE!\n- Kad ga pogledaš - VADI BUDALU\n- Kad ti svi okrenu leđa - POBEGNE\nVoli te zbog toga kako izgledaš - A NE ZBOG TOGA KAKVA SI U DUŠI!!!');
+listMention.push('Znala si da lažem, verovala si u sve te moje laži. Pravila si se hladnokrvna... Ali opet kada bih te pogledao, video bi se osmeh na tvom licu. Dobra si ti osoba, samo eto, nisi trebala da zavoliš onog što sam te jebo');
+listMention.push('ej ti što čitaš ovo, nemoj da zaboraviš da te neko voli (onaj što sam te jebo)');
+listMention.push('gomila dece sa onim što sam te jebo je san svake žene');
 
 module.exports = listMention;
