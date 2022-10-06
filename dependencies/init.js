@@ -2,6 +2,7 @@ const { ETwitterStreamEvent } = require('twitter-api-v2');
 const { onDataFilterStream } = require('./libs/streamingExport');
 const { onNewMessage } = require('./libs/webhookExport');
 const { AutohookInstance, BearerClient } = require('./Instances');
+const { logTime } = require('./serverMaintenance');
 
 /*
 *	async renewRules()
@@ -74,14 +75,13 @@ const openStreaming = async () => {
 		onDataFilterStream(x);
 	});
 
-	stream.on(ETwitterStreamEvent.Connected, () => console.log('\nStream opened.'));
+	stream.on(ETwitterStreamEvent.Connected, () => logTime('Stream opened.'));
 	stream.on(ETwitterStreamEvent.Error, async (e) => {
-		stream.close();
+		//stream.close();
 		console.log("------------------------- ERROR -------------------------");
-		await new Promise(resolve => setTimeout(resolve, Number(30) * 1000));
+		//await new Promise(resolve => setTimeout(resolve, Number(30) * 1000));
 
-		await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
-		console.log(e);
+		//await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
 		try{
 			console.log(e.error.errors);
 		}catch(e){
@@ -91,7 +91,15 @@ const openStreaming = async () => {
 		console.log("---------------------------------------------------------");
 	});
 
-	await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity, keepAliveTimeoutMs: Infinity });
+	stream.on(ETwitterStreamEvent.Reconnected, () => logTime('Stream reconnected.'))
+
+	await stream.connect({ 
+		autoReconnect: true,
+		autoReconnectRetries: Infinity
+	}).catch((e) => {
+		console.log("------------------------- CONNECTERROR -------------------------");
+		console.log(e);
+	});
 }
 
 const openWebhook = async (dailyStorageInstance) => {

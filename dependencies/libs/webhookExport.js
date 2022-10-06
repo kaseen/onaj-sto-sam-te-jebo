@@ -104,11 +104,14 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             return;
         }
 
-        // Split message and trim if username starts with @
+        // Split message and trim username (if exists and starts with @)
         const splitedMsg = text.split(' ');
-        const _targetUsername = splitedMsg[1];
-		const targetUsername = _targetUsername.startsWith('@') ? 
-				_targetUsername.substring(_targetUsername.lastIndexOf('@') + 1) : _targetUsername;
+		let targetUsername = '';
+		if(splitedMsg.length > 1){
+			const _targetUsername = splitedMsg[1];
+			targetUsername = _targetUsername.startsWith('@') ? 
+					_targetUsername.substring(_targetUsername.lastIndexOf('@') + 1) : _targetUsername;
+		}
 
         // If first word is unknow command send list of commands to use
         if(!commands.includes(splitedMsg[0])){
