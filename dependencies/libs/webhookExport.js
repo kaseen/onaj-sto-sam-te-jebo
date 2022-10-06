@@ -1,10 +1,9 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
 const { antiSpam, addToEndOfFile, randomElementFromList, logTime } = require('../serverMaintenance');
+const { DATABASE_ADD, DATABASE_DELETE_USERNAME } = require('./sheetdb');
 const { 
     botHelperInfo,
-    whitelist,
-    blacklist,
     commands,
 	randomEmojiSuccess,
 	randomEmojiError,
@@ -25,8 +24,6 @@ const {
 *   async prenk(senderId, senderUsername, targetUsername)
 *   async onNewMessage(dailyStorageInstance, event)
 */
-
-
 
 const spamChecker = new antiSpam();
 
@@ -73,7 +70,7 @@ const prenk = async (senderId, targetId, targetUsername) => {
     return 1;
 }
 
-const onNewMessage = async (dailyStorageInstance, event) => {
+const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) => {
     try{
         // We check that the event is a direct message
         if (!event.direct_message_events) {
@@ -154,7 +151,7 @@ const onNewMessage = async (dailyStorageInstance, event) => {
             sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiError)}`);
             return;
         }else if(whitelist.includes(senderId)){
-            //sendMessage(senderId, 'Brao admine si.');
+            // sendMessage(senderId, 'Brao admine si.');
         }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
             sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas ${randomElementFromList(randomEmojiError)}`);
             return;
@@ -222,7 +219,8 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                     getUserByUsername(targetUsername)
                         .then((res) => {
                             whitelist.push(res.id_str);
-                            addToEndOfFile('./storage/txt/whitelist.txt', res.id_str);
+							DATABASE_ADD('Whitelist', { user_id: res.id_str, username: targetUsername });
+							logTime(`@${targetUsername} (ID: ${res.id_str}) added to whitelist.`);
                             sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to whitelist.`);
                         });
                 }
@@ -233,8 +231,9 @@ const onNewMessage = async (dailyStorageInstance, event) => {
                 if(senderId === process.env.HEAD_ADMIN_ID){
                     getUserByUsername(targetUsername)
                         .then((res) => {
-                            whitelist.push(res.id_str);
-                            addToEndOfFile('./storage/txt/blacklist.txt', res.id_str);
+                            blacklist.push(res.id_str);
+							DATABASE_ADD('Blacklist', { user_id: res.id_str, username: targetUsername });
+							logTime(`@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
                             sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
                         });
                 }

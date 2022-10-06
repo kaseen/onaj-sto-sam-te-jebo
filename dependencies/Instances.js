@@ -1,6 +1,7 @@
 require('dotenv').config({ path: require('find-config')('.env') })
 const { Autohook } = require('twitter-autohook');
 const { TwitterApi } = require('twitter-api-v2');
+const sheetdb = require('sheetdb-node');
 
 // ApiKey (Consumer key), ApiKeySecret (Consumer secret)
 const TwitterApiInit = new TwitterApi({
@@ -28,8 +29,15 @@ const BearerClient = new TwitterApi(process.env.BEARER_TOKEN);
 
 const TwitterClient = TwitterApiInit.readWrite;
 
+const config = {
+	address: process.env.SHEETDB_ADDRESS
+}
+
+const SheetDB = sheetdb(config);
+
 module.exports = {
   AutohookInstance,
   BearerClient,
-  TwitterClient
+  TwitterClient,
+  SheetDB
 }

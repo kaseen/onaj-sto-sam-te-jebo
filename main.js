@@ -17,20 +17,21 @@
 
 - 24H reset onUpdate (IMPLEMENTIRAO TESTIRA SE)
 - Svakih sat vremena save to storage (IMPLEMENTIRAO TESTIRA SE)
+- ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
+
+- rucno mora se uklanja whitelist blacklist
 
 - testiraj heroku storage .txt fajl
 - process.on exit print timestamp trenutni i kad ce da se ocekuje resetovanje storaga
 - getTimestamp !admin option
 - pametnije da se cekira timestamp za reset usluga
 
-- ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
 - NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
 
 - !mali na sliku stavi audio
 - new filestamp na exit radi?
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
 - Kad neko zaprati bota posalji mu Komande poruku
-- rucno mora se uklanja whitelist blacklist
 
 ------ ALT
 

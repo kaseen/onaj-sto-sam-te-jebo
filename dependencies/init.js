@@ -3,6 +3,7 @@ const { onDataFilterStream } = require('./libs/streamingExport');
 const { onNewMessage } = require('./libs/webhookExport');
 const { AutohookInstance, BearerClient } = require('./Instances');
 const { logTime } = require('./serverMaintenance');
+const { getWhitelist, getBlacklist } = require('./libs/sheetdb');
 
 /*
 *	async renewRules()
@@ -108,9 +109,14 @@ const openWebhook = async (dailyStorageInstance) => {
 	// Removes existing webhooks
 	await webhook.removeWebhooks();
 
+	const whitelist = await getWhitelist();
+	console.log('Whitelist loaded.');
+	const blacklist = await getBlacklist();
+	console.log('Blacklist loaded.');
+
 	webhook.on('event', async (event) => {
 		if (event.direct_message_events) {
-			await onNewMessage(dailyStorageInstance, event);
+			await onNewMessage(dailyStorageInstance, event, whitelist, blacklist);
 		}
 	})
 
