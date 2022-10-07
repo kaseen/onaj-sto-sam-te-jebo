@@ -45,7 +45,7 @@ const DATABASE_ADMIN_DELETE_USERNAME = (sheet, username) => {
 const DATABASE_USAGE_GET = async () => {
 	// Read the whole sheet
 	try{
-		return DBAdminMenu.read({ sheet: 'DailyUsage' });
+		return DBDailyUsage.read({ sheet: 'DailyUsage' });
 	}catch(e){
 		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_GET');
 		console.log(e);
@@ -56,7 +56,7 @@ const DATABASE_USAGE_ADD = async (list) => {
 	// Add row(s) in sheet
 	// [{ user_id: '', count: '' }]
 	try{
-		await DBAdminMenu.create(list, 'DailyUsage');
+		await DBDailyUsage.create(list, 'DailyUsage');
 	}catch(e){
 		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_ADD');
 		console.log(e);
