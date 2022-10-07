@@ -5,25 +5,24 @@ const fs = require('fs');
 /*
 *   fileStorage:                            antiSpam: 
 *
-*   constructor(filePath)                   constructor()
-*   async replenishMap()                    getIdTimestamp(userId)
-*   exportToFilePath()                      getWarning(userId)
-*   boolSaveStorage(timestampInstance)      checkSpam(userId)
-*   onExit()                                setWarning(userId)
-*   incrementId(userId)                     getWarning(userId)
-*   printMap()                              checkSpam(userId)
-*   getId(userId)                           setWarning(userId)
+*   constructor()							constructor()
+*   async replenishMap()					getIdTimestamp(userId)
+*   async exportMapToDatabase()				getWarning(userId)
+*   async checkTimestamp()					checkSpam(userId)
+*   async onExit()							setWarning(userId)
+*   incrementId(userId)						getWarning(userId)
+*   printMap()								checkSpam(userId)
+*   getId(userId)							setWarning(userId)
 *   getMap()
-*   getFilePath()                           Other:
-*   getMapSize()                            importFromFile(filepath)
-*   clearFile()                             addToEndOfFile(filepath, text)    
-*   clearMap()                              readBotInfoTxt(filePath)
-*                                           logTime(text)
-*   timestampStorage:                       randomElementFromList(list)
-*   constructor(filePath)                   dateNow()
-*   readTimestampFromFile()
-*   writeDateNowToFile()
-*   getTimestamp()
+*   getTimestamp()                           
+*   getMapSize()                            
+*   clearMap()                              
+*                                 
+*	Other:                                     
+*                    
+*	importFromFile(filepath)				readBotInfoTxt(filePath)
+*	logTime(text)							randomElementFromList(list)
+*	dateNow()
 */
    
 
@@ -47,14 +46,12 @@ class fileStorage {
 
     constructor() {
         this._map;
+		this._RESET_TIME = 86400000;
     }
 
 	// 1 call to database
     async replenishMap(){
         this._map = await getDailyUsage();
-
-		// TODO REMOVE
-		console.log(this._map);
     }
 
 	// 2 calls to database
@@ -68,46 +65,21 @@ class fileStorage {
 		await DATABASE_USAGE_ADD(list);
     }
 
-	getTimestamp(){
-		return this._map.get('timestamp');
+	// 2 calls to database
+	async checkTimestamp(){
+		if(dateNow() > this.getTimestamp() + this._RESET_TIME){
+			// Clear local map and clear database
+			this.clearMap();
+			await DATABASE_USAGE_CLEAR();
+			const newTimestamp = dateNow();
+			// Add new timestamp to local map and database
+			await DATABASE_USAGE_ADD({ user_id: 'timestamp', count: newTimestamp });
+			this._map.set('timestamp', newTimestamp);
+			logTime('[SERVER MAINTENANCE]: Timestamp database updated.\n');
+		}
 	}
 
-	// NE TREBA ZA POCETAK			MOZDA ZA KASNIJE
-    // Only write to .txt file in storage without clearing map
-    /*async boolSaveStorage(){
-		console.log("\n----------------------- 2HOURLY -------------------------\n");       // TODO: remove after deep test
-		logTime('\nMap entries before saving to server:\n');                                // TODO: remove after deep test
-		this.printMap();                                                                    // TODO: remove after deep test
-		console.log();                                                                      // TODO: remove after deep test
-		await this.exportMapToDatabase();
-		logTime('[SERVER MAINTENANCE]: Storage successfully saved to database.');
-		console.log("\n---------------------------------------------------------\n");       // TODO: remove after deep test
-
-		this.checkTimestamp(timestampInstance);
-    }*/
-
-	/*checkTimestamp(timestampInstance){
-		if(dateNow() > timestampInstance.getTimestamp() + timestampInstance._RESET_TIME){
-			console.log("\n------------------------ UPDATE -------------------------\n");   // TODO: remove after deep test
-			logTime('\nMap entries before reset:\n');                                       // TODO: remove after deep test
-			this.printMap();                                                                // TODO: remove after deep test
-			// Clear fileStorage map and clear ./dailyUsage.txt file
-			this.clearFile();
-			this.clearMap();
-			// Write new timestamp to file
-			timestampInstance.writeDateNowToFile();
-			timestampInstance.readTimestampFromFile();
-			logTime(`New filestamp: ${timestampInstance.getTimestamp()}`);                  // TODO: remove after deep test
-			logTime('[SERVER MAINTENANCE]: Timestamp file updated.\n');
-		}
-	}*/
-
-    // Save map to .txt file and exit
     async onExit(){
-        logTime(`Saving to database..`);						// TODO: remove after deep test
-        logTime('Map entries on exit:\n');						// TODO: remove after deep test
-        this.printMap();										// TODO: remove after deep test
-        console.log();											// TODO: remove after deep test
         await this.exportMapToDatabase();
         logTime('Database saved, exiting...\n');
     }
@@ -134,11 +106,14 @@ class fileStorage {
         return this._map;
     }
 
+	getTimestamp(){
+		return this._map.get('timestamp');
+	}
+
     getMapSize(){
         return this._map.size;
     }
 
-	// TODO na timestamp
     clearMap(){
         this._map.clear();
     }
@@ -194,10 +169,6 @@ const importFromFile = (filepath) => {
     return lines;
 }
 
-const addToEndOfFile = (filepath, text) => {
-    fs.writeFileSync(filepath, '\n' + text, {flag: 'a'});
-}
-
 const readBotInfoTxt = (filePath) => {
     const text = fs.readFileSync(filePath, {encoding:'utf8', flag:'r'});
     return text;
@@ -205,7 +176,6 @@ const readBotInfoTxt = (filePath) => {
 
 const logTime = (text) => {
     const currentTime = new Date();
-
     console.log('(' + currentTime.today() + ')(' + currentTime.timeNow() + ') ' + text);
 }
 
@@ -223,7 +193,6 @@ module.exports = {
     antiSpam,
     readBotInfoTxt,
     importFromFile,
-    addToEndOfFile,
     logTime,
     randomElementFromList,
     dateNow

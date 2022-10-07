@@ -10,17 +10,7 @@
 
 ------ MAIN
 
-
 - mozda on exit stream.close() ???
-
-- 24H reset onUpdate (IMPLEMENTIRAO TESTIRA SE)
-- Svakih sat vremena save to storage (IMPLEMENTIRAO TESTIRA SE)
-- ne radi stream gasi se (IMPLEMENTIRANO TESTIRA SE)
-
-- rucno mora se uklanja whitelist blacklist
-
-- testiraj heroku storage .txt fajl
-- process.on exit print timestamp trenutni i kad ce da se ocekuje resetovanje storaga
 - getTimestamp !admin option
 - pametnije da se cekira timestamp za reset usluga
 
@@ -53,19 +43,22 @@ process.on('beforeExit', async () => {
 	console.log("TEST ZA HEROKU BEFORE EXIT");
 });
 
-/*const checkStorage = async (n) => {
-	await setTimeout(function () {
-		dailyStorageInstance.boolSaveStorage(timestamp);
-		checkStorage(n);
-	// BEFORE
-	}, 2 * 60 * 1000);//n * 60 * 60 * 1000); TODO
-}*/
+const checkTime = async (n) => {
+	// Check timestamp every (n) minutes
+	setTimeout(async function () {
+		await dailyStorageInstance.checkTimestamp();
+		checkTime(n);
+	}, n * 60 * 1000);
+}
 
 const main = async () => {
 	try{
 		console.log("\n------------------------ STARTED ------------------------\n");
 		const expectedRestart = new Date(dateNow() + process.env.SERVER_RESTART * 60 * 60 * 1000);
 		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
+
+		// Check timestamp every n minutes
+		checkTime(75);
 
 		// Load DailyUsage database.
 		await dailyStorageInstance.replenishMap();
@@ -77,14 +70,7 @@ const main = async () => {
 			logTime('Ngrok time passed, restarting...');
 			await dailyStorageInstance.onExit();
 			process.exit(0);
-		}, 3 * 60 * 1000);//process.env.SERVER_RESTART * 60 * 60 * 1000); TODO
-
-		// TODO
-		// Check timestamp on startup
-		// dailyStorageInstance.checkTimestamp(timestamp);
-
-		// Every 2 hours (STORAGE_SAVE) save map in memory to drive
-		//checkStorage(process.env.STORAGE_SAVE);	 // NE TREBA ZA SAD
+		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 
 		await openWebhook(dailyStorageInstance);
 		await openStreaming();

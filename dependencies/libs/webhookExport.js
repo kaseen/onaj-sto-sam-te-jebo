@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
-const { antiSpam, addToEndOfFile, randomElementFromList, logTime } = require('../serverMaintenance');
+const { antiSpam, randomElementFromList, logTime } = require('../serverMaintenance');
 const { DATABASE_ADMIN_ADD, DATABASE_ADMIN_DELETE_USERNAME } = require('./sheetdb');
 const { 
     botHelperInfo,
