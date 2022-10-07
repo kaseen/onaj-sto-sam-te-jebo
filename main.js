@@ -41,22 +41,25 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const { dateNow, logTime } = require('./dependencies/serverMaintenance');
 const { openWebhook, openStreaming} = require('./dependencies/init');
-const { dailyStorageInstance, timestamp } = require('./storage/exportTxt');
+const { dailyStorageInstance } = require('./storage/exportTxt');
 
-timestamp.readTimestampFromFile();
-
-process.on('exit', () => {
+process.on('exit', async () => {
 	console.log("\n------------------------- EXIT --------------------------\n");
-	dailyStorageInstance.onExit();
+	console.log("TEST ZA HEROKU EXIT");
 });
 
-const checkStorage = async (n) => {
+process.on('beforeExit', async () => {
+	console.log("\n------------------------- BEXIT --------------------------\n");
+	console.log("TEST ZA HEROKU BEFORE EXIT");
+});
+
+/*const checkStorage = async (n) => {
 	await setTimeout(function () {
 		dailyStorageInstance.boolSaveStorage(timestamp);
 		checkStorage(n);
 	// BEFORE
-	}, 30 * 1000);//n * 60 * 60 * 1000);
-}
+	}, 2 * 60 * 1000);//n * 60 * 60 * 1000); TODO
+}*/
 
 const main = async () => {
 	try{
@@ -64,21 +67,24 @@ const main = async () => {
 		const expectedRestart = new Date(dateNow() + process.env.SERVER_RESTART * 60 * 60 * 1000);
 		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
 
+		// Load DailyUsage database.
+		await dailyStorageInstance.replenishMap();
+		console.log('DailyUsage loaded.');
+
 		// Turn off bot every SERVER_RESTART h (Ngrok server lives 8h)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes (and than exponentially)
-		setTimeout(function () {
+		setTimeout(async () => {
 			logTime('Ngrok time passed, restarting...');
+			await dailyStorageInstance.onExit();
 			process.exit(0);
-		}, 5 * 60 * 1000);//process.env.SERVER_RESTART * 60 * 60 * 1000);
+		}, 3 * 60 * 1000);//process.env.SERVER_RESTART * 60 * 60 * 1000); TODO
 
+		// TODO
 		// Check timestamp on startup
-		dailyStorageInstance.checkTimestamp(timestamp);
+		// dailyStorageInstance.checkTimestamp(timestamp);
 
 		// Every 2 hours (STORAGE_SAVE) save map in memory to drive
-		checkStorage(process.env.STORAGE_SAVE);
-
-		// If app stops working fill map again on start
-		await dailyStorageInstance.replenishMap();
+		//checkStorage(process.env.STORAGE_SAVE);	 // NE TREBA ZA SAD
 
 		await openWebhook(dailyStorageInstance);
 		await openStreaming();

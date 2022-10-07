@@ -25,15 +25,16 @@ const BearerClient = new TwitterApi(process.env.BEARER_TOKEN);
 
 const TwitterClient = TwitterApiInit.readWrite;
 
-const config = {
-	address: process.env.SHEETDB_ADDRESS
-}
+const configAdminMenu = { address: process.env.SHEETDB_ADMIN_MENU };
+const configDailyUsage = { address: process.env.SHEETDB_DAILY_USAGE };
 
-const SheetDB = sheetdb(config);
+const DBAdminMenu = sheetdb(configAdminMenu);
+const DBDailyUsage = sheetdb(configDailyUsage);
 
 module.exports = {
   AutohookInstance,
   BearerClient,
   TwitterClient,
-  SheetDB
+  DBAdminMenu,
+  DBDailyUsage
 }

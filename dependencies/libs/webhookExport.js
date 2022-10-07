@@ -1,7 +1,7 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
 const { antiSpam, addToEndOfFile, randomElementFromList, logTime } = require('../serverMaintenance');
-const { DATABASE_ADD, DATABASE_DELETE_USERNAME } = require('./sheetdb');
+const { DATABASE_ADMIN_ADD, DATABASE_ADMIN_DELETE_USERNAME } = require('./sheetdb');
 const { 
     botHelperInfo,
 	hAdminInfo,
@@ -18,9 +18,6 @@ const {
     postVideoMethod,
     getFollowers
 } = require('./twitterLib');
-
-// TODO REMOVE
-const { readBotInfoTxt } = require('../serverMaintenance');
 
 /*
 *   async userFollowsBot(senderId)
@@ -208,22 +205,13 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
             // HEAD ADMIN COMMANDS
             case '!admin':
                 if(senderId === process.env.HEAD_ADMIN_ID){
-					// BEFORE
-                    /*const map = dailyStorageInstance.getMap();
+                    const map = dailyStorageInstance.getMap();
                     let msg = '';
                     for (const [key, value] of map) {
                         msg += `${key} ${value}\n`
                     }
                     msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty.');
-					sendMessage(senderId, hAdminInfo);*/
-
-					// TODO REMOVE
-					const x = readBotInfoTxt('./storage/txt/dailyUsage.txt');
-					const y = readBotInfoTxt('./storage/txt/timestamp.txt');
-					console.log('---------daily')
-					console.log(x);
-					console.log('---------time');
-					console.log(y);
+					sendMessage(senderId, hAdminInfo);
                 }
                 return;
             case '!wadd':
@@ -234,7 +222,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                     getUserByUsername(targetUsername)
                         .then((res) => {
                             whitelist.push(res.id_str);
-							DATABASE_ADD('Whitelist', { user_id: res.id_str, username: targetUsername });
+							DATABASE_ADMIN_ADD('Whitelist', { user_id: res.id_str, username: targetUsername });
 							logTime(`@${targetUsername} (ID: ${res.id_str}) added to whitelist.`);
                             sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to whitelist.`);
                         });
@@ -245,7 +233,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                     return;
 				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
-                    DATABASE_DELETE_USERNAME('Whitelist', targetUsername);
+                    DATABASE_ADMIN_DELETE_USERNAME('Whitelist', targetUsername);
 					logTime(`@${targetUsername} (ID: ${res.id_str}) removed from whitelist.`);
                 }
                 return;
@@ -257,7 +245,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                     getUserByUsername(targetUsername)
                         .then((res) => {
                             blacklist.push(res.id_str);
-							DATABASE_ADD('Blacklist', { user_id: res.id_str, username: targetUsername });
+							DATABASE_ADMIN_ADD('Blacklist', { user_id: res.id_str, username: targetUsername });
 							logTime(`@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
                             sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
                         });
@@ -268,7 +256,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                     return;  
 				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
-                    DATABASE_DELETE_USERNAME('Blacklist', targetUsername);
+                    DATABASE_ADMIN_DELETE_USERNAME('Blacklist', targetUsername);
 					logTime(`@${targetUsername} (ID: ${res.id_str}) removed from blacklist.`);
                 }
                 return;

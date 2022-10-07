@@ -1,59 +1,103 @@
-const { SheetDB } = require('../Instances');
+const { DBAdminMenu, DBDailyUsage } = require('../Instances');
 
 /*
-*	async DATABASE_GET(sheet)
-*	DATABASE_ADD(sheet, username)
-*	DATABASE_DELETE_USERNAME(sheet, username)
+*	async DATABASE_ADMIN_GET(sheet)
+*	DATABASE_ADMIN_ADD(sheet, username)
+*	DATABASE_ADMIN_DELETE_USERNAME(sheet, username)
+*	async DATABASE_USAGE_GET()
+*	async DATABASE_USAGE_ADD(list)
+*	async DATABASE_USAGE_CLEAR()
 *	async getWhitelist()
 *	async getBlacklist()
 */
 
-const DATABASE_GET = async (sheet) => {
+const DATABASE_ADMIN_GET = async (sheet) => {
 	// Read the whole sheet
 	try{
-		return SheetDB.read({ sheet: sheet });
+		return DBAdminMenu.read({ sheet: sheet });
 	}catch(e){
 		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_GET');
 		console.log(e);
 	}
 }
 
-const DATABASE_ADD = (sheet, username) => {
+const DATABASE_ADMIN_ADD = (sheet, username) => {
 	// Add row(s) in sheet
 	// { user_id: '', username: '' }
 	try{
-		SheetDB.create(username, sheet);
+		DBAdminMenu.create(username, sheet);
 	}catch(e){
 		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_ADD');
 		console.log(e);
 	}
 }
 
-const DATABASE_DELETE_USERNAME = (sheet, username) => {
+const DATABASE_ADMIN_DELETE_USERNAME = (sheet, username) => {
 	// Delete row(s) in sheet
 	try{
-		SheetDB.delete('username', username, sheet);
+		DBAdminMenu.delete('username', username, sheet);
 	}catch(e){
 		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_DELETE_USERNAME');
 		console.log(e);
 	}
 }
 
+const DATABASE_USAGE_GET = async () => {
+	// Read the whole sheet
+	try{
+		return DBAdminMenu.read({ sheet: 'DailyUsage' });
+	}catch(e){
+		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_GET');
+		console.log(e);
+	}
+}
+
+const DATABASE_USAGE_ADD = async (list) => {
+	// Add row(s) in sheet
+	// [{ user_id: '', count: '' }]
+	try{
+		await DBAdminMenu.create(list, 'DailyUsage');
+	}catch(e){
+		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_ADD');
+		console.log(e);
+	}
+}
+
+const DATABASE_USAGE_CLEAR = async () => {
+	try{
+		await DBDailyUsage.delete('user_id', '*', 'DailyUsage');
+	}catch(e){
+		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_CLEAR');
+		console.log(e);
+	}
+}
+
 const getWhitelist = async () => {
 	const list = [];
-	JSON.parse(await DATABASE_GET('Whitelist')).forEach((item) => { list.push(item['user_id']) });
+	JSON.parse(await DATABASE_ADMIN_GET('Whitelist')).forEach((item) => { list.push(item['user_id']) });
 	return list;
 }
 
 const getBlacklist = async () => {
 	const list = [];
-	JSON.parse(await DATABASE_GET('Blacklist')).forEach((item) => { list.push(item['user_id']) });
+	JSON.parse(await DATABASE_ADMIN_GET('Blacklist')).forEach((item) => { list.push(item['user_id']) });
 	return list;
 }
 
+const getDailyUsage = async () => {
+	const map = new Map();
+	JSON.parse(await DATABASE_USAGE_GET()).forEach((item) => {
+		map.set(item['user_id'], Number(item['count']));
+	});
+	return map;
+}
+
 module.exports = {
-	DATABASE_ADD,
-	DATABASE_DELETE_USERNAME,
+	DATABASE_ADMIN_ADD,
+	DATABASE_ADMIN_DELETE_USERNAME,
+	DATABASE_USAGE_ADD,
+	DATABASE_USAGE_CLEAR,
 	getWhitelist,
-	getBlacklist
+	getBlacklist,
+	getDailyUsage
 }
