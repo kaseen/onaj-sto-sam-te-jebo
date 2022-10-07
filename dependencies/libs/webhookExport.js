@@ -19,6 +19,9 @@ const {
     getFollowers
 } = require('./twitterLib');
 
+// TODO REMOVE
+const { readBotInfoTxt } = require('../serverMaintenance');
+
 /*
 *   async userFollowsBot(senderId)
 *   async userBlocksBot(senderId)
@@ -94,7 +97,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
 
             // If it's spam sendMessage
             if(!spamChecker.getWarning(senderId)){
-                sendMessage(senderId, 'Sachekaj bota bote (spam protection)');
+                sendMessage(senderId, `Sachekaj bota bote (spam protection) ${randomElementFromList(randomEmojiError)}${randomElementFromList(randomEmojiError)}`);
             }
 
             // Disable sending message in this block of spam
@@ -205,13 +208,22 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
             // HEAD ADMIN COMMANDS
             case '!admin':
                 if(senderId === process.env.HEAD_ADMIN_ID){
-                    const map = dailyStorageInstance.getMap();
+					// BEFORE
+                    /*const map = dailyStorageInstance.getMap();
                     let msg = '';
                     for (const [key, value] of map) {
                         msg += `${key} ${value}\n`
                     }
                     msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty.');
-					sendMessage(senderId, hAdminInfo);
+					sendMessage(senderId, hAdminInfo);*/
+
+					// TODO REMOVE
+					const x = readBotInfoTxt('./storage/txt/dailyUsage.txt');
+					const y = readBotInfoTxt('./storage/txt/timestamp.txt');
+					console.log('---------daily')
+					console.log(x);
+					console.log('---------time');
+					console.log(y);
                 }
                 return;
             case '!wadd':

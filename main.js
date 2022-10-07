@@ -54,7 +54,8 @@ const checkStorage = async (n) => {
 	await setTimeout(function () {
 		dailyStorageInstance.boolSaveStorage(timestamp);
 		checkStorage(n);
-	}, n * 60 * 60 * 1000);
+	// BEFORE
+	}, 30 * 1000);//n * 60 * 60 * 1000);
 }
 
 const main = async () => {
@@ -68,7 +69,7 @@ const main = async () => {
 		setTimeout(function () {
 			logTime('Ngrok time passed, restarting...');
 			process.exit(0);
-		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
+		}, 5 * 60 * 1000);//process.env.SERVER_RESTART * 60 * 60 * 1000);
 
 		// Check timestamp on startup
 		dailyStorageInstance.checkTimestamp(timestamp);
