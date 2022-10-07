@@ -75,7 +75,7 @@ class fileStorage {
 			// Add new timestamp to local map and database
 			await DATABASE_USAGE_ADD({ user_id: 'timestamp', count: newTimestamp });
 			this._map.set('timestamp', newTimestamp);
-			logTime('[SERVER MAINTENANCE]: Timestamp database updated.\n');
+			logTime('[SERVER MAINTENANCE]: Timestamp database updated.');
 		}
 	}
 
@@ -83,6 +83,12 @@ class fileStorage {
         await this.exportMapToDatabase();
         logTime('Database saved, exiting...\n');
     }
+
+	expectedResetTime(){
+		const exReset = new Date(this.getTimestamp() + this._RESET_TIME);
+		exReset.setTime(exReset.getTime() + 2 * 60 * 60 * 1000);
+		return exReset;
+	}
 
     incrementId(userId){
         const currentValue = this._map.get(userId);
@@ -197,4 +203,3 @@ module.exports = {
     randomElementFromList,
     dateNow
 }
-

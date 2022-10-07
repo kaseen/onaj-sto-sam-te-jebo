@@ -10,6 +10,7 @@
 
 ------ MAIN
 
+- ocekivani restart TIME ZONE check
 - mozda on exit stream.close() ???
 - getTimestamp !admin option
 - pametnije da se cekira timestamp za reset usluga
@@ -45,7 +46,7 @@ process.on('beforeExit', async () => {
 
 const checkTime = async (n) => {
 	// Check timestamp every (n) minutes
-	setTimeout(async function () {
+	setTimeout(async () => {
 		await dailyStorageInstance.checkTimestamp();
 		checkTime(n);
 	}, n * 60 * 1000);

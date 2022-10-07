@@ -197,9 +197,14 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;
             case '!info':
-                sendMessage(senderId, `Iskorishteno (${numOfCommandUses}/${process.env.MAX_DAILY_USAGE}) usluga za danas.\n\n` + 
+				const exReset = dailyStorageInstance.expectedResetTime();
+                sendMessage(senderId, 
+					`~~ ochekiwani restart ${exReset.today()} ${exReset.timeNow()} ~~\n\n` + 
+					`Iskorishteno (${numOfCommandUses}/${process.env.MAX_DAILY_USAGE}) usluga za danas.\n\n` +
                     'Za wishe informacija (ili predloga) jawi se malena na wacap +381 62 839 7553.\n\n(poshalji sise ako oces admina ' +
-                    `${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)})`);
+                    `${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)})\n\n` +
+					`~made by: rip nokty xumor 😣`
+				);
                 return;
 
             // HEAD ADMIN COMMANDS
