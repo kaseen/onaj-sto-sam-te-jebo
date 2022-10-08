@@ -4,3 +4,4 @@ Dostupne komande:
 !fuxo <username>
 !zejtin <username>
 !info
+!help

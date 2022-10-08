@@ -2,6 +2,7 @@
 !patoshi
 !fuxo
 !zejtin
+!help
 !info
 !admin
 !wadd

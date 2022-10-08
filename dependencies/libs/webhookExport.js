@@ -21,6 +21,7 @@ const {
 
 /*
 *   async userFollowsBot(senderId)
+*	sendHelp(senderId)
 *   async userBlocksBot(senderId)
 *   async prenk(senderId, senderUsername, targetUsername)
 *   async onNewMessage(dailyStorageInstance, event)
@@ -36,6 +37,13 @@ const userFollowsBot = async (senderId) => {
 const userBlocksBot = async (senderId) => {
     const res = await relationshipId(process.env.BOT_ID, senderId);
     return res[0] === 2 ? false : true;
+}
+
+const sendHelp = (senderId) => {
+	const msg = `${botHelperInfo} ${randomElementFromList(randomEmojiSuccess)}` +
+		`${randomElementFromList(randomEmojiError)}\n\n`+
+		`npr. !prenk @jawisemalena\n~mozhe i bez @`
+	sendMessage(senderId, msg);
 }
 
 const prenk = async (senderId, targetId, targetUsername) => {
@@ -196,6 +204,9 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                     .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;
+			case '!help':
+				sendHelp(senderId);
+				return;
             case '!info':
 				const exReset = dailyStorageInstance.expectedResetTime();
                 sendMessage(senderId, 
@@ -239,7 +250,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
 				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
                     DATABASE_ADMIN_DELETE_USERNAME('Whitelist', targetUsername);
-					logTime(`@${targetUsername} (ID: ${res.id_str}) removed from whitelist.`);
+					logTime(`@${targetUsername} removed from whitelist.`);
                 }
                 return;
             case '!badd':
@@ -262,7 +273,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
 				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
                     DATABASE_ADMIN_DELETE_USERNAME('Blacklist', targetUsername);
-					logTime(`@${targetUsername} (ID: ${res.id_str}) removed from blacklist.`);
+					logTime(`@${targetUsername} removed from blacklist.`);
                 }
                 return;
             default:
@@ -276,5 +287,6 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
 }
 
 module.exports = {
-    onNewMessage
+    onNewMessage,
+	sendHelp
 }

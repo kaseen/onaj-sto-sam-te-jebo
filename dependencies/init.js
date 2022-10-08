@@ -1,6 +1,6 @@
 const { ETwitterStreamEvent } = require('twitter-api-v2');
 const { onDataFilterStream } = require('./libs/streamingExport');
-const { onNewMessage } = require('./libs/webhookExport');
+const { onNewMessage, sendHelp } = require('./libs/webhookExport');
 const { AutohookInstance, BearerClient } = require('./Instances');
 const { logTime } = require('./serverMaintenance');
 const { getWhitelist, getBlacklist } = require('./libs/sheetdb');
@@ -77,24 +77,14 @@ const openStreaming = async () => {
 	});
 
 	stream.on(ETwitterStreamEvent.Connected, () => logTime('Stream opened.'));
-	stream.on(ETwitterStreamEvent.Error, async (e) => {
-		console.log("------------------------- ERROR -------------------------");
-		console.log(e);
-		try{
-			console.log(e.error);
-		}catch(e1){}
-
-		console.log("---------------------------------------------------------");
-	});
-
-	stream.on(ETwitterStreamEvent.Reconnected, () => logTime('Stream reconnected.'))
+	stream.on(ETwitterStreamEvent.ConnectionClosed, () => logTime('Connection closed.'));
+	stream.on(ETwitterStreamEvent.Reconnected, () => logTime('Stream reconnected.'));
 
 	await stream.connect({ 
 		autoReconnect: true,
 		autoReconnectRetries: Infinity
 	}).catch((e) => {
-		console.log("------------------------- CONNECTERROR -------------------------");
-		console.log(e);
+		console.log('Error connecting.');
 	});
 }
 
@@ -110,9 +100,12 @@ const openWebhook = async (dailyStorageInstance) => {
 	console.log('Blacklist loaded.');
 
 	webhook.on('event', async (event) => {
-		if (event.direct_message_events) {
+		if(event.direct_message_events) {
 			await onNewMessage(dailyStorageInstance, event, whitelist, blacklist);
-		}
+		} else if(event.follow_events){
+			const senderId = event.follow_events[0].source.id;
+			sendHelp(senderId);
+		} 
 	})
 
 	// Starts a server and adds a new webhook
