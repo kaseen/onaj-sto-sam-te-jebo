@@ -1,7 +1,7 @@
 // fs.readdirSync uses process.cwd() - current working directory of the Node.js process.
 require('dotenv').config({ path: require('find-config')('.env') });
 const fs = require('fs');
-const { postStatusText, postStatusWithMedia } = require('./twitterLib');
+const { postStatusText, postStatusWithMedia } = require('../twitterapi/twitterLib');
 const { regex, provera } = require('./checkExport');
 const { logTime } = require('../serverMaintenance');
 const listMention = require('../../storage/listMention');

@@ -1,4 +1,4 @@
-const { timestampClass, readBotInfoTxt, importFromFile } = require('../dependencies/serverMaintenance');
+const { timestampClass, readBotInfoTxt, importFromFile } = require('../src/serverMaintenance');
 
 const timestampInstance = new timestampClass();
 

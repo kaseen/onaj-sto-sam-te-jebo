@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
-const { antiSpam, randomElementFromList, logTime } = require('../../dependencies/serverMaintenance');
+const { antiSpam, randomElementFromList, logTime } = require('../serverMaintenance');
 const { DATABASE_ADMIN_DELETE_USERNAME } = require('../databases/sheetdb');
 const { getUserCountById, updateItemCount } = require('../databases/dynamodb');
 const { 
@@ -16,7 +16,7 @@ const {
     relationshipId,
     postStatusText,
     getFollowers
-} = require('../../dependencies/libs/twitterLib');
+} = require('../twitterapi/twitterLib');
 const {
 	patoshi,
 	fuxo,
@@ -255,6 +255,5 @@ const onNewMessage = async (timestampInstance, event, whitelist, blacklist) => {
 }
 
 module.exports = {
-    onNewMessage,
-	sendHelp
+    onNewMessage
 }

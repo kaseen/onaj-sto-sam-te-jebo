@@ -1,28 +1,31 @@
 require('dotenv').config({ path: require('find-config')('.env') });
-const { DATABASE_GET_TIMESTAMP, DATABASE_SET_TIMESTAMP } = require('../src/databases/sheetdb');
-const { recreateCountTable } = require('../src/databases/dynamodb');
 const fs = require('fs');
+const { recreateCountTable } = require('./databases/dynamodb');
+const { DATABASE_GET_TIMESTAMP, DATABASE_SET_TIMESTAMP } = require('./databases/sheetdb');
 
 /*
-*   fileStorage:                            antiSpam: 
+*	timestampClass:
 *
-*   constructor()							constructor()
-*   async replenishMap()					getIdTimestamp(userId)
-*   async exportMapToDatabase()				getWarning(userId)
-*   async checkTimestamp()					checkSpam(userId)
-*   async onExit()							setWarning(userId)
-*   incrementId(userId)						getWarning(userId)
-*   printMap()								checkSpam(userId)
-*   getId(userId)							setWarning(userId)
-*   getMap()
-*   getTimestamp()                           
-*   getMapSize()                            
-*   clearMap()                              
-*                                 
-*	Other:                                     
-*                    
-*	importFromFile(filepath)				readBotInfoTxt(filePath)
-*	logTime(text)							randomElementFromList(list)
+*	constructor()
+*	async checkTimestamp()
+*	expectedResetTime()
+*	async initTimestamp()
+*	setTimestamp(newTime)
+*	getTimestamp()
+*
+*	antiSpam:
+*	constructor()
+*	getIdTimestamp(userId)
+*	getWarning(userId)
+*	checkSpam(userId)
+*	setWarning(userId)
+*
+*	Other:
+*
+*	importFromFile(filepath)
+*	readBotInfoTxt(filePath)
+*	logTime(text)
+*	randomElementFromList(list)
 *	dateNow()
 */
    

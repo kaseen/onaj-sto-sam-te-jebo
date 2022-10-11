@@ -1,8 +1,8 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 
 const { botHelperInfo, randomEmojiSuccess, randomEmojiError, waitForBot } = require('../../storage/exportTxt');
-const { sendMessage, getUserByUsername, postVideoMethod } = require('../../dependencies/libs/twitterLib');
-const { randomElementFromList, logTime } = require('../../dependencies/serverMaintenance');
+const { sendMessage, getUserByUsername, postVideoMethod } = require('../twitterapi/twitterLib');
+const { randomElementFromList, logTime } = require('../serverMaintenance');
 const { DATABASE_ADMIN_ADD } = require('../databases/sheetdb');
 const { updateItemCount } = require('../databases/dynamodb');
 

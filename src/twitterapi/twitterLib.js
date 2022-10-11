@@ -1,7 +1,7 @@
-const { TwitterClient } = require('../../src/initInstances');
+const fs = require('fs');
+const { TwitterClient } = require('../initInstances');
 const { randomElementFromList } = require('../serverMaintenance');
 const { randomEmojiError } = require('../../storage/exportTxt');
-const fs = require('fs');
 
 /* 
 *	async sendMessage(recipientId, text)

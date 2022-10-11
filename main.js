@@ -30,7 +30,7 @@
 */
 
 require('dotenv').config({ path: require('find-config')('.env') });
-const { dateNow, logTime } = require('./dependencies/serverMaintenance');
+const { dateNow, logTime } = require('./src/serverMaintenance');
 const { openWebhook, openStreaming } = require('./src/initMain');
 const { timestampInstance } = require('./storage/exportTxt');
 

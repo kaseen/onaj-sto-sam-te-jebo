@@ -23,17 +23,14 @@ const AutohookInstance = new Autohook({
 });
 
 const BearerClient = new TwitterApi(process.env.BEARER_TOKEN);
-
 const TwitterClient = TwitterApiInit.readWrite;
 
+// ----- SheetDB -----
 const configAdminMenu = { address: process.env.SHEETDB_ADMIN_MENU };
-const configDailyUsage = { address: process.env.SHEETDB_DAILY_USAGE };
-
 const DBAdminMenu = sheetdb(configAdminMenu);
-const DBDailyUsage = sheetdb(configDailyUsage);
 
 
-// ----- AWS -----
+// ------- AWS -------
 const awsConfig = {
 	region: 'eu-west-3',
 	endpoint: 'dynamodb.eu-west-3.amazonaws.com',
@@ -51,6 +48,5 @@ module.exports = {
   AWS,
   dynamoDB,
   dynamoDocClient,
-  DBAdminMenu,
-  DBDailyUsage
+  DBAdminMenu
 }

@@ -1,9 +1,9 @@
 const { ETwitterStreamEvent } = require('twitter-api-v2');
-const { onDataFilterStream } = require('../dependencies/libs/streamingExport');
+const { onDataFilterStream } = require('./streaming/streamingExport');
 const { onNewMessage } = require('./webhook/webhookExport');
 const { sendHelp } = require('./webhook/switchCommands');
 const { AutohookInstance, BearerClient } = require('./initInstances');
-const { logTime } = require('../dependencies/serverMaintenance');
+const { logTime } = require('./serverMaintenance');
 const { getWhitelist, getBlacklist } = require('./databases/sheetdb');
 
 /*
