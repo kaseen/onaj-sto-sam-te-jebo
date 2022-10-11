@@ -1,4 +1,4 @@
-const { DBAdminMenu, DBDailyUsage } = require('../Instances');
+const { DBAdminMenu, DBDailyUsage } = require('../../src/initInstances');
 
 /*
 *	async DATABASE_ADMIN_GET(sheet)

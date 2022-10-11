@@ -1,32 +1,31 @@
-const { TwitterClient } = require('../Instances');
+const { TwitterClient } = require('../../src/initInstances');
 const { randomElementFromList } = require('../serverMaintenance');
 const { randomEmojiError } = require('../../storage/exportTxt');
 const fs = require('fs');
 
 /* 
-*   async sendMessage(recipientId, text)
-*   async getUserByUsername(username)
-*   async relationshipId(senderId, targetId)
-*   async postStatusText(text)
-*   async postStatusWithMedia(text, mediaPath)
-*   async postVideoMethod(method, senderUsername, targetUsername)
-*   async getFollowers(senderId)
+*	async sendMessage(recipientId, text)
+*	async getUserByUsername(username)
+*	async relationshipId(senderId, targetId)
+*	async postStatusText(text)
+*	async postStatusWithMedia(text, mediaPath)
+*	async postVideoMethod(method, senderUsername, targetUsername)
+*	async getFollowers(senderId)
 */
 
 const methodtoVideoMap = {
-    'patoshi': './vid/cutepatosem.mp4',
-    'fuxo': './vid/fuxo.mp4',
-    'zejtin': './vid/zejtin.mp4'
+	'patoshi': './vid/cutepatosem.mp4',
+	'fuxo': './vid/fuxo.mp4',
+	'zejtin': './vid/zejtin.mp4'
 };
 
 const sendMessage = async (recipientId, text) => {
-
-    try{
-        await TwitterClient.v1.sendDm({ recipient_id: recipientId, text: text });
-    }catch(e){
-        console.log("Error in ./dependencies/twitterLib/sendMessage");
-        console.log(e);
-    }
+	try{
+		await TwitterClient.v1.sendDm({ recipient_id: recipientId, text: text });
+	}catch(e){
+		console.log("Error in ./dependencies/twitterLib/sendMessage");
+		console.log(e);
+	}
 }
 
 const getUserByUsername = async (username) => {

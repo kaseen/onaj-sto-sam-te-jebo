@@ -31,18 +31,8 @@
 
 require('dotenv').config({ path: require('find-config')('.env') });
 const { dateNow, logTime } = require('./dependencies/serverMaintenance');
-const { openWebhook, openStreaming} = require('./dependencies/init');
+const { openWebhook, openStreaming } = require('./src/initMain');
 const { dailyStorageInstance } = require('./storage/exportTxt');
-
-process.on('exit', async () => {
-	console.log("\n------------------------- EXIT --------------------------\n");
-	console.log("TEST ZA HEROKU EXIT");
-});
-
-process.on('beforeExit', async () => {
-	console.log("\n------------------------- BEXIT --------------------------\n");
-	console.log("TEST ZA HEROKU BEFORE EXIT");
-});
 
 const checkTime = async (n) => {
 	// Check timestamp every (n) minutes
@@ -59,17 +49,13 @@ const main = async () => {
 		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
 
 		// Check timestamp every n minutes
-		checkTime(75);
-
-		// Load DailyUsage database.
-		await dailyStorageInstance.replenishMap();
-		console.log('DailyUsage loaded.');
+		// TODO
+		// checkTime(45);
 
 		// Turn off bot every SERVER_RESTART h (Ngrok server lives 8h)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes (and than exponentially)
 		setTimeout(async () => {
 			logTime('Ngrok time passed, restarting...');
-			await dailyStorageInstance.onExit();
 			process.exit(0);
 		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 

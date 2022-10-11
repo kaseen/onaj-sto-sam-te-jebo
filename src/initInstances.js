@@ -1,6 +1,7 @@
 require('dotenv').config({ path: require('find-config')('.env') })
 const { Autohook } = require('twitter-autohook');
 const { TwitterApi } = require('twitter-api-v2');
+const AWS = require('aws-sdk');
 const sheetdb = require('sheetdb-node');
 
 // ApiKey (Consumer key), ApiKeySecret (Consumer secret)
@@ -31,10 +32,24 @@ const configDailyUsage = { address: process.env.SHEETDB_DAILY_USAGE };
 const DBAdminMenu = sheetdb(configAdminMenu);
 const DBDailyUsage = sheetdb(configDailyUsage);
 
+
+// ----- AWS -----
+const awsConfig = {
+	region: 'eu-west-3',
+	endpoint: 'dynamodb.eu-west-3.amazonaws.com',
+};
+
+AWS.config.update(awsConfig);
+
+const dynamoDB = new AWS.DynamoDB();
+const dynamoDocClient = new AWS.DynamoDB.DocumentClient();
+
 module.exports = {
   AutohookInstance,
   BearerClient,
   TwitterClient,
+  dynamoDB,
+  dynamoDocClient,
   DBAdminMenu,
   DBDailyUsage
 }

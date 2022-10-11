@@ -1,5 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const { DATABASE_USAGE_ADD, DATABASE_USAGE_CLEAR, getDailyUsage } = require('./libs/sheetdb');
+const { recreateCountTable } = require('../src/DynamoDB/dynamo');
 const fs = require('fs');
 
 /*
@@ -45,44 +46,21 @@ Date.prototype.timeNow = function () {
 class fileStorage {
 
     constructor() {
-        this._map;
+        this._timestamp;
 		this._RESET_TIME = 86400000;
-    }
-
-	// 1 call to database
-    async replenishMap(){
-        this._map = await getDailyUsage();
-    }
-
-	// 2 calls to database
-    async exportMapToDatabase(){
-		await DATABASE_USAGE_CLEAR();
-		const list = [];
-		// [{ user_id: '', count: '' }]
-        for (const [key, value] of this._map) {
-			list.push({ user_id: key, count: value});
-        }
-		await DATABASE_USAGE_ADD(list);
     }
 
 	// 2 calls to database
 	async checkTimestamp(){
 		if(dateNow() > this.getTimestamp() + this._RESET_TIME){
 			// Clear local map and clear database
-			this.clearMap();
-			await DATABASE_USAGE_CLEAR();
+			recreateCountTable();
 			const newTimestamp = dateNow();
-			// Add new timestamp to local map and database
+			// Add new timestamp to sheet database
 			await DATABASE_USAGE_ADD({ user_id: 'timestamp', count: newTimestamp });
-			this._map.set('timestamp', newTimestamp);
 			logTime('[SERVER MAINTENANCE]: Timestamp database updated.');
 		}
 	}
-
-    async onExit(){
-        await this.exportMapToDatabase();
-        logTime('Database saved, exiting...\n');
-    }
 
 	expectedResetTime(){
 		const exReset = new Date(this.getTimestamp() + this._RESET_TIME);
@@ -90,39 +68,10 @@ class fileStorage {
 		return exReset;
 	}
 
-    incrementId(userId){
-        const currentValue = this._map.get(userId);
-        if(typeof currentValue === 'undefined')
-            this._map.set(userId, 1);
-        else
-            this._map.set(userId, currentValue+1);
-    }
-
-    printMap(){
-        for (const [key, value] of this._map) {
-            console.log(`\t${key}\t\t${value}`);
-        }
-    }
-
-    getId(userId){
-        return this._map.get(userId);
-    }
-
-    getMap(){
-        return this._map;
-    }
 
 	getTimestamp(){
-		return this._map.get('timestamp');
+		return this._timestamp;
 	}
-
-    getMapSize(){
-        return this._map.size;
-    }
-
-    clearMap(){
-        this._map.clear();
-    }
 
 };
 

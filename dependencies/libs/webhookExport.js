@@ -18,6 +18,14 @@ const {
     postVideoMethod,
     getFollowers
 } = require('./twitterLib');
+const {
+	getUserCountById,
+	deleteItem,
+	updateItemCount,
+	createCountTable,
+	deleteTable,
+	recreateCountTable
+} = require('../../src/DynamoDB/dynamo');
 
 /*
 *   async userFollowsBot(senderId)
@@ -151,10 +159,9 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
         if(!(await userBlocksBot(targetId))){
             sendMessage(senderId, `Mićko blokiro bota ${randomElementFromList(randomEmojiError)}`);
             return;
-        }
+        }   
 
-        const _numOfCommandUses = dailyStorageInstance.getId(senderId);
-        const numOfCommandUses = isNaN(_numOfCommandUses) ? 0 : _numOfCommandUses;    
+        const numOfCommandUses = await getUserCountById('daily-usage', senderId);
 
         if(blacklist.includes(senderId)){
             sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiError)}`);
@@ -173,14 +180,14 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                 const res = await prenk(senderId, targetId, targetUsername);
                 // On successful prenk increment
                 if(res === 1){
-                    dailyStorageInstance.incrementId(senderId);
+					updateItemCount('daily-usage', senderId);
                     logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
                 }
                 return;
             case '!patoshi':
                 if(splitedMsg.length === 1)
                     return;
-                dailyStorageInstance.incrementId(senderId);
+				updateItemCount('daily-usage', senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('patoshi', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
@@ -189,7 +196,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
             case '!fuxo':
                 if(splitedMsg.length === 1)
                     return;
-                dailyStorageInstance.incrementId(senderId);
+				updateItemCount('daily-usage', senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));         
                 postVideoMethod('fuxo', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
@@ -198,7 +205,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
             case '!zejtin':
                 if(splitedMsg.length === 1)
                     return;
-                dailyStorageInstance.incrementId(senderId);
+				updateItemCount('daily-usage', senderId);
                 sendMessage(senderId, randomElementFromList(waitForBot));
                 postVideoMethod('zejtin', senderUsername, targetUsername)
                     .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));

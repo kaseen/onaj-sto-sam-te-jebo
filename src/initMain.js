@@ -1,9 +1,9 @@
 const { ETwitterStreamEvent } = require('twitter-api-v2');
-const { onDataFilterStream } = require('./libs/streamingExport');
-const { onNewMessage, sendHelp } = require('./libs/webhookExport');
-const { AutohookInstance, BearerClient } = require('./Instances');
-const { logTime } = require('./serverMaintenance');
-const { getWhitelist, getBlacklist } = require('./libs/sheetdb');
+const { onDataFilterStream } = require('../dependencies/libs/streamingExport');
+const { onNewMessage, sendHelp } = require('../dependencies/libs/webhookExport');
+const { AutohookInstance, BearerClient } = require('./initInstances');
+const { logTime } = require('../dependencies/serverMaintenance');
+const { getWhitelist, getBlacklist } = require('../dependencies/libs/sheetdb');
 
 /*
 *	async renewRules()
@@ -77,7 +77,7 @@ const openStreaming = async () => {
 	});
 
 	stream.on(ETwitterStreamEvent.Connected, () => logTime('Stream opened.'));
-	stream.on(ETwitterStreamEvent.ConnectionClosed, () => logTime('Connection closed.'));
+	stream.on(ETwitterStreamEvent.ConnectionLost, () => logTime('Connection lost.'));
 	stream.on(ETwitterStreamEvent.Reconnected, () => logTime('Stream reconnected.'));
 
 	await stream.connect({ 

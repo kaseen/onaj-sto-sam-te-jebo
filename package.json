@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1231.0",
     "dotenv": "^16.0.2",
     "find-config": "^1.0.0",
     "sheetdb-node": "^0.0.12",
