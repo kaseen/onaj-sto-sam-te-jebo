@@ -1,6 +1,6 @@
-const { fileStorage, readBotInfoTxt, importFromFile } = require('../dependencies/serverMaintenance');
+const { timestampClass, readBotInfoTxt, importFromFile } = require('../dependencies/serverMaintenance');
 
-const dailyStorageInstance = new fileStorage();
+const timestampInstance = new timestampClass();
 
 const botHelperInfo = readBotInfoTxt('./storage/txt/botInfo.txt');
 const hAdminInfo = readBotInfoTxt('./storage/txt/hAdminInfo.txt');
@@ -21,7 +21,7 @@ const waitForBot = [
 ]
 
 module.exports = {
-    dailyStorageInstance,
+    timestampInstance,
     botHelperInfo,
 	hAdminInfo,
     commands,

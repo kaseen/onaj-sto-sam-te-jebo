@@ -1,9 +1,10 @@
 const { ETwitterStreamEvent } = require('twitter-api-v2');
 const { onDataFilterStream } = require('../dependencies/libs/streamingExport');
-const { onNewMessage, sendHelp } = require('../dependencies/libs/webhookExport');
+const { onNewMessage } = require('./webhook/webhookExport');
+const { sendHelp } = require('./webhook/switchCommands');
 const { AutohookInstance, BearerClient } = require('./initInstances');
 const { logTime } = require('../dependencies/serverMaintenance');
-const { getWhitelist, getBlacklist } = require('../dependencies/libs/sheetdb');
+const { getWhitelist, getBlacklist } = require('./databases/sheetdb');
 
 /*
 *	async renewRules()

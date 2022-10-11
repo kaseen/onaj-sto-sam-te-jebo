@@ -1,38 +1,39 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const listPrenk = require('../../storage/listPrenk');
-const { antiSpam, randomElementFromList, logTime } = require('../serverMaintenance');
-const { DATABASE_ADMIN_ADD, DATABASE_ADMIN_DELETE_USERNAME } = require('./sheetdb');
+const { antiSpam, randomElementFromList, logTime } = require('../../dependencies/serverMaintenance');
+const { DATABASE_ADMIN_DELETE_USERNAME } = require('../databases/sheetdb');
+const { getUserCountById, updateItemCount } = require('../databases/dynamodb');
 const { 
     botHelperInfo,
 	hAdminInfo,
     commands,
 	randomEmojiSuccess,
-	randomEmojiError,
-	waitForBot 
+	randomEmojiError
 } = require('../../storage/exportTxt');
 const { 
     sendMessage,
     getUserByUsername,
     relationshipId,
     postStatusText,
-    postVideoMethod,
     getFollowers
-} = require('./twitterLib');
+} = require('../../dependencies/libs/twitterLib');
 const {
-	getUserCountById,
-	deleteItem,
-	updateItemCount,
-	createCountTable,
-	deleteTable,
-	recreateCountTable
-} = require('../../src/DynamoDB/dynamo');
+	patoshi,
+	fuxo,
+	zejtin,
+	sendHelp,
+	sendInfo,
+	whitelistAdd,
+	blacklistAdd
+} = require('./switchCommands');
+
 
 /*
 *   async userFollowsBot(senderId)
 *	sendHelp(senderId)
 *   async userBlocksBot(senderId)
 *   async prenk(senderId, senderUsername, targetUsername)
-*   async onNewMessage(dailyStorageInstance, event)
+*   async onNewMessage(timestampInstance, event)
 */
 
 const spamChecker = new antiSpam();
@@ -45,13 +46,6 @@ const userFollowsBot = async (senderId) => {
 const userBlocksBot = async (senderId) => {
     const res = await relationshipId(process.env.BOT_ID, senderId);
     return res[0] === 2 ? false : true;
-}
-
-const sendHelp = (senderId) => {
-	const msg = `${botHelperInfo} ${randomElementFromList(randomEmojiSuccess)}` +
-		`${randomElementFromList(randomEmojiError)}\n\n`+
-		`npr. !prenk @jawisemalena\n~mozhe i bez @`
-	sendMessage(senderId, msg);
 }
 
 const prenk = async (senderId, targetId, targetUsername) => {
@@ -83,11 +77,11 @@ const prenk = async (senderId, targetId, targetUsername) => {
         console.log(e);
     }
 
-    // If success return 1 (needed for dailyStorageInstance)
+    // If success return 1 (needed for timestampInstance)
     return 1;
 }
 
-const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) => {
+const onNewMessage = async (timestampInstance, event, whitelist, blacklist) => {
     try{
         // We check that the event is a direct message
         if (!event.direct_message_events) {
@@ -187,68 +181,41 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
             case '!patoshi':
                 if(splitedMsg.length === 1)
                     return;
-				updateItemCount('daily-usage', senderId);
-                sendMessage(senderId, randomElementFromList(waitForBot));
-                postVideoMethod('patoshi', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
+				patoshi(senderId, senderUsername, targetUsername);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
 				return;
             case '!fuxo':
                 if(splitedMsg.length === 1)
                     return;
-				updateItemCount('daily-usage', senderId);
-                sendMessage(senderId, randomElementFromList(waitForBot));         
-                postVideoMethod('fuxo', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
+				fuxo(senderId, senderUsername, targetUsername);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
                 return;
             case '!zejtin':
                 if(splitedMsg.length === 1)
                     return;
-				updateItemCount('daily-usage', senderId);
-                sendMessage(senderId, randomElementFromList(waitForBot));
-                postVideoMethod('zejtin', senderUsername, targetUsername)
-                    .then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
+				zejtin(senderId, senderUsername, targetUsername);
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
                 return;
 			case '!help':
 				sendHelp(senderId);
 				return;
             case '!info':
-				const exReset = dailyStorageInstance.expectedResetTime();
-                sendMessage(senderId, 
-					`~~ ochekiwani restart ${exReset.today()} ${exReset.timeNow()} ~~\n\n` + 
-					`Iskorishteno (${numOfCommandUses}/${process.env.MAX_DAILY_USAGE}) usluga za danas.\n\n` +
-                    'Za wishe informacija (ili predloga) jawi se malena na wacap +381 62 839 7553.\n\n(poshalji sise ako oces admina ' +
-                    `${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)})\n\n` +
-					`~made by: rip nokty xumor 😣`
-				);
+				const exReset = timestampInstance.expectedResetTime();
+				sendInfo(senderId, exReset, numOfCommandUses, process.env.MAX_DAILY_USAGE);
                 return;
 
             // HEAD ADMIN COMMANDS
-            case '!admin':
-                if(senderId === process.env.HEAD_ADMIN_ID){
-                    const map = dailyStorageInstance.getMap();
-                    let msg = '';
-                    for (const [key, value] of map) {
-                        msg += `${key} ${value}\n`
-                    }
-                    msg !== '' ? sendMessage(senderId, msg) : sendMessage(senderId, 'Map empty.');
+			case '!admin':
+				if(senderId === process.env.HEAD_ADMIN_ID){
 					sendMessage(senderId, hAdminInfo);
                 }
-                return;
+				return;
             case '!wadd':
                 if(splitedMsg.length === 1){
                     return;
 				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
-                    getUserByUsername(targetUsername)
-                        .then((res) => {
-                            whitelist.push(res.id_str);
-							DATABASE_ADMIN_ADD('Whitelist', { user_id: res.id_str, username: targetUsername });
-							logTime(`@${targetUsername} (ID: ${res.id_str}) added to whitelist.`);
-                            sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to whitelist.`);
-                        });
+                    whitelistAdd(senderId, whitelist, targetUsername);
                 }
                 return;
 			case '!wrem':
@@ -265,13 +232,7 @@ const onNewMessage = async (dailyStorageInstance, event, whitelist, blacklist) =
                     return;
 				}
                 if(senderId === process.env.HEAD_ADMIN_ID){
-                    getUserByUsername(targetUsername)
-                        .then((res) => {
-                            blacklist.push(res.id_str);
-							DATABASE_ADMIN_ADD('Blacklist', { user_id: res.id_str, username: targetUsername });
-							logTime(`@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
-                            sendMessage(senderId, `@${targetUsername} (ID: ${res.id_str}) added to blacklist.`);
-                        });
+					blacklistAdd(senderId, blacklist, targetUsername);
                 }
                 return;
 			case '!brem':

@@ -1,4 +1,4 @@
-const { dynamoDB, dynamoDocClient } = require('../initInstances');
+const { AWS, dynamoDB, dynamoDocClient } = require('../initInstances');
 
 /*
 *	async getUserCountById(table_name, user_id)
@@ -18,8 +18,8 @@ const getUserCountById = async (table_name, user_id) => {
 	};
 	// Convert marshall (AWS Response) to JSON
 	try{
-		const res = AWS.DynamoDB.Converter.marshall(await dbClient.get(params).promise());
-		return res.Item.M.count.N;
+		const res = AWS.DynamoDB.Converter.marshall(await dynamoDocClient.get(params).promise());
+		return Number(res.Item.M.count.N);
 	}catch(e){
 		// If not found return 0
 		return 0;

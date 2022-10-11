@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
-const { DATABASE_USAGE_ADD, DATABASE_USAGE_CLEAR, getDailyUsage } = require('./libs/sheetdb');
-const { recreateCountTable } = require('../src/DynamoDB/dynamo');
+const { DATABASE_GET_TIMESTAMP, DATABASE_SET_TIMESTAMP } = require('../src/databases/sheetdb');
+const { recreateCountTable } = require('../src/databases/dynamodb');
 const fs = require('fs');
 
 /*
@@ -43,31 +43,41 @@ Date.prototype.timeNow = function () {
     )
 }
 
-class fileStorage {
+class timestampClass {
 
     constructor() {
         this._timestamp;
-		this._RESET_TIME = 86400000;
+		this._RESET_TIME = 86000000;
     }
 
-	// 2 calls to database
+	// 2 calls to sheetdb
 	async checkTimestamp(){
 		if(dateNow() > this.getTimestamp() + this._RESET_TIME){
-			// Clear local map and clear database
-			recreateCountTable();
+			// Clear daily-usage database
+			recreateCountTable('daily-usage');
+			// Save new timestamp to sheetdb and locally
 			const newTimestamp = dateNow();
-			// Add new timestamp to sheet database
-			await DATABASE_USAGE_ADD({ user_id: 'timestamp', count: newTimestamp });
+			this.setTimestamp(newTimestamp);
 			logTime('[SERVER MAINTENANCE]: Timestamp database updated.');
 		}
 	}
 
 	expectedResetTime(){
 		const exReset = new Date(this.getTimestamp() + this._RESET_TIME);
+		// Move two hours ahead becouse of heroku
 		exReset.setTime(exReset.getTime() + 2 * 60 * 60 * 1000);
 		return exReset;
 	}
 
+	// 1 call to sheetdb
+	async initTimestamp(){
+		this._timestamp = Number(await DATABASE_GET_TIMESTAMP());
+	}
+
+	// 1 call to sheetdb
+	setTimestamp(newTime){
+		DATABASE_SET_TIMESTAMP(newTime);
+	}
 
 	getTimestamp(){
 		return this._timestamp;
@@ -144,7 +154,7 @@ const dateNow = () => {
 }
 
 module.exports = {
-    fileStorage,
+    timestampClass,
     antiSpam,
     readBotInfoTxt,
     importFromFile,
