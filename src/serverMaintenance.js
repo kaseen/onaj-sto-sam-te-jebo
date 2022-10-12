@@ -53,7 +53,7 @@ class timestampClass {
 		this._RESET_TIME = 86000000;
     }
 
-	// 2 calls to sheetdb
+	// 1 calls to sheetdb
 	async checkTimestamp(){
 		if(dateNow() > this.getTimestamp() + this._RESET_TIME){
 			// Clear daily-usage database
@@ -77,7 +77,6 @@ class timestampClass {
 		this._timestamp = Number(await DATABASE_GET_TIMESTAMP());
 	}
 
-	// 1 call to sheetdb
 	setTimestamp(newTime){
 		DATABASE_SET_TIMESTAMP(newTime);
 	}
