@@ -30,29 +30,22 @@
 */
 
 require('dotenv').config({ path: require('find-config')('.env') });
+const cron = require('node-cron');
 const { dateNow, logTime } = require('./src/serverMaintenance');
 const { openWebhook, openStreaming } = require('./src/initMain');
-const { timestampInstance } = require('./storage/exportTxt');
+const { recreateCountTable } = require('./src/databases/dynamodb')
 
-const checkTime = async (n) => {
-	// Check timestamp every (n) minutes
-	setTimeout(async () => {
-		await timestampInstance.checkTimestamp();
-		checkTime(n);
-	}, n * 60 * 1000);
-}
+cron.schedule('0 6 * * *', () => {
+	console.log('CRON 06:00 AM');
+	logTime('[SERVER MAINTENANCE]: CRON JOB');
+	recreateCountTable('daily-usage');
+});
 
 const main = async () => {
 	try{
 		console.log("\n------------------------ STARTED ------------------------\n");
 		const expectedRestart = new Date(dateNow() + process.env.SERVER_RESTART * 60 * 60 * 1000);
 		console.log(`Expected restart time: ${expectedRestart.today()} ${expectedRestart.timeNow()}`);
-
-		await timestampInstance.initTimestamp();
-		console.log('Timestamp loaded.');
-
-		// Check timestamp every n minutes
-		checkTime(30);
 
 		// Turn off bot every SERVER_RESTART h (Ngrok server lives 8h)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes (and than exponentially)
@@ -61,7 +54,7 @@ const main = async () => {
 			process.exit(0);
 		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
 
-		await openWebhook(timestampInstance);
+		await openWebhook();
 		await openStreaming();
 		console.log("\n------------------------- LIVE --------------------------\n");
 	} catch (e) {

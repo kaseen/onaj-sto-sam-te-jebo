@@ -34,9 +34,9 @@ const sendHelp = (senderId) => {
 	sendMessage(senderId, msg);
 }
 
-const sendInfo = (senderId, exReset, numOfCommandUses, maxOfCommandUses) => {
+const sendInfo = (senderId, numOfCommandUses, maxOfCommandUses) => {
 	sendMessage(senderId, 
-		`~~ ochekiwani restart ${exReset.today()} ${exReset.timeNow()} ~~\n\n` + 
+		`~~ restart usluga je rano sabajle pre prwi petlowi(shestlowi xd) ~~\n\n` + 
 		`Iskorishteno (${numOfCommandUses}/${maxOfCommandUses}) usluga za danas.\n\n` +
 		'Za wishe informacija (ili predloga) jawi se malena na wacap +381 62 839 7553.\n\n(poshalji sise ako oces admina ' +
 		`${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)})\n\n` +

@@ -1,19 +1,9 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const fs = require('fs');
-const { recreateCountTable } = require('./databases/dynamodb');
-const { DATABASE_GET_TIMESTAMP, DATABASE_SET_TIMESTAMP } = require('./databases/sheetdb');
 
 /*
-*	timestampClass:
-*
-*	constructor()
-*	async checkTimestamp()
-*	expectedResetTime()
-*	async initTimestamp()
-*	setTimestamp(newTime)
-*	getTimestamp()
-*
 *	antiSpam:
+*
 *	constructor()
 *	getIdTimestamp(userId)
 *	getWarning(userId)
@@ -45,47 +35,6 @@ Date.prototype.timeNow = function () {
         ((this.getSeconds() < 10) ? '0' : '') + this.getSeconds()
     )
 }
-
-class timestampClass {
-
-    constructor() {
-        this._timestamp;
-		this._RESET_TIME = 86000000;
-    }
-
-	// 1 calls to sheetdb
-	async checkTimestamp(){
-		if(dateNow() > this.getTimestamp() + this._RESET_TIME){
-			// Clear daily-usage database
-			recreateCountTable('daily-usage');
-			// Save new timestamp to sheetdb and locally
-			const newTimestamp = dateNow();
-			this.setTimestamp(newTimestamp);
-			logTime('[SERVER MAINTENANCE]: Timestamp database updated.');
-		}
-	}
-
-	expectedResetTime(){
-		const exReset = new Date(this.getTimestamp() + this._RESET_TIME);
-		// Move two hours ahead becouse of heroku
-		exReset.setTime(exReset.getTime() + 2 * 60 * 60 * 1000);
-		return exReset;
-	}
-
-	// 1 call to sheetdb
-	async initTimestamp(){
-		this._timestamp = Number(await DATABASE_GET_TIMESTAMP());
-	}
-
-	setTimestamp(newTime){
-		DATABASE_SET_TIMESTAMP(newTime);
-	}
-
-	getTimestamp(){
-		return this._timestamp;
-	}
-
-};
 
 class antiSpam {
 
@@ -156,7 +105,6 @@ const dateNow = () => {
 }
 
 module.exports = {
-    timestampClass,
     antiSpam,
     readBotInfoTxt,
     importFromFile,

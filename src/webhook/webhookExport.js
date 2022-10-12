@@ -33,7 +33,7 @@ const {
 *	sendHelp(senderId)
 *   async userBlocksBot(senderId)
 *   async prenk(senderId, senderUsername, targetUsername)
-*   async onNewMessage(timestampInstance, event)
+*   async onNewMessage(event)
 */
 
 const spamChecker = new antiSpam();
@@ -77,11 +77,11 @@ const prenk = async (senderId, targetId, targetUsername) => {
         console.log(e);
     }
 
-    // If success return 1 (needed for timestampInstance)
+    // If success return 1
     return 1;
 }
 
-const onNewMessage = async (timestampInstance, event, whitelist, blacklist) => {
+const onNewMessage = async (event, whitelist, blacklist) => {
     try{
         // We check that the event is a direct message
         if (!event.direct_message_events) {
@@ -200,8 +200,7 @@ const onNewMessage = async (timestampInstance, event, whitelist, blacklist) => {
 				sendHelp(senderId);
 				return;
             case '!info':
-				const exReset = timestampInstance.expectedResetTime();
-				sendInfo(senderId, exReset, numOfCommandUses, process.env.MAX_DAILY_USAGE);
+				sendInfo(senderId, numOfCommandUses, process.env.MAX_DAILY_USAGE);
                 return;
 
             // HEAD ADMIN COMMANDS

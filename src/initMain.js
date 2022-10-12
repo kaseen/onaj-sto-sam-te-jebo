@@ -89,7 +89,7 @@ const openStreaming = async () => {
 	});
 }
 
-const openWebhook = async (dailyStorageInstance) => {
+const openWebhook = async () => {
 	const webhook = AutohookInstance;
 
 	// Removes existing webhooks
@@ -102,7 +102,7 @@ const openWebhook = async (dailyStorageInstance) => {
 
 	webhook.on('event', async (event) => {
 		if(event.direct_message_events) {
-			await onNewMessage(dailyStorageInstance, event, whitelist, blacklist);
+			await onNewMessage(event, whitelist, blacklist);
 		} else if(event.follow_events){
 			const senderId = event.follow_events[0].source.id;
 			sendHelp(senderId);

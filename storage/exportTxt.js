@@ -1,6 +1,4 @@
-const { timestampClass, readBotInfoTxt, importFromFile } = require('../src/serverMaintenance');
-
-const timestampInstance = new timestampClass();
+const { readBotInfoTxt, importFromFile } = require('../src/serverMaintenance');
 
 const botHelperInfo = readBotInfoTxt('./storage/txt/botInfo.txt');
 const hAdminInfo = readBotInfoTxt('./storage/txt/hAdminInfo.txt');
@@ -21,7 +19,6 @@ const waitForBot = [
 ]
 
 module.exports = {
-    timestampInstance,
     botHelperInfo,
 	hAdminInfo,
     commands,

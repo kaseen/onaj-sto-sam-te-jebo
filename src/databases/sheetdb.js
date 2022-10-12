@@ -8,25 +8,6 @@ const { DBAdminMenu } = require('../initInstances');
 *	async getBlacklist()
 */
 
-const DATABASE_GET_TIMESTAMP = async () => {
-	try{
-		const res = JSON.parse(await DBAdminMenu.read({ sheet: 'Timestamp'}));
-		return res[0].value;
-	}catch(e){
-		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_GET_TIMESTAMP');
-		console.log(e);
-	}
-}
-
-const DATABASE_SET_TIMESTAMP = (newTimestamp) => {
-	try{
-		DBAdminMenu.update('timestamp', 'unixseconds', { value: newTimestamp }, 'Timestamp');
-	}catch(e){
-		console.log('Error in ./dependencies/libs/sheetdb/DATABASE_SET_TIMESTAMP');
-		console.log(e);
-	}
-}
-
 const DATABASE_ADMIN_GET = async (sheet) => {
 	// Read the whole sheet
 	try{
@@ -72,8 +53,6 @@ const getBlacklist = async () => {
 
 
 module.exports = {
-	DATABASE_GET_TIMESTAMP,
-	DATABASE_SET_TIMESTAMP,
 	DATABASE_ADMIN_ADD,
 	DATABASE_ADMIN_DELETE_USERNAME,
 	getWhitelist,
