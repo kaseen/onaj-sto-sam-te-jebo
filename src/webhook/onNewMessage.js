@@ -4,7 +4,7 @@ const { antiSpam, randomElementFromList, logTime } = require('../serverMaintenan
 const { DATABASE_ADMIN_DELETE_USERNAME } = require('../databases/sheetdb');
 const { getUserCountById, updateItemCount } = require('../databases/dynamodb');
 const { 
-    botHelperInfo,
+    botInfo,
 	hAdminInfo,
     commands,
 	randomEmojiSuccess,
@@ -15,7 +15,9 @@ const {
     getUserByUsername,
     relationshipId,
     postStatusText,
-    getFollowers
+    getFollowers,
+	userFollowsBot,
+	userBlocksBot
 } = require('../twitterapi/twitterLib');
 const {
 	patoshi,
@@ -37,16 +39,6 @@ const {
 */
 
 const spamChecker = new antiSpam();
-
-const userFollowsBot = async (senderId) => {
-    const res = await relationshipId(senderId, process.env.BOT_ID);
-    return res[0] === 1 ? true : false;
-}
-
-const userBlocksBot = async (senderId) => {
-    const res = await relationshipId(process.env.BOT_ID, senderId);
-    return res[0] === 2 ? false : true;
-}
 
 const prenk = async (senderId, targetId, targetUsername) => {
 
@@ -84,7 +76,7 @@ const prenk = async (senderId, targetId, targetUsername) => {
 const onNewMessage = async (event, whitelist, blacklist) => {
     try{
         // We check that the event is a direct message
-        if (!event.direct_message_events) {
+        if (!event.direct_message_events){
             return;
         }
 
@@ -112,6 +104,17 @@ const onNewMessage = async (event, whitelist, blacklist) => {
             return;
         }
 
+		const numOfCommandUses = await getUserCountById('daily-usage', senderId);
+        if(blacklist.includes(senderId)){
+            sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiError)}`);
+            return;
+        }else if(whitelist.includes(senderId)){
+            // Skip check for whitelist users
+        }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
+            sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas ${randomElementFromList(randomEmojiError)}`);
+            return;
+        }
+
         // Split message and trim username (if exists and starts with @)
         const splitedMsg = text.split(' ');
 		let targetUsername = '';
@@ -123,7 +126,7 @@ const onNewMessage = async (event, whitelist, blacklist) => {
 
         // If first word is unknow command send list of commands to use
         if(!commands.includes(splitedMsg[0])){
-            sendMessage(senderId, botHelperInfo + '\n' + randomElementFromList(randomEmojiSuccess) + 
+            sendMessage(senderId, botInfo + '\n' + randomElementFromList(randomEmojiSuccess) + 
                                      ' ' + randomElementFromList(randomEmojiError));
             return;
         }
@@ -155,18 +158,7 @@ const onNewMessage = async (event, whitelist, blacklist) => {
             return;
         }   
 
-        const numOfCommandUses = await getUserCountById('daily-usage', senderId);
-
-        if(blacklist.includes(senderId)){
-            sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }else if(whitelist.includes(senderId)){
-            // sendMessage(senderId, 'Brao admine si.');
-        }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
-            sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
-
+		const textVideo = `@${targetUsername}\n\nXalo kurajberu ${randomElementFromList(randomEmojiError)}, @${senderUsername} ti poruchuje:`;
         switch(splitedMsg[0]){
             case '!prenk':
                 if(splitedMsg.length === 1)
@@ -181,20 +173,20 @@ const onNewMessage = async (event, whitelist, blacklist) => {
             case '!patoshi':
                 if(splitedMsg.length === 1)
                     return;
-				patoshi(senderId, senderUsername, targetUsername);
-                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied @${targetUsername}`);
+				patoshi(senderId, targetUsername, textVideo, '0');
+                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied(M) @${targetUsername}`);
 				return;
             case '!fuxo':
                 if(splitedMsg.length === 1)
                     return;
-				fuxo(senderId, senderUsername, targetUsername);
-                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed @${targetUsername}`);
+				fuxo(senderId, targetUsername, textVideo, '0');
+                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(M) @${targetUsername}`);
                 return;
             case '!zejtin':
                 if(splitedMsg.length === 1)
                     return;
-				zejtin(senderId, senderUsername, targetUsername);
-                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed @${targetUsername}`);
+				zejtin(senderId, targetUsername, textVideo, '0');
+                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(M) @${targetUsername}`);
                 return;
 			case '!help':
 				sendHelp(senderId);
@@ -244,11 +236,11 @@ const onNewMessage = async (event, whitelist, blacklist) => {
                 }
                 return;
             default:
-                sendMessage(senderId, botHelperInfo);
+                sendMessage(senderId, botInfo);
         }
 
     }catch(e){
-        console.log("Error in ./dependencies/webhookExport/onNewMessage");
+        console.log("Error in ./dependencies/onNewMessage");
         console.log(e);
     }
 }

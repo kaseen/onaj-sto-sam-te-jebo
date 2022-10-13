@@ -6,7 +6,15 @@ Dostupne chat komande:
 !info
 !help
 
+primer:
+!prenk @jawisemalena
+~mozhe i bez @
+
 Dostupne stream komande:
 !patoshi
 !fuxo
 !zejtin
+
+primer:
+odgovorish na twit sa 
+@jawisemalena !fuxo

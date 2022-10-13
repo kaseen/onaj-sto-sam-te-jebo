@@ -1,37 +1,34 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 
-const { botHelperInfo, randomEmojiSuccess, randomEmojiError, waitForBot } = require('../../storage/exportTxt');
+const { botHelp, randomEmojiSuccess, randomEmojiError, waitForBot } = require('../../storage/exportTxt');
 const { sendMessage, getUserByUsername, postVideoMethod } = require('../twitterapi/twitterLib');
 const { randomElementFromList, logTime } = require('../serverMaintenance');
 const { DATABASE_ADMIN_ADD } = require('../databases/sheetdb');
 const { updateItemCount } = require('../databases/dynamodb');
 
-const patoshi = (senderId, senderUsername, targetUsername) => {
+const patoshi = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
 	sendMessage(senderId, randomElementFromList(waitForBot));
-	postVideoMethod('patoshi', senderUsername, targetUsername)
+	postVideoMethod('patoshi', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
-const fuxo = (senderId, senderUsername, targetUsername) => {
+const fuxo = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
 	sendMessage(senderId, randomElementFromList(waitForBot));         
-	postVideoMethod('fuxo', senderUsername, targetUsername)
+	postVideoMethod('fuxo', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
-const zejtin = (senderId, senderUsername, targetUsername) => {
+const zejtin = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
 	sendMessage(senderId, randomElementFromList(waitForBot));
-	postVideoMethod('zejtin', senderUsername, targetUsername)
+	postVideoMethod('zejtin', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const sendHelp = (senderId) => {
-	const msg = `${botHelperInfo} ${randomElementFromList(randomEmojiSuccess)}` +
-		`${randomElementFromList(randomEmojiError)}\n\n`+
-		`npr. !prenk @jawisemalena\n~mozhe i bez @`
-	sendMessage(senderId, msg);
+	sendMessage(senderId, botHelp);
 }
 
 const sendInfo = (senderId, numOfCommandUses, maxOfCommandUses) => {

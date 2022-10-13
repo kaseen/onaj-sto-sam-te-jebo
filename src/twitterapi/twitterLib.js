@@ -1,16 +1,17 @@
 const fs = require('fs');
 const { TwitterClient } = require('../initInstances');
-const { randomElementFromList } = require('../serverMaintenance');
-const { randomEmojiError } = require('../../storage/exportTxt');
 
 /* 
 *	async sendMessage(recipientId, text)
 *	async getUserByUsername(username)
 *	async relationshipId(senderId, targetId)
 *	async postStatusText(text)
+*	async replyToTweet(text, tweetId)
 *	async postStatusWithMedia(text, mediaPath)
 *	async postVideoMethod(method, senderUsername, targetUsername)
 *	async getFollowers(senderId)
+*	async userFollowsBot(senderId)
+*	async userBlocksBot(senderId)
 */
 
 const methodtoVideoMap = {
@@ -72,14 +73,28 @@ const postStatusText = async (text) => {
     }
 }
 
-const postStatusWithMedia = async (text, mediaPath, mimeType) => {
+const replyToTweet = async (text, tweetId) => {
+	try{
+		await TwitterClient.v1.reply(text, tweetId);
+	}catch(e){
+		console.log("Error in ./dependencies/twitterLib/replyToTweet");
+		console.log(e);
+	}
+}
+
+// replyTo = 0 tweet, else reply to that id 
+const postStatusWithMedia = async (text, mediaPath, mimeType, replyTo) => {
     try{
         const filePath = fs.readFileSync(mediaPath);
         const mediaId = await TwitterClient.v1.uploadMedia(filePath, { mimeType: mimeType });
         if(mimeType === 'image/jpeg'){
             await TwitterClient.v1.createMediaMetadata(mediaId, { alt_text: { text: 'prenk xd' } });
         }
-        await TwitterClient.v1.tweet(text, { media_ids: mediaId });
+		if(replyTo === '0'){
+        	await TwitterClient.v1.tweet(text, { media_ids: mediaId });
+		}else{
+			await TwitterClient.v1.reply(text, replyTo, { media_ids: mediaId });
+		}
     } catch(e){
         console.log("Error in ./dependencies/twitterLib/postStatusWithMedia");
         console.log(e);
@@ -87,15 +102,14 @@ const postStatusWithMedia = async (text, mediaPath, mimeType) => {
     }
 }
 
-const postVideoMethod = async (method, senderUsername, targetUsername) => {
+const postVideoMethod = async (method, text, replyTo) => {
 
     const video_path = methodtoVideoMap[method];
     if (typeof(video_path) === 'undefined'){
         return;
     }
-    const text = `@${targetUsername}\n\nXalo kurajberu ${randomElementFromList(randomEmojiError)}, @${senderUsername} ti poruchuje:`;
     try{
-        await postStatusWithMedia(text, video_path, 'video/mp4');
+        await postStatusWithMedia(text, video_path, 'video/mp4', replyTo);
     }catch(e){
         console.log("Error in ./dependencies/twitterLib/postVideoMethod");
         console.log(e);
@@ -113,12 +127,25 @@ const getFollowers = async (senderId) => {
     }
 }
 
+const userFollowsBot = async (senderId) => {
+    const res = await relationshipId(senderId, process.env.BOT_ID);
+    return res[0] === 1 ? true : false;
+}
+
+const userBlocksBot = async (senderId) => {
+    const res = await relationshipId(process.env.BOT_ID, senderId);
+    return res[0] === 2 ? false : true;
+}
+
 module.exports = {
     sendMessage,
     getUserByUsername,
     relationshipId,
     postStatusText,
+	replyToTweet,
     postStatusWithMedia,
     postVideoMethod,
-    getFollowers
+    getFollowers,
+	userFollowsBot,
+	userBlocksBot
 }

@@ -1,6 +1,7 @@
 const { readBotInfoTxt, importFromFile } = require('../src/serverMaintenance');
 
-const botHelperInfo = readBotInfoTxt('./storage/txt/botInfo.txt');
+const botInfo = readBotInfoTxt('./storage/txt/botInfo.txt');
+const botHelp = readBotInfoTxt('./storage/txt/botHelp.txt');
 const hAdminInfo = readBotInfoTxt('./storage/txt/hAdminInfo.txt');
 const commands = importFromFile('./storage/txt/commands.txt');
 
@@ -19,7 +20,8 @@ const waitForBot = [
 ]
 
 module.exports = {
-    botHelperInfo,
+    botInfo,
+	botHelp,
 	hAdminInfo,
     commands,
 	randomEmojiSuccess,

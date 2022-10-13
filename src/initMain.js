@@ -1,6 +1,7 @@
 const { ETwitterStreamEvent } = require('twitter-api-v2');
 const { onDataFilterStream } = require('./streaming/streamingExport');
-const { onNewMessage } = require('./webhook/webhookExport');
+const { onNewMessage } = require('./webhook/onNewMessage');
+const { onNewMention } = require('./webhook/onNewMention');
 const { sendHelp } = require('./webhook/switchCommands');
 const { AutohookInstance, BearerClient } = require('./initInstances');
 const { logTime } = require('./serverMaintenance');
@@ -101,8 +102,11 @@ const openWebhook = async () => {
 	console.log('Blacklist loaded.');
 
 	webhook.on('event', async (event) => {
-		if(event.direct_message_events) {
-			await onNewMessage(event, whitelist, blacklist);
+		if(event.tweet_create_events) {
+			onNewMention(event, whitelist, blacklist);
+		} else if(event.direct_message_events) {
+			// TODO: sklonio sam await
+			onNewMessage(event, whitelist, blacklist);
 		} else if(event.follow_events){
 			const senderId = event.follow_events[0].source.id;
 			sendHelp(senderId);

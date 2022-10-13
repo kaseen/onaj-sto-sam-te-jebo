@@ -10,17 +10,15 @@
 
 ------ MAIN
 
-- ocekivani restart TIME ZONE check
-- mozda on exit stream.close() ???
-- getTimestamp !admin option
-- pametnije da se cekira timestamp za reset usluga
+- kad je neko banovan mogu bota da mi ugase zbog spama micko banovan si
 
-- NGROK 8 sati proveri jel radi valja to (na 8 sati restartuj usluge zbog provere)
+- na mensn @test6bot i komanda i bot izvrsi na taj tvit iznad
 
 - !mali na sliku stavi audio
 - new filestamp na exit radi?
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
-- Kad neko zaprati bota posalji mu Komande poruku
+
+- micy rekla da mogu komande da budu anonimne
 
 ------ ALT
 
@@ -35,8 +33,8 @@ const { dateNow, logTime } = require('./src/serverMaintenance');
 const { openWebhook, openStreaming } = require('./src/initMain');
 const { recreateCountTable } = require('./src/databases/dynamodb')
 
-cron.schedule('0 6 * * *', () => {
-	console.log('CRON 06:00 AM');
+// 2am je 4am u heroku
+cron.schedule('0 2 * * *', () => {
 	logTime('[SERVER MAINTENANCE]: CRON JOB');
 	recreateCountTable('daily-usage');
 });
