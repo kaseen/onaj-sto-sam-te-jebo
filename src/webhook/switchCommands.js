@@ -28,7 +28,8 @@ const zejtin = (senderId, targetUsername, text, replyTo) => {
 }
 
 const sendHelp = (senderId) => {
-	sendMessage(senderId, botHelp);
+	const msg = botHelp + `\n${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)}`
+	sendMessage(senderId, msg);
 }
 
 const sendInfo = (senderId, numOfCommandUses, maxOfCommandUses) => {

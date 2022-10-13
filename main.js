@@ -11,8 +11,7 @@
 ------ MAIN
 
 - kad je neko banovan mogu bota da mi ugase zbog spama micko banovan si
-
-- na mensn @test6bot i komanda i bot izvrsi na taj tvit iznad
+- na help dodati rendom emoji
 
 - !mali na sliku stavi audio
 - new filestamp na exit radi?
