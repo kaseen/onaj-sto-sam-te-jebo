@@ -1,5 +1,14 @@
 // HTTP ERROR: 401 Unathorized - Check time on local pc
 
+/*
+*	Adding new video command steps:
+*	1. Add video to ./vid
+*	2. Add <name> to ./src/webhook/switchCommands
+*	3. Add path to ./src/twitterapi/twitterLib/methodtoVideoMap
+*	4. Add to ./storage/txt/ command name in botHelp.txt, botInfo.txt and commands.txt
+*	5. Add to import and switch in ./src/webhook onNewMention and onNewMessage  
+*/
+
 /* TODOS:
 
 ------ FUTURE PLANS
@@ -11,7 +20,6 @@
 ------ MAIN
 
 - kad je neko banovan mogu bota da mi ugase zbog spama micko banovan si
-- na help dodati rendom emoji
 
 - !mali na sliku stavi audio
 - new filestamp na exit radi?

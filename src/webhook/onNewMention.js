@@ -2,7 +2,7 @@ require('dotenv').config({ path: require('find-config')('.env') });
 const { randomElementFromList, logTime } = require('../serverMaintenance');
 const { getUserCountById } = require('../databases/dynamodb');
 const { sendMessage, getFollowers, userFollowsBot, userBlocksBot } = require('../twitterapi/twitterLib');
-const { patoshi, fuxo, zejtin } = require('./switchCommands');
+const { patoshi, fuxo, zejtin, mali } = require('./switchCommands');
 const { randomEmojiSuccess, randomEmojiError } = require('../../storage/exportTxt');
 
 const onNewMention = async (event, whitelist, blacklist) => {
@@ -27,9 +27,13 @@ const onNewMention = async (event, whitelist, blacklist) => {
 
 		// Skip using commands on self
 		if(myId === targetId){
-			console.log('SAM SEBI')
 			return;
 		}
+
+		// Avoiding infinite loop
+        if(myId === senderId){
+            return;
+        }
 
 		// Check sender daily usage
 		const numOfCommandUses = await getUserCountById('daily-usage', senderId);
@@ -91,6 +95,10 @@ const onNewMention = async (event, whitelist, blacklist) => {
 			case '!zejtin':
 				zejtin(senderId, targetUsername, textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(S) @${targetUsername}`);
+				return;
+			case '!mali':
+				mali(senderId, targetUsername, textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(S) @${targetUsername}`);
 				return;
 			default:
 				return;

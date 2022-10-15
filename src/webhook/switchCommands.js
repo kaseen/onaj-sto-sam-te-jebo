@@ -27,6 +27,13 @@ const zejtin = (senderId, targetUsername, text, replyTo) => {
 		.then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
+const mali = (senderId, targetUsername, text, replyTo) => {
+	updateItemCount('daily-usage', senderId);
+	sendMessage(senderId, randomElementFromList(waitForBot));
+	postVideoMethod('mali', text, replyTo)
+		.then(() => sendMessage(senderId, `Uspeshno si malowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
+}
+
 const sendHelp = (senderId) => {
 	const msg = botHelp + `\n${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)}`
 	sendMessage(senderId, msg);
@@ -66,6 +73,7 @@ module.exports = {
 	patoshi,
 	fuxo,
 	zejtin,
+	mali,
 	sendHelp,
 	sendInfo,
 	whitelistAdd,

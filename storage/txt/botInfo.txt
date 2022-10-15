@@ -3,6 +3,7 @@ Dostupne chat komande:
 !patoshi <username>
 !fuxo <username>
 !zejtin <username>
+!mali <username>
 !info
 !help
 
@@ -10,3 +11,4 @@ Dostupne stream komande:
 !patoshi
 !fuxo
 !zejtin
+!mali

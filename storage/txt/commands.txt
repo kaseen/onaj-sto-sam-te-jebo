@@ -2,6 +2,7 @@
 !patoshi
 !fuxo
 !zejtin
+!mali
 !help
 !info
 !admin

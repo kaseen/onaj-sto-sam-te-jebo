@@ -23,6 +23,7 @@ const {
 	patoshi,
 	fuxo,
 	zejtin,
+	mali,
 	sendHelp,
 	sendInfo,
 	whitelistAdd,
@@ -188,6 +189,12 @@ const onNewMessage = async (event, whitelist, blacklist) => {
 				zejtin(senderId, targetUsername, textVideo, '0');
                 logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(M) @${targetUsername}`);
                 return;
+			case '!mali':
+				if(splitedMsg.length === 1)
+                    return;
+				mali(senderId, targetUsername, textVideo, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(M) @${targetUsername}`);
+				return;
 			case '!help':
 				sendHelp(senderId);
 				return;
