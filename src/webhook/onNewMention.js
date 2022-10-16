@@ -74,6 +74,9 @@ const onNewMention = async (event, whitelist, blacklist) => {
 			if(elem.startsWith('!')){
 				command = elem;
 				return false;
+			}else if(elem.startsWith('/')){
+				command = elem;
+				return false;
 			}
 			return true;
 		});
@@ -82,23 +85,44 @@ const onNewMention = async (event, whitelist, blacklist) => {
 			return;
 		}
 
-		const textTweet = `${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)}`
+		// Tweet text for mention (two smileys)
+		const M_textTweet = `${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)}`;
+
+		// Tweet text for quote (two smileys)
+		const Q_textTweet = M_textTweet + `\nhttps://twitter.com/${targetUsername}/status/${tweetId}`;
+
 		switch(command){
 			case '!patoshi':
-				patoshi(senderId, targetUsername, textTweet, tweetId);
+				patoshi(senderId, targetUsername, M_textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied(S) @${targetUsername}`);
 				return;
+			case '/patoshi':
+				patoshi(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied(Q) @${targetUsername}`);
+				return;
 			case '!fuxo':
-				fuxo(senderId, targetUsername, textTweet, tweetId);
+				fuxo(senderId, targetUsername, M_textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(S) @${targetUsername}`);
 				return;
+			case '/fuxo':
+				fuxo(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(Q) @${targetUsername}`);
+				return;
 			case '!zejtin':
-				zejtin(senderId, targetUsername, textTweet, tweetId);
+				zejtin(senderId, targetUsername, M_textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(S) @${targetUsername}`);
 				return;
+			case '/zejtin':
+				zejtin(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(Q) @${targetUsername}`);
+				return;
 			case '!mali':
-				mali(senderId, targetUsername, textTweet, tweetId);
+				mali(senderId, targetUsername, M_textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(S) @${targetUsername}`);
+				return;
+			case '/mali':
+				mali(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(Q) @${targetUsername}`);
 				return;
 			default:
 				return;

@@ -11,11 +11,12 @@ primer:
 !prenk @jawisemalena
 ~mozhe i bez @
 
-Dostupne stream komande:
-!patoshi
-!fuxo
-!zejtin
-!mali
+Komande za
+Mention:    Quote:
+!patoshi     /patoshi
+!fuxo          /fuxo
+!zejtin        /zejtin
+!mali          /mali
 
 primer:
 odgovorish na twit sa 

@@ -36,7 +36,7 @@ const postStreamImg = async (tweetUsername, tweetId) => {
     const randSlika = "./img/" + (randIntSlika+1) + ".jpg";
 
     try{
-        postStatusWithMedia(text, randSlika, 'image/jpeg');
+        postStatusWithMedia(text, randSlika, 'image/jpeg', '0');
         logTime(`@${tweetUsername} /postStreamImg`);
     }catch(e){
         console.log("Error in ./dependencies/libs/streamingExport/postStreamImg");
