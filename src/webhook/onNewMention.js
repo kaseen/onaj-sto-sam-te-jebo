@@ -2,7 +2,7 @@ require('dotenv').config({ path: require('find-config')('.env') });
 const { randomElementFromList, logTime } = require('../serverMaintenance');
 const { getUserCountById } = require('../databases/dynamodb');
 const { sendMessage, getFollowers, userFollowsBot, userBlocksBot } = require('../twitterapi/twitterLib');
-const { patoshi, fuxo, zejtin, mali } = require('./switchCommands');
+const { patoshi, fuxo, zejtin, mali, pipni, mani, shala, kurwo } = require('./switchCommands');
 const { randomEmojiSuccess, randomEmojiError } = require('../../storage/exportTxt');
 
 const onNewMention = async (event, whitelist, blacklist) => {
@@ -94,36 +94,76 @@ const onNewMention = async (event, whitelist, blacklist) => {
 		switch(command){
 			case '!patoshi':
 				patoshi(senderId, targetUsername, M_textTweet, tweetId);
-				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied(S) @${targetUsername}`);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied(M) @${targetUsername}`);
 				return;
 			case '/patoshi':
 				patoshi(senderId, targetUsername, Q_textTweet, '0');
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied(Q) @${targetUsername}`);
 				return;
+
 			case '!fuxo':
 				fuxo(senderId, targetUsername, M_textTweet, tweetId);
-				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(S) @${targetUsername}`);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(M) @${targetUsername}`);
 				return;
 			case '/fuxo':
 				fuxo(senderId, targetUsername, Q_textTweet, '0');
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(Q) @${targetUsername}`);
 				return;
+
 			case '!zejtin':
 				zejtin(senderId, targetUsername, M_textTweet, tweetId);
-				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(S) @${targetUsername}`);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(M) @${targetUsername}`);
 				return;
 			case '/zejtin':
 				zejtin(senderId, targetUsername, Q_textTweet, '0');
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(Q) @${targetUsername}`);
 				return;
+
 			case '!mali':
 				mali(senderId, targetUsername, M_textTweet, tweetId);
-				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(S) @${targetUsername}`);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(M) @${targetUsername}`);
 				return;
 			case '/mali':
 				mali(senderId, targetUsername, Q_textTweet, '0');
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(Q) @${targetUsername}`);
 				return;
+
+			case '!pipni':
+				pipni(senderId, targetUsername, M_textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) pipnowed(M) @${targetUsername}`);
+				return;
+			case '/pipni':
+				pipni(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) pipnowed(Q) @${targetUsername}`);
+				return;
+
+			case '!mani':
+				mani(senderId, targetUsername, M_textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) maniowed(M) @${targetUsername}`);
+				return;
+			case '/mani':
+				mani(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) maniowed(Q) @${targetUsername}`);
+				return;
+
+			case '!shala':
+				shala(senderId, targetUsername, M_textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) shalowed(M) @${targetUsername}`);
+				return;
+			case '/shala':
+				shala(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) shalowed(Q) @${targetUsername}`);
+				return;
+
+			case '!kurwo':
+				kurwo(senderId, targetUsername, M_textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) kurwowed(M) @${targetUsername}`);
+				return;
+			case '/kurwo':
+				kurwo(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) kurwowed(Q) @${targetUsername}`);
+				return;
+
 			default:
 				return;
 		}

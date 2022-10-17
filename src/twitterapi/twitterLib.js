@@ -18,15 +18,31 @@ const methodtoVideoMap = {
 	'patoshi': './vid/cutepatosem.mp4',
 	'fuxo': './vid/fuxo.mp4',
 	'zejtin': './vid/zejtin.mp4',
-	'mali': './vid/mali.mp4'
+	'mali': './vid/mali.mp4',
+	'pipni': './vid/pipni.mp4',
+	'mani': './vid/mani.mp4',
+	'shala': './vid/shala.mp4',
+	'kurwo': './vid/kurwo.mp4',
 };
 
-const sendMessage = async (recipientId, text) => {
+const sendMessage = async (recipientId, text, command) => {
 	try{
-		await TwitterClient.v1.sendDm({ recipient_id: recipientId, text: text });
+		if (typeof (command) === 'undefined'){
+			await TwitterClient.v1.sendDm({ recipient_id: recipientId, text: text });
+		}else{
+			// For preview in onNewMessage
+			const mediaId = await TwitterClient.v1.uploadMedia(
+				methodtoVideoMap[command],
+				{ mimeType: 'video/mp4', target: 'dm' }
+			);
+			await TwitterClient.v1.sendDm({
+				recipient_id: recipientId,
+				text: text,
+				attachment: { type: 'media', media: { id: mediaId } }
+			});
+		}
 	}catch(e){
-		console.log("Error in ./dependencies/twitterLib/sendMessage");
-		console.log(e);
+		// Not valid methodtoVideoMap, skip
 	}
 }
 

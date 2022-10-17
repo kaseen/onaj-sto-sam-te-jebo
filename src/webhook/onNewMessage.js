@@ -8,7 +8,8 @@ const {
 	hAdminInfo,
     commands,
 	randomEmojiSuccess,
-	randomEmojiError
+	randomEmojiError,
+	waitForBot
 } = require('../../storage/exportTxt');
 const { 
     sendMessage,
@@ -32,9 +33,6 @@ const {
 
 
 /*
-*   async userFollowsBot(senderId)
-*	sendHelp(senderId)
-*   async userBlocksBot(senderId)
 *   async prenk(senderId, senderUsername, targetUsername)
 *   async onNewMessage(event)
 */
@@ -107,7 +105,7 @@ const onNewMessage = async (event, whitelist, blacklist) => {
 
 		const numOfCommandUses = await getUserCountById('daily-usage', senderId);
         if(blacklist.includes(senderId)){
-            sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiError)}`);
+            sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)}${randomElementFromList(randomEmojiError)}`);
             return;
         }else if(whitelist.includes(senderId)){
             // Skip check for whitelist users
@@ -145,6 +143,16 @@ const onNewMessage = async (event, whitelist, blacklist) => {
             return;
         }
 
+		// If command is preview skip target checks
+		if(splitedMsg[0] === 'preview'){
+			if(splitedMsg.length === 1) return;
+			// Trim first character if it starts with '!'
+			sendMessage(senderId, randomElementFromList(waitForBot));
+			const command = splitedMsg[1].startsWith('!') ? splitedMsg[1].substring(1) : splitedMsg[1];
+			sendMessage(senderId, randomElementFromList(randomEmojiSuccess)+randomElementFromList(randomEmojiError), command);
+			return;
+		}
+
         // Check if targetUsername exists
         const targetInfo = await getUserByUsername(targetUsername);
         const targetId = targetInfo.id_str;
@@ -159,11 +167,9 @@ const onNewMessage = async (event, whitelist, blacklist) => {
             return;
         }   
 
-		const textVideo = `@${targetUsername}\n\nXalo kurajberu ${randomElementFromList(randomEmojiError)}, @${senderUsername} ti poruchuje:`;
         switch(splitedMsg[0]){
             case '!prenk':
-                if(splitedMsg.length === 1)
-                    return;
+                if(splitedMsg.length === 1) return;
                 const res = await prenk(senderId, targetId, targetUsername);
                 // On successful prenk increment
                 if(res === 1){
@@ -171,30 +177,6 @@ const onNewMessage = async (event, whitelist, blacklist) => {
                     logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) prenked @${targetUsername}`);
                 }
                 return;
-            case '!patoshi':
-                if(splitedMsg.length === 1)
-                    return;
-				patoshi(senderId, targetUsername, textVideo, '0');
-                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) patoshied(M) @${targetUsername}`);
-				return;
-            case '!fuxo':
-                if(splitedMsg.length === 1)
-                    return;
-				fuxo(senderId, targetUsername, textVideo, '0');
-                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(M) @${targetUsername}`);
-                return;
-            case '!zejtin':
-                if(splitedMsg.length === 1)
-                    return;
-				zejtin(senderId, targetUsername, textVideo, '0');
-                logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) zejtinowed(M) @${targetUsername}`);
-                return;
-			case '!mali':
-				if(splitedMsg.length === 1)
-                    return;
-				mali(senderId, targetUsername, textVideo, '0');
-				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) malowed(M) @${targetUsername}`);
-				return;
 			case '!help':
 				sendHelp(senderId);
 				return;

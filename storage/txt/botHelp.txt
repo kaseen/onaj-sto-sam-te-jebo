@@ -1,23 +1,24 @@
-Dostupne chat komande:
-!prenk <username>
-!patoshi <username>
-!fuxo <username>
-!zejtin <username>
-!mali <username>
+~~Chat komande:
+preview <komanda> (za pregledanje)
+!prenk <username> (sa ili bez @) 
 !info
 !help
 
 primer:
+napišeš DM botu sam
 !prenk @jawisemalena
-~mozhe i bez @
+i bot izvrši komandu
 
-Komande za
-Mention:    Quote:
-!patoshi     /patoshi
-!fuxo          /fuxo
-!zejtin        /zejtin
-!mali          /mali
+~~Reply komande:
+patoshi, fuxo, zejtin
+mali, pipni, mani,
+shala, kurwo
+
+Menšn komande počinju sa !
+Quote komande počinju sa /
 
 primer:
 odgovorish na twit sa 
-@jawisemalena !fuxo
+@jawisemalena /fuxo
+i bot kvoutuje tvit sa
+izabranom komandom

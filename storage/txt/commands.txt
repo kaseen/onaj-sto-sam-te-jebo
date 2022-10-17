@@ -1,10 +1,7 @@
+preview
 !prenk
-!patoshi
-!fuxo
-!zejtin
-!mali
-!help
 !info
+!help
 !admin
 !wadd
 !wrem

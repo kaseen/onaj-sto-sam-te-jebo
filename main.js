@@ -19,10 +19,6 @@
 
 ------ MAIN
 
-- kad je neko banovan mogu bota da mi ugase zbog spama micko banovan si
-
-- !mali na sliku stavi audio
-- new filestamp na exit radi?
 - korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
 
 - micy rekla da mogu komande da budu anonimne
@@ -42,7 +38,7 @@ const { recreateCountTable } = require('./src/databases/dynamodb')
 
 // 2am je 4am u heroku
 cron.schedule('0 2 * * *', () => {
-	logTime('[SERVER MAINTENANCE]: CRON JOB');
+	logTime('[SERVER MAINTENANCE]: Cron job...');
 	recreateCountTable('daily-usage');
 });
 

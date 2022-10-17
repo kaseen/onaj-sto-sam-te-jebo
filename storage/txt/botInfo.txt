@@ -1,14 +1,13 @@
 Dostupne chat komande:
-!prenk <username>
-!patoshi <username>
-!fuxo <username>
-!zejtin <username>
-!mali <username>
+preview <komanda> (za pregledanje)
+!prenk <username> (sa ili bez @) 
 !info
 !help
 
-Dostupne stream komande:
-!patoshi
-!fuxo
-!zejtin
-!mali
+Dostupne reply komande:
+patoshi, fuxo, zejtin
+mali, pipni, mani,
+shala, kurwo
+
+Menšn komande počinju sa !
+Quote komande počinju sa /
