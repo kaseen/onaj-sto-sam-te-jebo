@@ -100,7 +100,7 @@ const kurwo = (senderId, targetUsername, text, replyTo) => {
 const pojebemo = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
 	sendMessage(senderId, randomElementFromList(waitForBot));
-	postVideoMethod('pojebem', text, replyTo)
+	postVideoMethod('pojebemo', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si pojebemoao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
