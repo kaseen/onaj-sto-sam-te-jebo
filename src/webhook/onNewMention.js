@@ -2,8 +2,18 @@ require('dotenv').config({ path: require('find-config')('.env') });
 const { randomElementFromList, logTime } = require('../serverMaintenance');
 const { getUserCountById } = require('../databases/dynamodb');
 const { sendMessage, getFollowers, userFollowsBot, userBlocksBot } = require('../twitterapi/twitterLib');
-const { patoshi, fuxo, zejtin, mali, pipni, mani, shala, kurwo } = require('./switchCommands');
 const { randomEmojiSuccess, randomEmojiError } = require('../../storage/exportTxt');
+const { 
+	patoshi,
+	fuxo,
+	zejtin,
+	mali,
+	pipni,
+	mani,
+	shala,
+	kurwo,
+	pojebemo
+} = require('./switchCommands');
 
 const onNewMention = async (event, whitelist, blacklist) => {
 	try{
@@ -162,6 +172,15 @@ const onNewMention = async (event, whitelist, blacklist) => {
 			case '/kurwo':
 				kurwo(senderId, targetUsername, Q_textTweet, '0');
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) kurwowed(Q) @${targetUsername}`);
+				return;
+
+			case '!pojebemo':
+				pojebemo(senderId, targetUsername, M_textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) pojebemoed(M) @${targetUsername}`);
+				return;
+			case '/pojebemo':
+				pojebemo(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) pojebemoed(Q) @${targetUsername}`);
 				return;
 
 			default:

@@ -7,7 +7,7 @@ preview <komanda> (za pregledanje)
 Dostupne reply komande:
 patoshi, fuxo, zejtin
 mali, pipni, mani,
-shala, kurwo
+shala, kurwo, pojebemo
 
 Menšn komande počinju sa !
 Quote komande počinju sa /

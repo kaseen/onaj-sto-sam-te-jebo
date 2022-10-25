@@ -97,6 +97,13 @@ const kurwo = (senderId, targetUsername, text, replyTo) => {
 		.then(() => sendMessage(senderId, `Uspeshno si kurwowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
+const pojebemo = (senderId, targetUsername, text, replyTo) => {
+	updateItemCount('daily-usage', senderId);
+	sendMessage(senderId, randomElementFromList(waitForBot));
+	postVideoMethod('pojebem', text, replyTo)
+		.then(() => sendMessage(senderId, `Uspeshno si pojebemoao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
+}
+
 module.exports = {
 	sendHelp,
 	sendInfo,
@@ -109,5 +116,6 @@ module.exports = {
 	pipni,
 	mani,
 	shala,
-	kurwo
+	kurwo,
+	pojebemo
 }

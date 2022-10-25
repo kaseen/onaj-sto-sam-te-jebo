@@ -79,12 +79,7 @@ const openStreaming = async () => {
 	});
 
 	stream.on(ETwitterStreamEvent.Connected, () => logTime('Stream opened.'));
-	//
-	stream.on(ETwitterStreamEvent.Error, () => logTime('Error'));
-	stream.on(ETwitterStreamEvent.ConnectionError, () => logTime('ConnectionError'));
-	stream.on(ETwitterStreamEvent.ConnectionClosed, () => logTime('ConnectionClosed'));
-	stream.on(ETwitterStreamEvent.ConnectionLost, () => logTime('ConnectionLost'));	// radi po nekad
-	//
+	stream.on(ETwitterStreamEvent.ConnectionError, () => logTime('Streaming lost...'));
 	stream.on(ETwitterStreamEvent.Reconnected, () => logTime('Stream reconnected.'));
 
 	await stream.connect({ 

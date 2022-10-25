@@ -19,15 +19,13 @@
 
 ------ MAIN
 
-- korisnik moze da drejnuje ceo api (proveri kolki je limit per 24h)
-
-- micy rekla da mogu komande da budu anonimne
-
------- ALT
-
+- svi klipovi sound balance (mali mnogo jako)
+- commandsMention, commandsMessage posebna lista
+- onDisconnect napravi ima dobrih logova
 - rendom lista patoshi, postPatoshi, prenk
 - ALT TEXT NA SLIKE ALSO RANDOM
 - patoshi alt text
+
 */
 
 require('dotenv').config({ path: require('find-config')('.env') });
