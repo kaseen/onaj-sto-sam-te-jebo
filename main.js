@@ -19,7 +19,7 @@
 
 ------ MAIN
 
-- svi klipovi sound balance (mali mnogo jako)
+- svi klipovi sound balance
 - commandsMention, commandsMessage posebna lista
 - onDisconnect napravi ima dobrih logova
 - rendom lista patoshi, postPatoshi, prenk

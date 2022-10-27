@@ -12,13 +12,14 @@ i bot izvrši komandu
 ~~Reply komande:
 patoshi, fuxo, zejtin
 mali, pipni, mani,
-shala, kurwo, pojebemo
+shala, kurwo, pojebemo,
+cigan
 
-Menšn komande počinju sa !
-Quote komande počinju sa /
+Quote komande počinju sa !
+Menšn komande počinju sa /
 
 primer:
 odgovorish na twit sa 
-@jawisemalena /fuxo
+@jawisemalena !fuxo
 i bot kvoutuje tvit sa
 izabranom komandom
