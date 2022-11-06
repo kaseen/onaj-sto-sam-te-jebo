@@ -19,6 +19,7 @@
 
 ------ MAIN
 
+- wrem brew izbaci iz liste u memoriji
 - svi klipovi sound balance
 - commandsMention, commandsMessage posebna lista
 - onDisconnect napravi ima dobrih logova

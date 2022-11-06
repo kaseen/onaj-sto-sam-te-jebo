@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 
-const { botHelp, randomEmojiSuccess, randomEmojiError, waitForBot } = require('../../storage/exportTxt');
+const { botHelp, randomEmojiSuccess, randomEmojiError } = require('../../storage/exportTxt');
 const { sendMessage, getUserByUsername, postVideoMethod } = require('../twitterapi/twitterLib');
 const { randomElementFromList, logTime } = require('../serverMaintenance');
 const { DATABASE_ADMIN_ADD } = require('../databases/sheetdb');
@@ -43,70 +43,60 @@ const blacklistAdd = (senderId, blacklist, targetUsername) => {
 
 const patoshi = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('patoshi', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si patoshio @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const fuxo = (senderId, targetUsername, text, replyTo) => {
-	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));         
+	updateItemCount('daily-usage', senderId);       
 	postVideoMethod('fuxo', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const zejtin = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('zejtin', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si zejtinowo @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const mali = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('mali', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si malowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const pipni = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('pipni', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si pipnowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const mani = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('mani', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si manowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const shala = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('shala', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si shalowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const kurwo = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('kurwo', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si kurwowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const pojebemo = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('pojebemo', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si pojebemoao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
 const cigan = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
-	sendMessage(senderId, randomElementFromList(waitForBot));
 	postVideoMethod('cigan', text, replyTo)
 		.then(() => sendMessage(senderId, `Uspeshno si ciganowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }

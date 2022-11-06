@@ -3,6 +3,7 @@ const listPrenk = require('../../storage/listPrenk');
 const { antiSpam, randomElementFromList, logTime } = require('../serverMaintenance');
 const { DATABASE_ADMIN_DELETE_USERNAME } = require('../databases/sheetdb');
 const { getUserCountById, updateItemCount } = require('../databases/dynamodb');
+const { checkUser } = require('./checkUser');
 const { 
     botInfo,
 	hAdminInfo,
@@ -16,15 +17,9 @@ const {
     getUserByUsername,
     relationshipId,
     postStatusText,
-    getFollowers,
-	userFollowsBot,
 	userBlocksBot
 } = require('../twitterapi/twitterLib');
 const {
-	patoshi,
-	fuxo,
-	zejtin,
-	mali,
 	sendHelp,
 	sendInfo,
 	whitelistAdd,
@@ -103,34 +98,12 @@ const onNewMessage = async (event, whitelist, blacklist) => {
             return;
         }
 
-		// Check if user follows bot
-        if(!(await userFollowsBot(senderId))){
-            sendMessage(senderId, `Zaprati bota, stoko ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
+		// Check user criteria
+		const userCheck = await checkUser(senderId, whitelist, blacklist);
+		if(userCheck === false)
+			return;
 
-		// Check if sender have enought followers (Skip for whitelist users)
-        const senderIdFollowersCount = await getFollowers(senderId);
-        if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
-            if(whitelist.includes(senderId)){
-                // Skip check for whitelist users
-            } else {
-				sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno ${randomElementFromList(randomEmojiError)}`);
-                return;
-            }
-        }
-
-		// Check if sender used all commands
 		const numOfCommandUses = await getUserCountById('daily-usage', senderId);
-        if(blacklist.includes(senderId)){
-            sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)}${randomElementFromList(randomEmojiError)}`);
-            return;
-        }else if(whitelist.includes(senderId)){
-            // Skip check for whitelist users
-        }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
-            sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
 
         // Split message and trim username (if exists and starts with @)
         const splitedMsg = text.split(' ');

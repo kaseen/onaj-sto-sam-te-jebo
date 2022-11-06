@@ -1,8 +1,9 @@
 require('dotenv').config({ path: require('find-config')('.env') });
 const { randomElementFromList, logTime } = require('../serverMaintenance');
-const { getUserCountById } = require('../databases/dynamodb');
-const { sendMessage, getFollowers, userFollowsBot, userBlocksBot } = require('../twitterapi/twitterLib');
+const { sendMessage, userBlocksBot } = require('../twitterapi/twitterLib');
 const { randomEmojiSuccess, randomEmojiError } = require('../../storage/exportTxt');
+const { getUserCountById } = require('../databases/dynamodb');
+const { checkUser } = require('./checkUser');
 const { 
 	patoshi,
 	fuxo,
@@ -46,30 +47,12 @@ const onNewMention = async (event, whitelist, blacklist) => {
             return;
         }
 
-		// Check sender daily usage
+		// Check user criteria
+		const userCheck = await checkUser(senderId, whitelist, blacklist);
+		if(userCheck === false)
+			return;
+
 		const numOfCommandUses = await getUserCountById('daily-usage', senderId);
-        if(blacklist.includes(senderId)){
-            sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }else if(whitelist.includes(senderId)){
-            // Skip check for whitelist users
-        }else if(numOfCommandUses >= process.env.MAX_DAILY_USAGE){
-            sendMessage(senderId, `Wec si iskoristio ${process.env.MAX_DAILY_USAGE} usluge danas ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
-
-		// Check if sender have enought followers (Skip for whitelist users)
-    	const senderIdFollowersCount = await getFollowers(senderId);
-        if(!whitelist.includes(senderId) && senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
-            sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
-
-		// Check if user follows bot
-        if(!(await userFollowsBot(senderId))){
-            sendMessage(senderId, `Zaprati bota, stoko ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
 
 		// Check if target blocks bot
         if(!(await userBlocksBot(targetId))){
