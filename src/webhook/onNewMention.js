@@ -7,6 +7,7 @@ const { checkUser } = require('./checkUser');
 const { 
 	patoshi,
 	fuxo,
+	fuxo2,
 	zejtin,
 	mali,
 	pipni,
@@ -102,6 +103,15 @@ const onNewMention = async (event, whitelist, blacklist) => {
 			case '/fuxo':
 				fuxo(senderId, targetUsername, M_textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed(M) @${targetUsername}`);
+				return;
+
+			case '!fuxo2':
+				fuxo2(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed2(Q) @${targetUsername}`);
+				return;
+			case '/fuxo2':
+				fuxo2(senderId, targetUsername, M_textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) fuxoed2(M) @${targetUsername}`);
 				return;
 			
 			case '!zejtin':

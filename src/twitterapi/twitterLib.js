@@ -17,6 +17,7 @@ const { TwitterClient } = require('../initInstances');
 const methodtoVideoMap = {
 	'patoshi': './vid/cutepatosem.mp4',
 	'fuxo': './vid/fuxo.mp4',
+	'fuxo2': './vid/fuxo2.mp4',
 	'zejtin': './vid/zejtin.mp4',
 	'mali': './vid/mali.mp4',
 	'pipni': './vid/pipni.mp4',

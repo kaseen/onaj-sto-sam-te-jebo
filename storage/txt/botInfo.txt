@@ -5,10 +5,10 @@ preview <komanda> (za pregledanje)
 !help
 
 Dostupne reply komande:
-patoshi, fuxo, zejtin
-mali, pipni, mani,
-shala, kurwo, pojebemo,
-cigan
+patoshi, fuxo, fuxo2,
+zejtin, mali, pipni,
+mani, shala, kurwo,
+pojebemo, cigan
 
 Quote komande počinju sa !
 Menšn komande počinju sa /

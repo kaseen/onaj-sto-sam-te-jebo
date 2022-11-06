@@ -53,6 +53,12 @@ const fuxo = (senderId, targetUsername, text, replyTo) => {
 		.then(() => sendMessage(senderId, `Uspeshno si fuxowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
+const fuxo2 = (senderId, targetUsername, text, replyTo) => {
+	updateItemCount('daily-usage', senderId);       
+	postVideoMethod('fuxo2', text, replyTo)
+		.then(() => sendMessage(senderId, `Uspeshno si fuxowao2 @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
+}
+
 const zejtin = (senderId, targetUsername, text, replyTo) => {
 	updateItemCount('daily-usage', senderId);
 	postVideoMethod('zejtin', text, replyTo)
@@ -108,6 +114,7 @@ module.exports = {
 	blacklistAdd,
 	patoshi,
 	fuxo,
+	fuxo2,
 	zejtin,
 	mali,
 	pipni,
