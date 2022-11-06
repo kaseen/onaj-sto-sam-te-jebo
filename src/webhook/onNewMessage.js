@@ -103,6 +103,24 @@ const onNewMessage = async (event, whitelist, blacklist) => {
             return;
         }
 
+		// Check if user follows bot
+        if(!(await userFollowsBot(senderId))){
+            sendMessage(senderId, `Zaprati bota, stoko ${randomElementFromList(randomEmojiError)}`);
+            return;
+        }
+
+		// Check if sender have enought followers (Skip for whitelist users)
+        const senderIdFollowersCount = await getFollowers(senderId);
+        if(senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
+            if(whitelist.includes(senderId)){
+                // Skip check for whitelist users
+            } else {
+				sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno ${randomElementFromList(randomEmojiError)}`);
+                return;
+            }
+        }
+
+		// Check if sender used all commands
 		const numOfCommandUses = await getUserCountById('daily-usage', senderId);
         if(blacklist.includes(senderId)){
             sendMessage(senderId, `Mićko banowan si ${randomElementFromList(randomEmojiSuccess)}${randomElementFromList(randomEmojiError)}${randomElementFromList(randomEmojiError)}`);
@@ -127,19 +145,6 @@ const onNewMessage = async (event, whitelist, blacklist) => {
         if(!commands.includes(splitedMsg[0])){
             sendMessage(senderId, botInfo + '\n' + randomElementFromList(randomEmojiSuccess) + 
                                      ' ' + randomElementFromList(randomEmojiError));
-            return;
-        }
-
-        // Check if sender have enought followers (Skip for whitelist users)
-        const senderIdFollowersCount = await getFollowers(senderId);
-        if(!whitelist.includes(senderId) && senderIdFollowersCount < process.env.MIN_FOLLOWERS_WEBHOOK){
-            sendMessage(senderId, `Nemash ni ${process.env.MIN_FOLLOWERS_WEBHOOK} folowera yadno ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
-
-        // Check if user follows bot
-        if(!(await userFollowsBot(senderId))){
-            sendMessage(senderId, `Zaprati bota, stoko ${randomElementFromList(randomEmojiError)}`);
             return;
         }
 
