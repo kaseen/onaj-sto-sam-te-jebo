@@ -19,6 +19,7 @@
 
 ------ MAIN
 
+- !kurwo i !kurvo isti case da bude
 - wrem brew izbaci iz liste u memoriji
 - svi klipovi sound balance
 - commandsMention, commandsMessage posebna lista

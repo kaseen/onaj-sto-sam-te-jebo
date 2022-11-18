@@ -15,8 +15,13 @@ const {
 	shala,
 	kurwo,
 	pojebemo,
-	cigan
+	cigan,
+	ubije
 } = require('./switchCommands');
+
+/*
+*	async onNewMention(event, whitelist, blacklist)
+*/
 
 const onNewMention = async (event, whitelist, blacklist) => {
 	try{
@@ -160,10 +165,12 @@ const onNewMention = async (event, whitelist, blacklist) => {
 				return;
 			
 			case '!kurwo':
+			case '!kurvo':
 				kurwo(senderId, targetUsername, Q_textTweet, '0');
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) kurwowed(Q) @${targetUsername}`);
 				return;
 			case '/kurwo':
+			case '/kurvo':
 				kurwo(senderId, targetUsername, M_textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) kurwowed(M) @${targetUsername}`);
 				return;
@@ -184,6 +191,15 @@ const onNewMention = async (event, whitelist, blacklist) => {
 			case '/cigan':
 				cigan(senderId, targetUsername, M_textTweet, tweetId);
 				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) ciganowed(M) @${targetUsername}`);
+				return;
+
+			case '!ubije':
+				ubije(senderId, targetUsername, Q_textTweet, '0');
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) ubiowed(Q) @${targetUsername}`);
+				return;
+			case '/ubije':
+				ubije(senderId, targetUsername, M_textTweet, tweetId);
+				logTime(`@${senderUsername}(${numOfCommandUses+1}/${process.env.MAX_DAILY_USAGE}) ubiowed(M) @${targetUsername}`);
 				return;
 			
 			default:

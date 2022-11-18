@@ -13,7 +13,7 @@ i bot izvrši komandu
 patoshi, fuxo, fuxo2,
 zejtin, mali, pipni,
 mani, shala, kurwo,
-pojebemo, cigan
+pojebemo, cigan, ubije
 
 Quote komande počinju sa !
 Menšn komande počinju sa /

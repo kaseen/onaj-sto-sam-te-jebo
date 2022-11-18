@@ -25,7 +25,8 @@ const methodtoVideoMap = {
 	'shala': './vid/shala.mp4',
 	'kurwo': './vid/kurwo.mp4',
 	'pojebemo': './vid/pojebemo.mp4',
-	'cigan': './vid/cigan.mp4'
+	'cigan': './vid/cigan.mp4',
+	'ubije': './vid/ubije.mp4'
 };
 
 const sendMessage = async (recipientId, text, command) => {

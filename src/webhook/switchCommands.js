@@ -107,6 +107,12 @@ const cigan = (senderId, targetUsername, text, replyTo) => {
 		.then(() => sendMessage(senderId, `Uspeshno si ciganowao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
 }
 
+const ubije = (senderId, targetUsername, text, replyTo) => {
+	updateItemCount('daily-usage', senderId);
+	postVideoMethod('ubije', text, replyTo)
+		.then(() => sendMessage(senderId, `Uspeshno si ubiwao @${targetUsername} swe u 16 ${randomElementFromList(randomEmojiSuccess)}`));
+}
+
 module.exports = {
 	sendHelp,
 	sendInfo,
@@ -122,5 +128,6 @@ module.exports = {
 	shala,
 	kurwo,
 	pojebemo,
-	cigan
+	cigan,
+	ubije
 }
