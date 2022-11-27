@@ -26,9 +26,9 @@ const {
 const onNewMention = async (event, whitelist, blacklist) => {
 	try{
 		// We check that the event is a mention
-        if(!event.tweet_create_events){
-            return;
-        }
+		if(!event.tweet_create_events){
+			return;
+		}
 
 		// Check if tweet is reply is null (null == undefined, code will catch both null and undefined.)
 		if(event.tweet_create_events[0].in_reply_to_status_id_str === null){
@@ -49,9 +49,9 @@ const onNewMention = async (event, whitelist, blacklist) => {
 		}
 
 		// Avoiding infinite loop
-        if(myId === senderId){
-            return;
-        }
+		if(myId === senderId){
+			return;
+		}
 
 		// Check user criteria
 		const userCheck = await checkUser(senderId, whitelist, blacklist);
@@ -61,13 +61,13 @@ const onNewMention = async (event, whitelist, blacklist) => {
 		const numOfCommandUses = await getUserCountById('daily-usage', senderId);
 
 		// Check if target blocks bot
-        if(!(await userBlocksBot(targetId))){
-            sendMessage(senderId, `Mićko blokiro bota ${randomElementFromList(randomEmojiError)}`);
-            return;
-        }
+		if(!(await userBlocksBot(targetId))){
+			sendMessage(senderId, `Mićko blokiro bota ${randomElementFromList(randomEmojiError)}`);
+			return;
+		}
 
 		// Split message and find command (what starts with !)
-        const splitedMsg = text.split(' ');
+		const splitedMsg = text.split(' ');
 
 		let command = null;
 		splitedMsg.every((elem) => {
@@ -208,7 +208,7 @@ const onNewMention = async (event, whitelist, blacklist) => {
 
 	}catch(e){
 		console.log("Error in ./dependencies/onNewMention");
-        console.log(e);
+		console.log(e);
 	}
 }
 

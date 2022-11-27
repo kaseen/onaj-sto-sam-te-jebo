@@ -24,6 +24,7 @@ const methodtoVideoMap = {
 	'mani': './vid/mani.mp4',
 	'shala': './vid/shala.mp4',
 	'kurwo': './vid/kurwo.mp4',
+	'kurvo': './vid/kurwo.mp4',
 	'pojebemo': './vid/pojebemo.mp4',
 	'cigan': './vid/cigan.mp4',
 	'ubije': './vid/ubije.mp4'
