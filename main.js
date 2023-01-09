@@ -34,12 +34,17 @@ require('dotenv').config({ path: require('find-config')('.env') });
 const cron = require('node-cron');
 const { dateNow, logTime } = require('./src/serverMaintenance');
 const { openWebhook, openStreaming } = require('./src/initMain');
-const { recreateCountTable } = require('./src/databases/dynamodb')
+const { recreateCountTable } = require('./src/databases/dynamodb');
+const { postRandomDailyVideo } = require('./src/AWS/S3');
 
 // 2am je 4am u heroku
 cron.schedule('0 2 * * *', () => {
 	logTime('[SERVER MAINTENANCE]: Cron job...');
 	recreateCountTable('daily-usage');
+});
+
+cron.schedule('0 12 * * *', () => {
+	postRandomDailyVideo('kavali');
 });
 
 const main = async () => {
@@ -50,10 +55,11 @@ const main = async () => {
 
 		// Turn off bot every SERVER_RESTART h (Ngrok server lives 8h)
 		// Heroku restart crashed dynos by spawning new dynos once every ten minutes (and than exponentially)
-		setTimeout(async () => {
+		// TODO:
+		/*setTimeout(async () => {
 			logTime('Ngrok time passed, restarting...');
 			process.exit(0);
-		}, process.env.SERVER_RESTART * 60 * 60 * 1000);
+		}, process.env.SERVER_RESTART * 60 * 60 * 1000);*/
 
 		await openWebhook();
 		await openStreaming();

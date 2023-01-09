@@ -2,9 +2,12 @@ require('dotenv').config({ path: require('find-config')('.env') })
 const { Autohook } = require('twitter-autohook');
 const { TwitterApi } = require('twitter-api-v2');
 const AWS = require('aws-sdk');
+const DYNAMO_DB = require('aws-sdk/clients/dynamodb');
+const S3 = require('aws-sdk/clients/s3');
 const sheetdb = require('sheetdb-node');
 
-// ApiKey (Consumer key), ApiKeySecret (Consumer secret)
+// CONSUMER_KEY = Project & Apps -> App -> Keys and tokens -> API Key and Secret
+// TOKENV2 = Project & Apps -> App -> Keys and tokens -> Access Token and Secret
 const TwitterApiInit = new TwitterApi({
   appKey:           process.env.CONSUMER_KEY_V2,
   appSecret:        process.env.CONSUMER_KEY_V2_SECRET,
@@ -22,6 +25,7 @@ const AutohookInstance = new Autohook({
   port: process.env.PORT || 8999
 });
 
+// BEARER_TOKEN = Project & Apps -> App -> Keys and tokens -> Bearer Token
 const BearerClient = new TwitterApi(process.env.BEARER_TOKEN);
 const TwitterClient = TwitterApiInit.readWrite;
 
@@ -29,18 +33,24 @@ const TwitterClient = TwitterApiInit.readWrite;
 const configAdminMenu = { address: process.env.SHEETDB_ADMIN_MENU };
 const DBAdminMenu = sheetdb(configAdminMenu);
 
-
 // ------- AWS -------
-const awsConfig = {
+const AWS_S3 = new S3({
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+	region: 'eu-central-1',
+	endpoint: 's3.eu-central-1.amazonaws.com'
+})
+
+const AWS_DYNAMO_DB = new DYNAMO_DB({
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 	region: 'eu-west-3',
 	endpoint: 'dynamodb.eu-west-3.amazonaws.com',
-};
+});
 
-AWS.config.update(awsConfig);
+// Needed for DocumentClient
+AWS.config.update({ region: 'eu-west-3', endpoint: 'dynamodb.eu-west-3.amazonaws.com' });
 
-const dynamoDB = new AWS.DynamoDB();
 const dynamoDocClient = new AWS.DynamoDB.DocumentClient();
 
 module.exports = {
@@ -48,7 +58,8 @@ module.exports = {
   BearerClient,
   TwitterClient,
   AWS,
-  dynamoDB,
+  AWS_S3,
+  AWS_DYNAMO_DB,
   dynamoDocClient,
   DBAdminMenu
 }

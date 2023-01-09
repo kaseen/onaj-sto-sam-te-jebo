@@ -3,3 +3,4 @@ Head admin commands:
 !wrem <username>
 !badd <username>
 !brem <username>
+!forceDaily

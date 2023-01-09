@@ -1,4 +1,4 @@
-const { AWS, dynamoDB, dynamoDocClient } = require('../initInstances');
+const { AWS, AWS_DYNAMO_DB, dynamoDocClient } = require('../initInstances');
 
 /*
 *	async getUserCountById(table_name, user_id)
@@ -91,18 +91,18 @@ const createCountTable = (table_name) => {
 		}
 	}
 
-	dynamoDB.waitFor('tableNotExists', paramsForWaiting, function(err){
+	AWS_DYNAMO_DB.waitFor('tableNotExists', paramsForWaiting, function(err){
 		if(err){
 			console.log('Error in ./src/DynamoDB/dynamo/createCountTable/tableNotExits');
 			console.log(err);
 		}else{
-			dynamoDB.createTable(paramsForCreation, function(err){
+			AWS_DYNAMO_DB.createTable(paramsForCreation, function(err){
 				if(err){
 					console.log('Error in ./src/DynamoDB/dynamo/createCountTable/createTable');
 					console.log(err);
 				}else{
 					console.log(`Creating new table ${table_name}...`);
-					dynamoDB.waitFor('tableExists', paramsForWaiting, function(err){
+					AWS_DYNAMO_DB.waitFor('tableExists', paramsForWaiting, function(err){
 						if(err){
 							console.log('Error in ./src/DynamoDB/dynamo/createCountTable/tableExists');
 							console.log(err);
@@ -120,7 +120,7 @@ const deleteTable = (table_name) => {
 	const params = {
 		TableName: table_name
 	}
-	dynamoDB.deleteTable(params, function(err){
+	AWS_DYNAMO_DB.deleteTable(params, function(err){
 		if(err){
 			console.log('Erro in ./src/DynamoDB/dynamo/deleteTable');
 			console.log(err);

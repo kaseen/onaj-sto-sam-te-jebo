@@ -7,3 +7,4 @@ preview
 !wrem
 !badd
 !brem
+!forceDaily

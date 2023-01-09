@@ -105,7 +105,6 @@ const openWebhook = async () => {
 		if(event.tweet_create_events) {
 			onNewMention(event, whitelist, blacklist);
 		} else if(event.direct_message_events) {
-			// TODO: sklonio sam await
 			onNewMessage(event, whitelist, blacklist);
 		} else if(event.follow_events){
 			const senderId = event.follow_events[0].source.id;
