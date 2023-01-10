@@ -30,4 +30,26 @@ jobs:
       with:
         cmd: install                  # will run `yarn install` command
         
+    - name: Environment variables
+      run: |
+        echo "${{secrets.TOKENV2}}" >> .env
+        echo "${{secrets.TOKENV2_SECRET}}" >> .env
+        echo "${{secrets.CONSUMER_KEY_V2}}" >> .env
+        echo "${{secrets.CONSUMER_KEY_V2_SECRET}}" >> .env
+        echo "${{secrets.BEARER_TOKEN}}" >> .env
+        echo "${{secrets.AWS_ACCESS_KEY_ID}}" >> .env
+        echo "${{secrets.AWS_SECRET_ACCESS_KEY}}" >> .env
+        echo "${{secrets.AWS_SDK_LOAD_CONFIG}}" >> .env
+        echo "${{secrets.NGROK_SECRET}}" >> .env
+        echo "${{secrets.SHEETDB_ADMIN_MENU}}" >> .env
+        echo "${{secrets.BOT_ID}}" >> .env
+        echo "${{secrets.STORAGE_SAVE}}" >> .env
+        echo "${{secrets.SERVER_RESTART}}" >> .env
+        echo "${{secrets.POST_STREAM_IMG_PERCENT}}" >> .env
+        echo "${{secrets.MIN_FOLLOWERS_WEBHOOK}}" >> .env
+        echo "${{secrets.MAX_DAILY_USAGE}}" >> .env
+        echo "${{secrets.ANTI_SPAM_SECONDS}}" >> .env
+        echo "${{secrets.HEAD_ADMIN_ID}}" >> .env
+        echo "${{secrets.PORT}}" >> .env
+        
     - run: sudo pm2 restart BOT --cron-restart="0 */8 * * *"
