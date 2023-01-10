@@ -37,14 +37,14 @@ jobs:
         echo "CONSUMER_KEY_V2=${{secrets.CONSUMER_KEY_V2}}" >> .env
         echo "CONSUMER_KEY_V2_SECRET=${{secrets.CONSUMER_KEY_V2_SECRET}}" >> .env
         echo "BEARER_TOKEN=${{secrets.BEARER_TOKEN}}" >> .env
-        
+        echo "" >> .env
         echo "AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}}" >> .env
         echo "AWS_SECRET_ACCESS_KEY=${{secrets.AWS_SECRET_ACCESS_KEY}}" >> .env
         echo "AWS_SDK_LOAD_CONFIG=${{secrets.AWS_SDK_LOAD_CONFIG}}" >> .env
-        
+        echo "" >> .env
         echo "NGROK_SECRET=${{secrets.NGROK_SECRET}}" >> .env
         echo "SHEETDB_ADMIN_MENU=${{secrets.SHEETDB_ADMIN_MENU}}" >> .env
-        
+        echo "" >> .env
         echo "BOT_ID=${{secrets.BOT_ID}}" >> .env
         echo "STORAGE_SAVE=${{secrets.STORAGE_SAVE}}" >> .env
         echo "SERVER_RESTART=${{secrets.SERVER_RESTART}}" >> .env
