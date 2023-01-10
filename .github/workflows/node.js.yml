@@ -28,4 +28,6 @@ jobs:
     - name: Run install
       uses: borales/actions-yarn@v4
       with:
-        cmd: install  # will run `yarn install` command
+        cmd: install                  # will run `yarn install` command
+        
+    - run: sudo pm2 restart BOT --cron-restart="0 */8 * * *"
